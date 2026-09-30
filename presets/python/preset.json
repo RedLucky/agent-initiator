@@ -1,0 +1,24 @@
+{
+  "id": "python",
+  "name": "Python",
+  "category": "language",
+  "description": "Python conventions: PEP 8, type hints, ruff, pytest, logging.",
+  "extends": [
+    "base"
+  ],
+  "commands": {
+    "install": "{{pyInstall}}",
+    "build": "{{pyRun}}python -m compileall -q -x '\\.venv' .",
+    "test": "{{pyRun}}pytest",
+    "lint": "{{pyRun}}ruff check .",
+    "typecheck": "{{pyRun}}mypy .",
+    "format": "{{pyRun}}ruff format --check .",
+    "audit": "{{pyRun}}pip-audit"
+  },
+  "never": [
+    "Use bare `except:` or `except Exception: pass`."
+  ],
+  "docs": [
+    "https://docs.python.org/3/ — Python standard library reference."
+  ]
+}

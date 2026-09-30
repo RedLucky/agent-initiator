@@ -1,0 +1,19 @@
+{
+  "id": "turborepo",
+  "name": "Turborepo",
+  "category": "monorepo",
+  "description": "Turborepo task pipeline, caching and filtered runs.",
+  "extends": [
+    "monorepo"
+  ],
+  "commands": {
+    "install": "{{pm}} install",
+    "dev": "{{pmx}} turbo run dev",
+    "build": "{{pmx}} turbo run build",
+    "test": "{{pmx}} turbo run test",
+    "lint": "{{pmx}} turbo run lint"
+  },
+  "docs": [
+    "`node_modules/turbo/docs/README.md` — docs matching the installed turbo version, with a task → page table. Read it before changing turbo.json or turbo commands."
+  ]
+}

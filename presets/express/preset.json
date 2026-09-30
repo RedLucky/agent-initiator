@@ -1,0 +1,13 @@
+{
+  "id": "express",
+  "name": "Express",
+  "category": "backend",
+  "description": "Express routers, middleware, validation and centralised error handling.",
+  "extends": [
+    "node",
+    "web-backend"
+  ],
+  "docs": [
+    "https://expressjs.com/en/5x/api.html — Express 5 API reference (check the installed major in package.json)."
+  ]
+}

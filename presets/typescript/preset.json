@@ -1,0 +1,10 @@
+{
+  "id": "typescript",
+  "name": "TypeScript",
+  "category": "language",
+  "description": "TypeScript strictness, typing and validation conventions (on top of Node.js).",
+  "extends": ["node"],
+  "commands": { "typecheck": "{{pmx}} tsc --noEmit" },
+  "must": ["Keep `strict` TypeScript; fix type errors instead of silencing them."],
+  "never": ["Use `any`, `@ts-ignore` or non-null `!` assertions to hide type errors (use `unknown` + narrowing)."]
+}

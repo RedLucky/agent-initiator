@@ -1,0 +1,15 @@
+{
+  "id": "nextjs",
+  "name": "Next.js",
+  "category": "frontend",
+  "description": "Next.js App Router conventions: server/client components, data fetching, route handlers.",
+  "extends": [
+    "node",
+    "web-frontend"
+  ],
+  "docs": [
+    "`node_modules/next/dist/docs/` — guides bundled with the installed Next.js version (App Router in `01-app/`).",
+    "https://nextjs.org/docs/llms.txt — markdown docs index; append `.md` to any docs URL for markdown.",
+    "While `next dev` runs: MCP endpoint `/_next/mcp` (compilation issues, route compile) — prefer it over guessing from logs."
+  ]
+}

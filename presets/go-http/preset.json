@@ -1,0 +1,16 @@
+{
+  "id": "go-http",
+  "name": "Go HTTP service",
+  "category": "backend",
+  "description": "Go HTTP services (net/http, gin, echo, chi, fiber): handlers, middleware, graceful shutdown.",
+  "extends": [
+    "go",
+    "web-backend"
+  ],
+  "commands": {
+    "dev": "go run ."
+  },
+  "docs": [
+    "https://gin-gonic.com/en/docs/ — Gin docs (when the service uses Gin)."
+  ]
+}

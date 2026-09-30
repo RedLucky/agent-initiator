@@ -1,0 +1,18 @@
+{
+  "id": "django",
+  "name": "Django",
+  "category": "backend",
+  "description": "Django apps, models/migrations, views/serializers, settings and tests.",
+  "extends": [
+    "python",
+    "web-backend"
+  ],
+  "commands": {
+    "dev": "{{pyRun}}python manage.py runserver",
+    "build": "{{pyRun}}python manage.py check",
+    "test": "{{pyRun}}python manage.py test"
+  },
+  "docs": [
+    "https://docs.djangoproject.com/en/stable/ — Django docs (match the installed version)."
+  ]
+}

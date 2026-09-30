@@ -1,0 +1,1 @@
+{ "name": "fast-api-node", "dependencies": { "fastify": "5.0.0" } }

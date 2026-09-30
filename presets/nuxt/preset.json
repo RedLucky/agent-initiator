@@ -1,0 +1,14 @@
+{
+  "id": "nuxt",
+  "name": "Nuxt",
+  "category": "frontend",
+  "description": "Nuxt 3 conventions: file-based routing, server routes, data fetching, runtime config.",
+  "extends": [
+    "node",
+    "web-frontend"
+  ],
+  "docs": [
+    "https://nuxt.com/mcp — official Nuxt MCP server (docs for the installed major, modules, deployment).",
+    "https://nuxt.com/docs — Nuxt docs."
+  ]
+}

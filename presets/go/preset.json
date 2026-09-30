@@ -1,0 +1,24 @@
+{
+  "id": "go",
+  "name": "Go",
+  "category": "language",
+  "description": "Go conventions: gofmt, error wrapping, slog, table-driven tests.",
+  "extends": [
+    "base"
+  ],
+  "commands": {
+    "install": "go mod download",
+    "build": "go build ./...",
+    "test": "go test ./...",
+    "lint": "go vet ./...",
+    "format": "gofmt -l .",
+    "audit": "govulncheck ./..."
+  },
+  "never": [
+    "Ignore returned errors with `_` unless a comment explains why it is safe."
+  ],
+  "docs": [
+    "`gopls mcp` — official Go language-server MCP (definitions, references, diagnostics, tests); e.g. `claude mcp add gopls -- gopls mcp`.",
+    "https://pkg.go.dev — package documentation for the versions in go.mod."
+  ]
+}

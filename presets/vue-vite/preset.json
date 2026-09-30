@@ -1,0 +1,14 @@
+{
+  "id": "vue-vite",
+  "name": "Vue + Vite",
+  "category": "frontend",
+  "description": "Vue 3 SPA with Vite: Composition API, SFCs, composables, Pinia.",
+  "extends": [
+    "node",
+    "web-frontend"
+  ],
+  "docs": [
+    "https://vuejs.org/guide/ — Vue guide (Composition API).",
+    "https://vite.dev/guide/ — Vite guide and config reference."
+  ]
+}

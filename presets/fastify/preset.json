@@ -1,0 +1,13 @@
+{
+  "id": "fastify",
+  "name": "Fastify",
+  "category": "backend",
+  "description": "Fastify plugins, JSON-schema validation, typed routes and built-in pino logging.",
+  "extends": [
+    "node",
+    "web-backend"
+  ],
+  "docs": [
+    "https://fastify.dev/docs/latest/ — Fastify reference (routes, schemas, hooks, plugins)."
+  ]
+}

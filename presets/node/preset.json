@@ -1,0 +1,16 @@
+{
+  "id": "node",
+  "name": "Node.js (JavaScript)",
+  "category": "language",
+  "description": "JavaScript/Node.js runtime conventions, naming and logging.",
+  "extends": [
+    "base"
+  ],
+  "commands": {
+    "install": "{{pm}} install",
+    "audit": "{{pm}} audit"
+  },
+  "conventions": [
+    "Use the package manager already locked in the repo; never mix lockfiles."
+  ]
+}

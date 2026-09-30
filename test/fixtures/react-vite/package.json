@@ -1,0 +1,2 @@
+{ "name": "dashboard", "scripts": { "dev": "vite", "build": "vite build" },
+  "dependencies": { "react": "19.0.0" }, "devDependencies": { "vite": "6.0.0" } }

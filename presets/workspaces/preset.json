@@ -1,0 +1,8 @@
+{
+  "id": "workspaces",
+  "name": "Package-manager workspaces",
+  "category": "monorepo",
+  "description": "Plain npm/pnpm/yarn/bun workspaces without a task runner.",
+  "extends": ["monorepo"],
+  "commands": { "install": "{{pm}} install" }
+}

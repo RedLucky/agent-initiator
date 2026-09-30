@@ -1,0 +1,13 @@
+{
+  "id": "hono",
+  "name": "Hono",
+  "category": "backend",
+  "description": "Hono routes, validator middleware, error handling for Node/edge runtimes.",
+  "extends": [
+    "node",
+    "web-backend"
+  ],
+  "docs": [
+    "https://hono.dev/llms.txt — official Hono docs for LLMs."
+  ]
+}

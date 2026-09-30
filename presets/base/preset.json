@@ -1,0 +1,42 @@
+{
+  "id": "base",
+  "name": "Base",
+  "category": "base",
+  "description": "Universal engineering discipline: quality, security, testing, docs, git workflow and required tooling.",
+  "tooling": [
+    "ponytail",
+    "caveman",
+    "rtk",
+    "graphify"
+  ],
+  "conventions": [
+    "Existing repository conventions win; these rules only fill the gaps.",
+    "Comments explain *why* (intent, constraints, trade-offs), not *what*. Add them to new or changed code only.",
+    "Code must be readable by a beginner: clear names, small functions, early returns, no clever tricks."
+  ],
+  "must": [
+    "State assumptions and ask when a requirement is unclear or contradictory instead of guessing.",
+    "Read the version-matched framework docs listed in AGENTS.md → Framework docs before using framework APIs; never rely on memory for APIs that may have changed.",
+    "Plan multi-step work with the `plan-task` skill and get the plan approved before implementing.",
+    "Write or update unit tests for every behaviour change.",
+    "Handle errors explicitly and log them with enough context to debug (see the error-handling-logging rule).",
+    "Validate all external input at the boundary (HTTP, CLI, files, env, third-party responses).",
+    "Run the `self-review` skill on your diff before the Definition of Done.",
+    "Update the LLM wiki in both `docs/wiki/en/` and `docs/wiki/id/` (`index.md` and `log.md`) for every change.",
+    "Ask for explicit confirmation, showing the proposed message, before every `git commit` and `git push`.",
+    "Use commit format `type(#<issue>): subject`, or `type(TASK-<n>): subject` with the plan's task number when there is no issue.",
+    "Prefix shell commands with `rtk`.",
+    "Record hard-to-reverse architecture decisions as ADRs (`write-adr` skill)."
+  ],
+  "never": [
+    "Commit or push without explicit approval.",
+    "Commit secrets, credentials, tokens or `.env` files.",
+    "Refactor, reformat or \"improve\" code unrelated to the task.",
+    "Add speculative abstractions, options or features that were not requested.",
+    "Swallow errors silently (empty catch blocks, ignored error returns).",
+    "Disable or skip tests, lint rules or type checks to make a task pass.",
+    "Run destructive commands (force push, `rm -rf`, dropping data, shared-DB migrations) without confirmation.",
+    "Log, trace or expose personal data (PII) without masking, or use real personal data in tests and seeds.",
+    "Add a dependency without checking maintenance, licence and known vulnerabilities."
+  ]
+}

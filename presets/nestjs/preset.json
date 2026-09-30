@@ -1,0 +1,13 @@
+{
+  "id": "nestjs",
+  "name": "NestJS",
+  "category": "backend",
+  "description": "NestJS modules, DI, DTO validation, exception filters and logging.",
+  "extends": [
+    "node",
+    "web-backend"
+  ],
+  "docs": [
+    "https://docs.nestjs.com/llms.txt — official NestJS docs index for LLMs (markdown pages + full text)."
+  ]
+}

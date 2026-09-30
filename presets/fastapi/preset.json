@@ -1,0 +1,16 @@
+{
+  "id": "fastapi",
+  "name": "FastAPI",
+  "category": "backend",
+  "description": "FastAPI routers, Pydantic schemas, dependency injection and exception handlers.",
+  "extends": [
+    "python",
+    "web-backend"
+  ],
+  "commands": {
+    "dev": "{{pyRun}}fastapi dev"
+  },
+  "docs": [
+    "Official FastAPI skill bundled with the installed package: `.venv/lib/python*/site-packages/fastapi/.agents/skills/fastapi/SKILL.md` (plus `references/`). Read it before writing FastAPI code."
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "id": "nx",
+  "name": "Nx",
+  "category": "monorepo",
+  "description": "Nx workspace: project graph, targets, affected commands and module boundaries.",
+  "extends": [
+    "monorepo"
+  ],
+  "commands": {
+    "install": "{{pm}} install",
+    "build": "{{pmx}} nx run-many -t build",
+    "test": "{{pmx}} nx run-many -t test",
+    "lint": "{{pmx}} nx run-many -t lint",
+    "affected": "{{pmx}} nx affected -t lint test build"
+  },
+  "docs": [
+    "Official Nx skills in `.agents/skills/` (`nx-workspace`, `nx-generate`, `nx-run-tasks`, `nx-plugins`, `link-workspace-packages`, `nx-import`) — use them before improvising Nx commands.",
+    "`node_modules/@nx/<plugin>/PLUGIN.md` — plugin best practices, when the file exists.",
+    "`nx <command> --help` — never guess CLI flags."
+  ]
+}

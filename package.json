@@ -1,0 +1,35 @@
+{
+  "name": "agent-initiator",
+  "version": "0.1.0",
+  "description": "Generate AGENTS.md, rules, skills and constraints for AI coding assistants in new repos",
+  "type": "module",
+  "bin": {
+    "agent-initiator": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "presets"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@clack/prompts": "^1.8.1",
+    "commander": "^15.0.0",
+    "gray-matter": "^4.0.3",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.3",
+    "tsup": "^8.5.1",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.3"
+  }
+}

@@ -1,0 +1,84 @@
+import path from 'node:path';
+import { listSubdirs, readJson } from '../fs-utils.js';
+import type { DetectedProject, PackageInfo, PackageManager } from '../types.js';
+import { detectGoPackage } from './go.js';
+import { detectNodePackage } from './node.js';
+import { detectNodePackageManager } from './package-manager.js';
+import { detectPythonPackage } from './python.js';
+import { detectExistingSkills } from './skills.js';
+import { detectWorkspace } from './workspace.js';
+
+/** Tries each ecosystem detector in turn; the first one that recognises a manifest wins. */
+async function detectPackage(root: string, relPath: string, options: DetectOptions): Promise<PackageInfo | null> {
+  return (
+    (await detectNodePackage(root, relPath, options.nodePackageManager)) ??
+    (await detectPythonPackage(root, relPath)) ??
+    (await detectGoPackage(root, relPath))
+  );
+}
+
+async function detectAll(root: string, relPaths: string[], options: DetectOptions): Promise<PackageInfo[]> {
+  const found = await Promise.all(relPaths.map((rel) => detectPackage(root, rel, options)));
+  return found.filter((pkg): pkg is PackageInfo => pkg !== null);
+}
+
+/**
+ * Scans a repository and describes its packages and stacks.
+ * Order of checks: workspace tooling → single root manifest → one level of sub-folders (e.g. web/ + api/).
+ */
+export interface DetectOptions {
+  /** Node package manager to assume when no lockfile exists yet (set after scaffolding with --skip-install). */
+  nodePackageManager?: PackageManager;
+}
+
+export async function detectProject(root: string, options: DetectOptions = {}): Promise<DetectedProject> {
+  return { ...(await detectLayout(root, options)), existingSkills: await detectExistingSkills(root) };
+}
+
+async function detectLayout(root: string, options: DetectOptions): Promise<DetectedProject> {
+  const rootPkg = await readJson<{ name?: string; scripts?: Record<string, string> }>(path.join(root, 'package.json'));
+  const name = rootPkg?.name ?? path.basename(root);
+
+  const workspace = await detectWorkspace(root);
+  if (workspace) {
+    return {
+      root,
+      name,
+      monorepo: workspace.tool,
+      rootScripts: Object.keys(rootPkg?.scripts ?? {}),
+      rootPackageManager: await detectNodePackageManager([root], options.nodePackageManager),
+      packages: await detectAll(root, workspace.packageDirs, options),
+    };
+  }
+
+  const single = await detectPackage(root, '.', options);
+  if (single) return { root, name: single.name, packages: [single] };
+
+  return { root, name, packages: await detectAll(root, await listSubdirs(root), options) };
+}
+
+/**
+ * Replaces detected stacks with presets chosen by the user (--preset or the prompt).
+ * The override applies to the root package; a repo without a root manifest gets a synthetic one.
+ */
+export function overridePresets(project: DetectedProject, presetIds: string[]): DetectedProject {
+  const current = project.packages.find((p) => p.path === '.');
+  const language = presetIds.includes('typescript')
+    ? 'typescript'
+    : presetIds.includes('python') || presetIds.includes('fastapi') || presetIds.includes('django')
+      ? 'python'
+      : presetIds.includes('go') || presetIds.includes('go-http')
+        ? 'go'
+        : 'javascript';
+  const root: PackageInfo = {
+    path: '.',
+    name: project.name,
+    packageManager: current?.packageManager ?? (language === 'python' ? 'pip' : language === 'go' ? 'go' : 'npm'),
+    scripts: current?.scripts ?? [],
+    manifests: current?.manifests ?? [],
+    ...current,
+    language,
+    presets: presetIds,
+  };
+  return { ...project, monorepo: undefined, packages: [root] };
+}

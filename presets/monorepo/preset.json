@@ -1,0 +1,18 @@
+{
+  "id": "monorepo",
+  "name": "Monorepo (shared)",
+  "category": "monorepo",
+  "description": "Shared monorepo rules: package boundaries, dependencies, scoped commands.",
+  "extends": [
+    "base"
+  ],
+  "must": [
+    "Run tasks scoped to the affected package(s); run the full pipeline before finishing."
+  ],
+  "never": [
+    "Import another package's internal files; use its public entry point."
+  ],
+  "commands": {
+    "audit": "{{pm}} audit"
+  }
+}

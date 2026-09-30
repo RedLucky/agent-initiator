@@ -1,0 +1,1 @@
+{ "name": "nx-org", "private": true, "workspaces": ["apps/*"] }

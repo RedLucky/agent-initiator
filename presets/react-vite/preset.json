@@ -1,0 +1,14 @@
+{
+  "id": "react-vite",
+  "name": "React + Vite",
+  "category": "frontend",
+  "description": "React SPA with Vite: components, hooks, routing and data fetching.",
+  "extends": [
+    "node",
+    "web-frontend"
+  ],
+  "docs": [
+    "https://react.dev/reference/react — React API reference.",
+    "https://vite.dev/guide/ — Vite guide and config reference."
+  ]
+}

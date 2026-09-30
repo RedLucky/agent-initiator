@@ -1,0 +1,8 @@
+{
+  "id": "web-backend",
+  "name": "Web backend (shared)",
+  "category": "backend",
+  "description": "Shared backend/API rules: API design, validation, auth, persistence.",
+  "extends": ["base"],
+  "must": ["Return consistent error responses and never leak stack traces or internal details to clients."]
+}
