@@ -3,6 +3,7 @@ import * as p from '@clack/prompts';
 import { Command } from 'commander';
 import pc from 'picocolors';
 import { detectProject, overridePresets } from './detect/index.js';
+import { detectExistingSkills } from './detect/skills.js';
 import { checkTools, type ToolStatus } from './doctor.js';
 import { generateFiles } from './generate.js';
 import { defaultPresetsDir, loadRegistry, type Registry } from './presets/registry.js';
@@ -10,6 +11,7 @@ import { resolvePresets } from './presets/resolve.js';
 import { choosePresets, defaultPackageManager, promptNewProject } from './prompts.js';
 import { specFromFlags, type ScaffoldFlags } from './scaffold/flags.js';
 import { inspectDir, LAYOUTS, scaffoldProject, type NodePackageManager, type ScaffoldSpec } from './scaffold/index.js';
+import { planToolSetup, runToolSetup, type SetupAction, type SetupResult } from './setup.js';
 import type { DetectedProject } from './types.js';
 import { applyPlan, manualSteps, planFiles } from './write/index.js';
 
@@ -17,6 +19,7 @@ interface InitOptions extends ScaffoldFlags {
   preset?: string;
   yes?: boolean;
   dryRun?: boolean;
+  setupTools?: boolean;
 }
 
 function describeProject(registry: Registry, project: DetectedProject): string {
@@ -79,6 +82,29 @@ async function prepareNewProject(
   return {};
 }
 
+function logSetupResult({ action, outcome, reason }: SetupResult): void {
+  if (outcome === 'done') p.log.success(action.label);
+  else p.log.warn(`${action.label}: ${outcome}${reason ? ` — ${reason}` : ''}`);
+}
+
+/**
+ * Decides whether to run per-repo tool setup: --setup-tools forces it, --yes/non-interactive skips it
+ * (explicit opt-in for CI), otherwise the user is asked. --dry-run only lists the actions.
+ */
+async function shouldSetupTools(options: InitOptions, actions: SetupAction[]): Promise<boolean> {
+  if (actions.length === 0) return false;
+  const listing = actions.map((a) => `${pc.cyan(`${a.command} ${a.args.join(' ')}`)}  ${pc.dim(a.label)}`).join('\n');
+  if (options.dryRun) {
+    p.note(listing, `Tool setup ${options.setupTools ? 'that would run' : 'available (--setup-tools)'}`);
+    return false;
+  }
+  if (options.setupTools) return true;
+  if (options.yes || !process.stdin.isTTY) return false;
+  p.note(listing, 'Per-repo tool setup');
+  const ok = await p.confirm({ message: 'Run these setup commands now?', initialValue: true });
+  return ok === true;
+}
+
 async function runInit(dir: string, options: InitOptions): Promise<void> {
   const root = path.resolve(dir);
   const registry = await loadRegistry(await defaultPresetsDir());
@@ -103,6 +129,15 @@ async function runInit(dir: string, options: InitOptions): Promise<void> {
     }
   }
 
+  const rootIds = [...new Set(['base', ...(project.monorepo ? [project.monorepo] : []), ...project.packages.flatMap((pkg) => pkg.presets)])];
+  const tooling = resolvePresets(registry, rootIds).tooling;
+
+  // Runs before generation so skills installed by tools (UI UX Pro Max) get indexed in AGENTS.md.
+  if (await shouldSetupTools(options, planToolSetup(tooling))) {
+    await runToolSetup(root, planToolSetup(tooling), logSetupResult);
+    project = { ...project, existingSkills: await detectExistingSkills(root) };
+  }
+
   const { kind, files } = generateFiles(project, registry, { date: new Date().toISOString().slice(0, 10) });
   const plan = await planFiles(root, files);
   const created = plan.filter((f) => f.status === 'create');
@@ -116,9 +151,8 @@ async function runInit(dir: string, options: InitOptions): Promise<void> {
   const written = await applyPlan(root, plan);
   for (const step of await manualSteps(root, plan)) p.log.warn(step);
 
-  const rootIds = [...new Set(['base', ...(project.monorepo ? [project.monorepo] : []), ...project.packages.flatMap((pkg) => pkg.presets)])];
   console.log(pc.bold('\nRequired tooling on this machine:'));
-  printToolStatus(await checkTools(resolvePresets(registry, rootIds).tooling));
+  printToolStatus(await checkTools(tooling));
 
   p.outro(`Wrote ${written.length} file(s). Review them, then commit when ready.`);
 }
@@ -150,6 +184,7 @@ program
   .option('--lang <ts|js>', 'language for Node apps when scaffolding (default: ts)')
   .option('--pm <pm>', 'package manager for scaffolding: pnpm | npm | yarn | bun')
   .option('--skip-install', 'do not install dependencies after scaffolding (where the scaffolder allows it)')
+  .option('--setup-tools', 'run per-repo tool setup without asking (graphify graph + git hooks, UI UX Pro Max skills)')
   .action(runInit);
 
 program.command('list').description('list available presets').action(runList);

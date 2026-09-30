@@ -88,7 +88,7 @@ function packageManagerVersion(pm: string): string | undefined {
   return /^\d+\.\d+\.\d+/.test(version) ? version : undefined;
 }
 
-function isInsideGitRepo(dir: string): boolean {
+export function isInsideGitRepo(dir: string): boolean {
   return spawnSync('git', ['rev-parse', '--is-inside-work-tree'], { cwd: dir, stdio: 'ignore' }).status === 0;
 }
 

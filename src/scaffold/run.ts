@@ -17,7 +17,7 @@ export function scaffoldEnv(env: NodeJS.ProcessEnv = process.env): NodeJS.Proces
 }
 
 /** Runs a command with inherited stdio (scaffolders print their own progress) and rejects on a non-zero exit. */
-function runCommand(command: string, args: string[], cwd: string): Promise<void> {
+export function runCommand(command: string, args: string[], cwd: string): Promise<void> {
   return new Promise((resolve, reject) => {
     // stdin is closed so a scaffolder can never hang waiting for input. (No CI=1: pnpm would then force a frozen lockfile.)
     const child = spawn(command, args, { cwd, env: scaffoldEnv(), stdio: ['ignore', 'inherit', 'inherit'], shell: process.platform === 'win32' });

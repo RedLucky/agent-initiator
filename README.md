@@ -145,6 +145,7 @@ Then review the generated files and commit them when you are happy. The tool nev
 | `--lang <ts\|js>` | Language for Node apps (default `ts`; TS-only frameworks ignore `js`) |
 | `--pm <pm>` | `pnpm` · `npm` · `yarn` · `bun` (default: pnpm if installed, else npm) |
 | `--skip-install` | Do not install dependencies, where the scaffolder allows it |
+| `--setup-tools` | Run per-repo tool setup without asking (see [Required tooling](#required-tooling)) |
 
 In `--yes` mode, an empty folder without `--framework`, `--apps` or `--preset` stops with an error and example commands. It does not silently write a base-only setup.
 
@@ -245,6 +246,24 @@ Every generated `AGENTS.md` asks contributors and agents to use these tools. The
 | [caveman](https://github.com/JuliusBrussee/caveman) | Terse responses that keep technical accuracy | `curl -fsSL https://raw.githubusercontent.com/JuliusBrussee/caveman/main/install.sh \| bash` |
 | [ponytail](https://github.com/DietrichGebert/ponytail) | Minimal-code discipline | Claude Code: `claude plugin marketplace add DietrichGebert/ponytail && claude plugin install ponytail@ponytail` |
 | [UI UX Pro Max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | UI/UX design skill (frontend presets only) | `npm i -g ui-ux-pro-max-cli`, then `uipro init --ai <agent>` in the repo |
+
+### What runs automatically and what needs per-repo setup
+
+| Tool | After the one-time machine install | Per-repo step |
+|------|------------------------------------|---------------|
+| rtk | Automatic in every repo: a global hook rewrites shell commands; Codex follows the `rtk`-prefixed commands in AGENTS.md | none |
+| caveman | Automatic in Claude Code (session hook); `/caveman` in Codex, Cursor or Windsurf | none |
+| ponytail | Automatic in Claude Code (session and prompt hooks) | none |
+| graphify | Skill available, but every repo needs its own graph | `graphify update .` and optionally `graphify hook install` (rebuilds on each commit; adds `.gitattributes`) |
+| UI UX Pro Max | CLI available | `uipro init --ai universal` (`.agents/skills`) and `uipro init --ai claude` (`.claude/skills`) |
+
+`init` offers to run the per-repo steps for you. It asks in interactive mode; with `--yes`, pass `--setup-tools`. Setup runs **before** the files are generated, so the UI UX Pro Max skills are indexed in `AGENTS.md`. The rules for setup:
+
+- It never installs a tool: if a binary is missing, that step is skipped and `doctor` shows how to install it.
+- Git hooks are only added inside a git repository.
+- A failing step prints a warning without stopping `init`.
+
+`graphify-out/` is yours to commit (graphify's merge driver supports sharing it) or to add to `.gitignore`.
 
 ## Safety principles
 

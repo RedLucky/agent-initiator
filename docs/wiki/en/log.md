@@ -9,6 +9,11 @@ Newest entries first. Format:
 - Files: ...
 ```
 
+## 2026-09-30 — feat(TASK-2): optional per-repo tool setup during init
+- What: `init` can run per-repo tool setup (graphify graph + git hooks, UI UX Pro Max skills) before generating files; new `--setup-tools` flag.
+- Why: rtk, caveman and ponytail activate globally, but graphify and UI UX Pro Max need a step in every repo.
+- Files: src/setup.ts, src/cli.ts, test/setup.test.ts, README.md
+
 ## 2026-09-30 — docs(TASK-1): add architecture page and dogfood agent config
 - What: Ran agent-initiator on its own repo, added repo-specific context to AGENTS.md, an architecture wiki page, and a graphify graph (git-ignored). Rewrote README (why / what / how).
 - Why: Use our own rules while developing the tool and make onboarding easier.
