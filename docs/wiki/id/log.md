@@ -3,6 +3,11 @@
 Entri terbaru di atas. Format:
 
 ```
+## 2026-10-02 — feat(TASK-6204): generate a full bilingual wiki skeleton for new repos
+- Apa: `init` sekarang membuat index (dengan jalur baca untuk non-developer, developer baru dan developer berpengalaman), overview, getting-started, architecture (dengan contoh diagram Mermaid), glossary dan faq dalam bahasa Inggris dan Indonesia, selain log. Setiap halaman dibuka dengan Singkatnya dan menjelaskan apa yang perlu ditulis. Halaman topik features/wiki-knowledge-base.md dan README diperbarui.
+- Kenapa: Repository baru hanya mendapat index dan log, sehingga struktur knowledge base dari rule documentation harus dibangun manual.
+- File: presets/base/files/docs/wiki/*, test/generate.test.ts, test/requirements.test.ts, README.md, docs/wiki/*/features/wiki-knowledge-base.md
+
 ## 2026-10-02 — docs(TASK-6203): make the wiki a knowledge base updated per topic
 - Apa: Rule documentation, skill update-wiki, definition-of-done dan self-review, constraint MUST, serta Definition of Done hasil generate mewajibkan memperbarui (atau membuat) halaman topik yang dikerjakan, dengan bagian Singkatnya untuk non-developer dan struktur halaman yang tetap. Halaman baru: features/wiki-knowledge-base.md. Halaman yang menjelaskan alur, proses, atau arsitektur diberi diagram Mermaid atau ASCII.
 - Kenapa: Selama ini hanya log.md yang diperbarui, sehingga wiki tertinggal dari kode dan tidak berguna bagi developer baru maupun non-developer.

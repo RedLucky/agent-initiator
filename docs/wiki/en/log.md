@@ -3,6 +3,11 @@
 Newest entries first. Format:
 
 ```
+## 2026-10-02 — feat(TASK-6204): generate a full bilingual wiki skeleton for new repos
+- What: `init` now creates index (with reading paths for non-developers, new and experienced developers), overview, getting-started, architecture (with an example Mermaid diagram), glossary and faq in English and Indonesian, next to log. Each page starts with In short and explains what to write. Topic page features/wiki-knowledge-base.md and README updated.
+- Why: New repositories only got index and log, so the knowledge base structure from the documentation rule had to be built by hand.
+- Files: presets/base/files/docs/wiki/*, test/generate.test.ts, test/requirements.test.ts, README.md, docs/wiki/*/features/wiki-knowledge-base.md
+
 ## 2026-10-02 — docs(TASK-6203): make the wiki a knowledge base updated per topic
 - What: The documentation rule, the update-wiki, definition-of-done and self-review skills, the MUST constraint and the generated Definition of Done require updating (or creating) the page of the topic you worked on, with an In short section for non-developers and a fixed page structure. New page: features/wiki-knowledge-base.md. Pages describing a flow, process or architecture get a Mermaid or ASCII diagram.
 - Why: Only log.md was being updated, so the wiki fell behind the code and was not useful for new developers or non-developers.

@@ -161,7 +161,8 @@ CLAUDE.md                           "@AGENTS.md" so Claude Code reads the same i
 .agents/rules/*.md                  rules (frontmatter: description, globs, alwaysApply)
 .agents/skills/<name>/SKILL.md      skills (Agent Skills format)
 .claude/skills/<name>/SKILL.md      copy of the skills for Claude Code
-docs/wiki/{en,id}/index.md, log.md  bilingual wiki skeleton
+docs/wiki/{en,id}/                  bilingual wiki knowledge base: index (reading paths), overview,
+                                    getting-started, architecture (Mermaid), glossary, faq, log
 <package>/AGENTS.md                 monorepos / multi-folder repos: package commands, rules, docs
 ```
 

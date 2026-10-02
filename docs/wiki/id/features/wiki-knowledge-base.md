@@ -30,6 +30,7 @@ Dengan kata-kata: saat sebuah perubahan selesai, agent mencari halaman wiki tent
   - halaman yang menjelaskan alur, proses, atau arsitektur diberi diagram — Mermaid sebagai bawaan, ASCII untuk alur sederhana.
 - Skill `update-wiki` adalah alur langkah demi langkah: cari atau buat halaman topik, perbarui halaman terkait (glosarium, FAQ, getting started), samakan versi Inggris ke Indonesia, perbarui `index.md`, tambahkan entri `log.md`.
 - Definition of Done (di `AGENTS.md` dan skill `definition-of-done`) tidak lolos kalau yang diperbarui hanya log.
+- `agent-initiator init` membuat halaman awal dalam dua bahasa (hanya kalau belum ada): `index` dengan jalur baca untuk non-developer, developer baru dan developer berpengalaman, `overview`, `getting-started`, `architecture` dengan contoh diagram Mermaid, `glossary`, `faq` dan `log`. Setiap halaman dibuka dengan *Singkatnya* dan menjelaskan apa yang perlu ditulis di sana.
 
 ## Letaknya di kode
 | Apa | Di mana |
@@ -37,6 +38,7 @@ Dengan kata-kata: saat sebuah perubahan selesai, agent mencari halaman wiki tent
 | Teks rule | `presets/base/rules/documentation.md` |
 | Alur kerja | `presets/base/skills/update-wiki/SKILL.md` |
 | Baris Definition of Done di AGENTS.md hasil generate | `src/render/agents-md.ts` (`dodSection`) |
+| Halaman awal untuk repository baru | `presets/base/files/docs/wiki/{en,id}/` |
 | Guard yang menjaga aturan ini tidak hilang | `test/requirements.test.ts` |
 
 ## Cara mengeceknya

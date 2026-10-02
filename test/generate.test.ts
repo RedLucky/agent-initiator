@@ -35,8 +35,10 @@ describe('generateFiles', () => {
         'docs/wiki/en/log.md',
         'docs/wiki/id/index.md',
         'docs/wiki/id/log.md',
+        ...['overview', 'getting-started', 'architecture', 'glossary', 'faq'].flatMap((page) => [`docs/wiki/en/${page}.md`, `docs/wiki/id/${page}.md`]),
       ]),
     );
+    expect(file('docs/wiki/en/overview.md')).toContain('# Overview of shop-web');
     expect(file('CLAUDE.md')).toBe('@AGENTS.md\n');
     expect(file('docs/wiki/en/index.md')).toContain('# shop-web Wiki');
     expect(file('docs/wiki/en/log.md')).toContain('## 2026-09-30');

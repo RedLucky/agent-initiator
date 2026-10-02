@@ -30,6 +30,7 @@ In words: when a change is finished, the agent looks for the wiki page about tha
   - pages that describe a flow, process or architecture get a diagram — Mermaid by default, ASCII for simple flows.
 - The skill `update-wiki` is the step-by-step workflow: find or create the topic page, update related pages (glossary, FAQ, getting started), mirror English to Indonesian, update `index.md`, add a `log.md` entry.
 - The Definition of Done (in `AGENTS.md` and the `definition-of-done` skill) does not pass when only the log was updated.
+- `agent-initiator init` creates the starting pages in both languages (only when they do not exist yet): `index` with reading paths for non-developers, new developers and experienced developers, `overview`, `getting-started`, `architecture` with an example Mermaid diagram, `glossary`, `faq` and `log`. Each page starts with *In short* and says what to write there.
 
 ## Where it lives in the code
 | What | Where |
@@ -37,6 +38,7 @@ In words: when a change is finished, the agent looks for the wiki page about tha
 | Rule text | `presets/base/rules/documentation.md` |
 | Workflow | `presets/base/skills/update-wiki/SKILL.md` |
 | Definition of Done line in generated AGENTS.md | `src/render/agents-md.ts` (`dodSection`) |
+| Starting pages for new repositories | `presets/base/files/docs/wiki/{en,id}/` |
 | Guards that keep these rules from disappearing | `test/requirements.test.ts` |
 
 ## How to check it

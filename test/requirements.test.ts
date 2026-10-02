@@ -87,6 +87,18 @@ const BASE_REQUIREMENTS: Array<[string, string, string[]]> = [
   ['Claude Code adapter', 'CLAUDE.md', ['@AGENTS.md']],
   ['wiki skeleton (en)', 'docs/wiki/en/log.md', ['## 2026-09-30']],
   ['wiki skeleton (id)', 'docs/wiki/id/index.md', ['Wiki']],
+  ['wiki skeleton: reading paths per reader (en)', 'docs/wiki/en/index.md', ['## Where to start', 'Not a developer', 'A new developer', 'An experienced developer']],
+  ['wiki skeleton: reading paths per reader (id)', 'docs/wiki/id/index.md', ['## Mulai dari mana', 'Bukan developer', 'Developer baru', 'Developer berpengalaman']],
+  ['wiki skeleton: overview (en/id)', 'docs/wiki/en/overview.md', ['## In short', 'Written for non-developers first']],
+  ['wiki skeleton: overview (id)', 'docs/wiki/id/overview.md', ['## Singkatnya']],
+  ['wiki skeleton: getting started (en)', 'docs/wiki/en/getting-started.md', ['## In short', '## Install and run', '## Your first change']],
+  ['wiki skeleton: getting started (id)', 'docs/wiki/id/getting-started.md', ['## Singkatnya', '## Instal dan jalankan']],
+  ['wiki skeleton: architecture with a diagram (en)', 'docs/wiki/en/architecture.md', ['## In short', '```mermaid', 'In words:']],
+  ['wiki skeleton: architecture with a diagram (id)', 'docs/wiki/id/architecture.md', ['## Singkatnya', '```mermaid', 'Dengan kata-kata:']],
+  ['wiki skeleton: glossary (en/id)', 'docs/wiki/en/glossary.md', ['## In short', 'Definition of Done']],
+  ['wiki skeleton: glossary (id)', 'docs/wiki/id/glossary.md', ['## Singkatnya', 'Definition of Done']],
+  ['wiki skeleton: faq (en)', 'docs/wiki/en/faq.md', ['## In short', 'Where do I start reading?']],
+  ['wiki skeleton: faq (id)', 'docs/wiki/id/faq.md', ['## Singkatnya', 'mulai membaca dari mana']],
 ];
 
 describe('agreed requirements stay in the generated output', () => {
