@@ -9,6 +9,7 @@ These are the files agent-initiator writes into a repository. `AGENTS.md` is the
 AGENTS.md                         entry point: overview, commands, framework docs, required tools,
                                   MUST/NEVER constraints, Definition of Done, conventions, rule and skill index
 CLAUDE.md                         "@AGENTS.md" so Claude Code reads the same instructions
+.graphifyignore                   keeps the Indonesian wiki and change logs out of the graphify graph
 .agents/rules/*.md                detailed rules
 .agents/skills/<name>/SKILL.md    skills (step-by-step guides)
 .claude/skills/<name>/SKILL.md    copy of the skills for Claude Code
@@ -30,6 +31,7 @@ flowchart LR
 In words: the file list is built in memory first. Each file is written only when it is missing. For an existing `AGENTS.md` or `CLAUDE.md`, the tool prints the sections you can add yourself.
 
 ## Details
+- AGENTS.md has a **Project knowledge** section that tells AI agents the cheapest way to learn the project: the English wiki first (`index.md`, then only the pages the task needs, no `log.md`), then graphify for structure questions, and grep last. Package AGENTS.md files point back to it.
 - Commands come from the real `package.json` scripts and are prefixed with `rtk`. A missing `test` or `build` script is flagged in the Definition of Done instead of invented.
 - Next.js apps get the official `nextjs-agent-rules` block, so `next dev` leaves AGENTS.md alone.
 - Skills already in `.agents/skills/` (for example Nx's official skills) are listed in AGENTS.md and copied to `.claude/skills/`.

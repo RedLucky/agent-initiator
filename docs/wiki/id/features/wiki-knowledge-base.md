@@ -28,6 +28,7 @@ Dengan kata-kata: saat sebuah perubahan selesai, agent mencari halaman wiki tent
   - wiki punya struktur tetap: `index`, `overview`, `getting-started`, `architecture`, `features/<topik>`, `glossary`, `faq`, `adr/` dan `log`;
   - **setiap perubahan memperbarui halaman topik yang disentuhnya**; kalau halamannya belum ada, dibuat `features/<topik>.md` baru. Entri log saja tidak pernah cukup;
   - halaman yang menjelaskan alur, proses, atau arsitektur diberi diagram — Mermaid sebagai bawaan, ASCII untuk alur sederhana.
+- Wiki juga ditulis untuk AI agent: mereka cukup membaca halaman bahasa Inggris, mulai dari tabel task → halaman di `index.md`, dan memakai tabel "Letaknya di kode" untuk langsung ke file. Bagian Project knowledge di AGENTS.md mengarahkan mereka ke sini sebelum menjelajah kode.
 - Skill `update-wiki` adalah alur langkah demi langkah: cari atau buat halaman topik, perbarui halaman terkait (glosarium, FAQ, getting started), samakan versi Inggris ke Indonesia, perbarui `index.md`, tambahkan entri `log.md`.
 - Definition of Done (di `AGENTS.md` dan skill `definition-of-done`) tidak lolos kalau yang diperbarui hanya log.
 - `agent-initiator init` membuat halaman awal dalam dua bahasa (hanya kalau belum ada): `index` dengan jalur baca untuk non-developer, developer baru dan developer berpengalaman, `overview`, `getting-started`, `architecture` dengan contoh diagram Mermaid, `glossary`, `faq` dan `log`. Setiap halaman dibuka dengan *Singkatnya* dan menjelaskan apa yang perlu ditulis di sana.

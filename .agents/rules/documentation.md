@@ -24,6 +24,13 @@ A picture often explains a flow faster than paragraphs, for people and for AI ag
 - Keep each diagram small (about 15 boxes at most). Split a bigger flow into several diagrams.
 - When the flow changes, update the diagram in the same change, in both languages.
 
+## Written for AI agents too
+AI agents read this wiki before exploring the code, so it must be cheap to read.
+- AI agents read the English pages only; the Indonesian pages hold the same content for human readers. `log.md` is history, read only when investigating it.
+- `index.md` has a **For AI agents: task → page** table: each common task points to the page to read and the code folder to open.
+- Every feature page has a **Where it lives in the code** table, so an agent can jump to the right file without searching.
+- Link instead of repeating: each fact lives on one page. The README covers install and usage and links to the wiki for details.
+
 ## Structure
 
 ```

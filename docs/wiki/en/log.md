@@ -3,6 +3,11 @@
 Newest entries first. Format:
 
 ```
+## 2026-10-02 — feat(TASK-6206): route AI agents to the English wiki and graphify first
+- What: Generated AGENTS.md has a Project knowledge section (English wiki index first, no log, then graphify affected/path/explain with a budget, grep last); package AGENTS.md files point to it. init writes a .graphifyignore that keeps docs/wiki/id/ and change logs out of the graph. The graphify usage text prefers the free code graph. The documentation rule gains "Written for AI agents too" and the wiki skeleton index a task → page table. Topic pages generated-files, tool-setup and wiki-knowledge-base updated.
+- Why: AGENTS.md only told agents to update the wiki, never to read it, so they explored code with grep; reading both languages doubled the tokens; and the Indonesian wiki and logs polluted graphify answers.
+- Files: src/render/agents-md.ts, src/tooling.ts, presets/base/*, .graphifyignore, AGENTS.md, .agents/rules/documentation.md, docs/wiki/*, test/*
+
 ## 2026-10-02 — docs(TASK-6205): fill this repo's wiki as a knowledge base
 - What: New pages overview, getting-started, glossary, faq and features/{stack-detection,presets,generated-files,scaffolding,tool-setup}, an updated architecture page (scaffolding, tool setup, moon, tests) and an index with reading paths, all in English and Indonesian with In short sections and Mermaid diagrams. test/wiki.test.ts guards twins, summaries, index links and diagrams. The index also has a task → page table for AI agents, who read the English pages only.
 - Why: The wiki only had an architecture page from the first commit and a log, so it no longer matched the code and did not help non-developers or new developers.

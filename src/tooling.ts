@@ -34,7 +34,7 @@ export const TOOLS: Tool[] = [
     purpose: 'Builds a queryable knowledge graph of the codebase.',
     install: ['uv tool install graphifyy   # package name has two "y"', 'graphify install   # or: graphify <codex|cursor|gemini|copilot> install'],
     usage:
-      'Build or refresh the graph with `graphify update .` (no LLM needed; output in `graphify-out/`, keep it git-ignored unless the team shares it). Query it (`graphify query "<question>"`, `graphify affected "X"`) to understand structure and impact before broad grep/find.',
+      'Build or refresh the code graph with `graphify update .` (reads the code only: no LLM, no tokens; the git hooks from `graphify hook install` keep it current). Run the full `/graphify` extraction, which uses an LLM on documents, only occasionally: the English wiki already explains the concepts. Ask with symbol names and a budget — `graphify affected "X"`, `graphify path "A" "B"`, `graphify explain "X"`, `--budget <tokens>` — before broad grep/find; broad questions return noise. Output goes to `graphify-out/` (git-ignored unless the team shares it); `.graphifyignore` keeps the Indonesian wiki and change logs out of the graph.',
     check: { bins: ['graphify'] },
   },
   {

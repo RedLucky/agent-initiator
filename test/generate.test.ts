@@ -78,7 +78,9 @@ describe('generateFiles', () => {
     expect(root).toContain('[add-package](.agents/skills/add-package/SKILL.md)');
     expect(root).toContain('| [nextjs](.agents/rules/nextjs.md) | `apps/web` |');
 
+    expect(root).toContain('## Project knowledge');
     const web = file('apps/web/AGENTS.md') ?? '';
+    expect(web).toContain('read the English wiki in `../../docs/wiki/en/`');
     expect(web).toContain('From the repo root: `rtk test pnpm exec turbo run test --filter=@acme/web`');
     expect(web).toContain('[nextjs](../../.agents/rules/nextjs.md)');
     expect(web).not.toContain('llm-discipline');
@@ -171,5 +173,34 @@ describe('generateFiles', () => {
     expect(file('AGENTS.md')).toContain('[nx-run-tasks](.agents/skills/nx-run-tasks/SKILL.md) — Helps with running tasks in an Nx workspace.');
     expect(paths).toContain('.claude/skills/nx-run-tasks/SKILL.md');
     expect(paths).not.toContain('.agents/skills/nx-run-tasks/SKILL.md');
+  });
+});
+
+describe('Project knowledge section', () => {
+  /** Minimal root AGENTS.md input; only the tooling list varies between tests. */
+  const input = (tooling: string[]) => ({
+    projectName: 'demo',
+    kind: 'library' as const,
+    stack: 'TypeScript',
+    packages: [],
+    commands: [],
+    tooling,
+    docs: [],
+    agentsMdBlocks: [],
+    conventions: [],
+    must: [],
+    never: [],
+    rules: [],
+    skills: [],
+  });
+
+  it('mentions graphify only when graphify is a required tool', async () => {
+    const { renderRootAgentsMd } = await import('../src/render/agents-md.js');
+    const withGraphify = renderRootAgentsMd(input(['graphify']));
+    const withoutGraphify = renderRootAgentsMd(input([]));
+    expect(withGraphify).toContain('graphify affected');
+    expect(withoutGraphify).toContain('## Project knowledge');
+    expect(withoutGraphify).toContain('AI agents read the English pages only');
+    expect(withoutGraphify).not.toContain('graphify affected');
   });
 });

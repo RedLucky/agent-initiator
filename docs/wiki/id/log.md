@@ -3,6 +3,11 @@
 Entri terbaru di atas. Format:
 
 ```
+## 2026-10-02 — feat(TASK-6206): route AI agents to the English wiki and graphify first
+- Apa: AGENTS.md hasil generate punya bagian Project knowledge (index wiki bahasa Inggris dulu, tanpa log, lalu graphify affected/path/explain dengan budget, grep paling akhir); AGENTS.md per package menunjuk ke bagian itu. init menulis .graphifyignore yang mengeluarkan docs/wiki/id/ dan log dari graph. Teks pemakaian graphify mengutamakan graph kode yang gratis. Rule documentation mendapat bagian "Written for AI agents too" dan kerangka index mendapat tabel task → halaman. Halaman topik generated-files, tool-setup dan wiki-knowledge-base diperbarui.
+- Kenapa: AGENTS.md hanya menyuruh agent memperbarui wiki, tidak pernah membacanya, sehingga agent menjelajah kode dengan grep; membaca dua bahasa menggandakan token; dan wiki bahasa Indonesia serta log mengotori jawaban graphify.
+- File: src/render/agents-md.ts, src/tooling.ts, presets/base/*, .graphifyignore, AGENTS.md, .agents/rules/documentation.md, docs/wiki/*, test/*
+
 ## 2026-10-02 — docs(TASK-6205): fill this repo's wiki as a knowledge base
 - Apa: Halaman baru overview, getting-started, glossary, faq dan features/{stack-detection,presets,generated-files,scaffolding,tool-setup}, halaman architecture yang diperbarui (scaffolding, setup tool, moon, test) dan index dengan jalur baca, semuanya dalam bahasa Inggris dan Indonesia dengan bagian Singkatnya dan diagram Mermaid. test/wiki.test.ts menjaga pasangan bahasa, ringkasan, tautan index dan diagram. Index juga punya tabel task → halaman untuk AI agent, yang cukup membaca halaman bahasa Inggris.
 - Kenapa: Wiki hanya punya halaman architecture dari commit pertama dan log, sehingga tidak lagi sesuai dengan kode dan tidak membantu non-developer maupun developer baru.

@@ -29,6 +29,12 @@ flowchart TD
 
 Dengan kata-kata: setelah preset diketahui, tool mendaftar langkah per repository. Langkah itu hanya dijalankan dengan `--setup-tools` atau kalau Anda setuju saat ditanya. Tool yang belum terinstal dilewati (tidak pernah diinstal), git hook hanya dipasang di dalam repository git, dan langkah yang gagal hanya memunculkan peringatan tanpa menghentikan `init`. Setup berjalan sebelum file dibuat supaya skill UI UX Pro Max terdaftar di AGENTS.md.
 
+## Memakai graphify dengan hemat
+- `graphify update .` membangun graph dari kode saja (tanpa LLM, tanpa token); git hook menjaganya tetap mutakhir.
+- Ekstraksi penuh `/graphify` membaca dokumen dengan LLM dan mahal; jalankan hanya sesekali, karena wiki bahasa Inggris sudah menjelaskan konsepnya.
+- Bertanya dengan nama simbol dan budget: `graphify affected "detectWorkspace"` menampilkan apa yang tersentuh sebuah perubahan dalam sekitar 140 token; `graphify path "runInit" "moonProjectConfig"` menampilkan rantai panggilan dalam satu baris. Pertanyaan umum menghasilkan noise.
+- `.graphifyignore` (dibuat oleh `init`) mengeluarkan `docs/wiki/id/` dan log perubahan dari graph.
+
 ## Doctor
 `agent-initiator doctor` menampilkan centang atau silang per tool, beserta command instal untuk yang belum ada. Exit code-nya 1 kalau ada yang kurang, sehingga bisa dipakai di CI.
 

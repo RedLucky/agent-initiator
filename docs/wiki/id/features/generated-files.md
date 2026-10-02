@@ -9,6 +9,7 @@ Ini adalah file-file yang ditulis agent-initiator ke sebuah repository. `AGENTS.
 AGENTS.md                         pintu masuk: gambaran, command, docs framework, tool wajib,
                                   batasan MUST/NEVER, Definition of Done, konvensi, indeks rule dan skill
 CLAUDE.md                         "@AGENTS.md" supaya Claude Code membaca instruksi yang sama
+.graphifyignore                   mengeluarkan wiki bahasa Indonesia dan log perubahan dari graph graphify
 .agents/rules/*.md                rule yang rinci
 .agents/skills/<nama>/SKILL.md    skill (panduan langkah demi langkah)
 .claude/skills/<nama>/SKILL.md    salinan skill untuk Claude Code
@@ -30,6 +31,7 @@ flowchart LR
 Dengan kata-kata: daftar file disusun dulu di memori. Setiap file hanya ditulis kalau belum ada. Untuk `AGENTS.md` atau `CLAUDE.md` yang sudah ada, tool mencetak bagian yang bisa Anda tambahkan sendiri.
 
 ## Detail
+- AGENTS.md punya bagian **Project knowledge** yang memberi tahu AI agent cara paling hemat mempelajari project: wiki bahasa Inggris dulu (`index.md`, lalu hanya halaman yang dibutuhkan task, tanpa `log.md`), lalu graphify untuk pertanyaan struktur, dan grep paling akhir. AGENTS.md per package menunjuk balik ke bagian ini.
 - Command diambil dari script `package.json` yang sebenarnya dan diberi prefix `rtk`. Script `test` atau `build` yang tidak ada ditandai di Definition of Done, bukan dikarang.
 - App Next.js mendapat blok resmi `nextjs-agent-rules`, sehingga `next dev` tidak mengubah AGENTS.md.
 - Skill yang sudah ada di `.agents/skills/` (misalnya skill resmi Nx) didaftarkan di AGENTS.md dan disalin ke `.claude/skills/`.

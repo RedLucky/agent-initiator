@@ -55,6 +55,11 @@ const BASE_REQUIREMENTS: Array<[string, string, string[]]> = [
   ['update-wiki skill finds or creates the topic page', '.agents/skills/update-wiki/SKILL.md', ['**Find the topic**', 'create `features/<topic>.md`', 'A log entry alone is never enough']],
   ['wiki pages use diagrams (Mermaid or ASCII) for flows', '.agents/rules/documentation.md', ['## Diagrams', 'add a diagram', '**Mermaid**', '**ASCII**', 'update the diagram in the same change']],
   ['update-wiki skill adds or updates diagrams', '.agents/skills/update-wiki/SKILL.md', ['**Add or update a diagram**', 'Mermaid', 'ASCII']],
+  ['AGENTS.md routes agents: English wiki first, then graphify, then grep', 'AGENTS.md', ['## Project knowledge', '`docs/wiki/en/index.md`', 'AI agents read the English pages only', 'Skip `docs/wiki/*/log.md`', 'graphify affected', 'Use grep only for what the wiki and graphify do not answer']],
+  ['.graphifyignore keeps the Indonesian wiki and logs out of the graph', '.graphifyignore', ['docs/wiki/id/', 'docs/wiki/*/log.md']],
+  ['graphify usage: code graph by default, symbol queries with a budget', 'AGENTS.md', ['`graphify update .`', 'only occasionally', '--budget <tokens>']],
+  ['documentation rule: written for AI agents too', '.agents/rules/documentation.md', ['## Written for AI agents too', 'AI agents read the English pages only', 'For AI agents: task → page', 'Where it lives in the code', 'Link instead of repeating']],
+  ['wiki skeleton: task table for AI agents', 'docs/wiki/en/index.md', ['## For AI agents: task → page', 'AI agents read the English pages only']],
   ['DoD rejects log-only wiki updates', '.agents/skills/definition-of-done/SKILL.md', ['A log entry alone does not pass']],
   // --- Karpathy (minus Simplicity First, replaced by ponytail)
   ['Karpathy: think before coding', '.agents/rules/llm-discipline.md', ['## 1. Think Before Coding', 'State assumptions explicitly', 'present them — do not pick silently', 'push back when warranted']],

@@ -106,6 +106,28 @@ function constraintsSection(must: string[], never: string[]): string[] {
   return lines;
 }
 
+/**
+ * Tells AI agents where to learn about the project before reading code, in the cheapest order:
+ * the English wiki (index → one page), then graphify for structure questions (when it is a required tool), then grep.
+ * @param toolIds - Required tool ids; the graphify line is shown only when graphify is one of them.
+ * @returns Markdown lines for the "Project knowledge" section.
+ */
+function projectKnowledgeSection(toolIds: string[]): string[] {
+  return [
+    '## Project knowledge',
+    '',
+    'Before exploring the code, read the wiki: `docs/wiki/en/index.md` lists every page and has a task → page table. Open only the pages your task needs.',
+    '',
+    '- AI agents read the English pages only; `docs/wiki/id/` is the same content in Indonesian.',
+    '- Skip `docs/wiki/*/log.md` unless you are investigating history.',
+    ...(toolIds.includes('graphify')
+      ? ['- For structure and impact questions, ask graphify with a symbol name: `graphify affected "<symbol>"`, `graphify path "<A>" "<B>"`, `graphify explain "<symbol>"` (add `--budget <tokens>` to cap the answer).']
+      : []),
+    '- Use grep only for what the wiki and graphify do not answer.',
+    '',
+  ];
+}
+
 function toolingSection(toolIds: string[]): string[] {
   if (toolIds.length === 0) return [];
   const lines = [
@@ -188,6 +210,7 @@ export function renderRootAgentsMd(input: RootAgentsInput): string {
     ...packages,
     '',
     ...commands,
+    ...projectKnowledgeSection(input.tooling),
     ...docsSection(input.docs),
     ...toolingSection(input.tooling),
     ...constraintsSection(input.must, input.never),
@@ -207,7 +230,7 @@ export function renderPackageAgentsMd(input: PackageAgentsInput): string {
     '',
     GENERATED_NOTE,
     '',
-    `Package-specific instructions for \`${input.pkg.path}\`. The [root AGENTS.md](${up}AGENTS.md) (tooling, constraints, Definition of Done, shared rules) still applies.`,
+    `Package-specific instructions for \`${input.pkg.path}\`. The [root AGENTS.md](${up}AGENTS.md) (project knowledge, tooling, constraints, Definition of Done, shared rules) still applies: read the English wiki in \`${up}docs/wiki/en/\` before exploring the code.`,
     '',
     ...blocksSection(input.agentsMdBlocks),
     '## Overview',

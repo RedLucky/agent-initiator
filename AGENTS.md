@@ -50,6 +50,15 @@ Run from the repo root. Keep the `rtk` prefix.
 | typecheck | `rtk err pnpm run typecheck` |
 | audit | `rtk proxy pnpm audit` |
 
+## Project knowledge
+
+Before exploring the code, read the wiki: `docs/wiki/en/index.md` lists every page and has a task → page table. Open only the pages your task needs.
+
+- AI agents read the English pages only; `docs/wiki/id/` is the same content in Indonesian.
+- Skip `docs/wiki/*/log.md` unless you are investigating history.
+- For structure and impact questions, ask graphify with a symbol name: `graphify affected "<symbol>"`, `graphify path "<A>" "<B>"`, `graphify explain "<symbol>"` (add `--budget <tokens>` to cap the answer).
+- Use grep only for what the wiki and graphify do not answer.
+
 ## Required tooling
 
 Mandatory for every contributor and agent. Install once per machine (`npx agent-initiator doctor` checks them).
@@ -88,7 +97,7 @@ rtk init -g   # Claude Code / Copilot; use --codex, --gemini or --agent <name> f
 ### [graphify](https://github.com/Graphify-Labs/graphify)
 Builds a queryable knowledge graph of the codebase.
 
-**Use:** Build or refresh the graph with `graphify update .` (no LLM needed; output in `graphify-out/`, keep it git-ignored unless the team shares it). Query it (`graphify query "<question>"`, `graphify affected "X"`) to understand structure and impact before broad grep/find.
+**Use:** Build or refresh the code graph with `graphify update .` (reads the code only: no LLM, no tokens; the git hooks from `graphify hook install` keep it current). Run the full `/graphify` extraction, which uses an LLM on documents, only occasionally: the English wiki already explains the concepts. Ask with symbol names and a budget — `graphify affected "X"`, `graphify path "A" "B"`, `graphify explain "X"`, `--budget <tokens>` — before broad grep/find; broad questions return noise. Output goes to `graphify-out/` (git-ignored unless the team shares it); `.graphifyignore` keeps the Indonesian wiki and change logs out of the graph.
 
 ```bash
 uv tool install graphifyy   # package name has two "y"

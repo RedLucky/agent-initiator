@@ -11,6 +11,14 @@ This wiki explains {{projectName}} for everyone: people who do not write code, d
 | A new developer | [overview](overview.md) → [getting-started](getting-started.md) → [architecture](architecture.md) → `features/` |
 | An experienced developer | [architecture](architecture.md) → `features/` → [log](log.md) |
 
+## For AI agents: task → page
+
+AI agents read the English pages only (`docs/wiki/en/`); skip `log.md` unless investigating history. Add one row per common task when you create its page.
+
+| Task | Read | Then look at |
+|------|------|--------------|
+| Understand the overall flow | [architecture](architecture.md) | the entry point of the code |
+
 ## All pages
 
 | Page | Summary |

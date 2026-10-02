@@ -28,6 +28,7 @@ In words: when a change is finished, the agent looks for the wiki page about tha
   - the wiki has a fixed structure: `index`, `overview`, `getting-started`, `architecture`, `features/<topic>`, `glossary`, `faq`, `adr/` and `log`;
   - **every change updates the page of the topic it touches**; if no page exists yet, a new `features/<topic>.md` is created. A log entry alone is never enough;
   - pages that describe a flow, process or architecture get a diagram — Mermaid by default, ASCII for simple flows.
+- The wiki is written for AI agents too: they read the English pages only, start from the task → page table in `index.md`, and use the "Where it lives in the code" tables to jump to files. AGENTS.md → Project knowledge sends them here before they explore the code.
 - The skill `update-wiki` is the step-by-step workflow: find or create the topic page, update related pages (glossary, FAQ, getting started), mirror English to Indonesian, update `index.md`, add a `log.md` entry.
 - The Definition of Done (in `AGENTS.md` and the `definition-of-done` skill) does not pass when only the log was updated.
 - `agent-initiator init` creates the starting pages in both languages (only when they do not exist yet): `index` with reading paths for non-developers, new developers and experienced developers, `overview`, `getting-started`, `architecture` with an example Mermaid diagram, `glossary`, `faq` and `log`. Each page starts with *In short* and says what to write there.
