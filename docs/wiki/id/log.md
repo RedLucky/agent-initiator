@@ -3,6 +3,11 @@
 Entri terbaru di atas. Format:
 
 ```
+## 2026-10-02 — fix(TASK-7342): report broken package.json instead of swallowing the error
+- Apa: Step scaffold moon-tasks membaca package.json dengan `readJson`: file yang tidak ada berarti "tidak ada script", file yang rusak berhenti dengan error yang menyebut path-nya.
+- Kenapa: Step itu memakai `.catch(() => null)` yang menyembunyikan semua error baca, melanggar rule error-handling.
+- File: src/scaffold/run.ts, test/scaffold.test.ts
+
 ## 2026-10-02 — fix(TASK-5131): skip root install without package.json and document moon setup
 - Apa: Monorepo tanpa package.json di root (misalnya repo moon Go + Python) tidak lagi mendapat command `npm install` di root. README menjelaskan cara memakai CLI sebelum dipublish ke npm dan prasyarat moon.
 - Kenapa: `npm install` di root tidak menginstal apa pun di sana, dan `npx agent-initiator` menghasilkan 404 sampai package dipublish.

@@ -224,4 +224,20 @@ describe('moon project tasks', () => {
     await runSteps([step]);
     expect(await readFile(path.join(dir, 'moon.yml'), 'utf8')).toBe('mine');
   });
+
+  it('reports a broken package.json with its path instead of hiding the error', async () => {
+    const { runSteps } = await import('../src/scaffold/run.js');
+    const dir = await mkdtemp(path.join(tmpdir(), 'agent-initiator-moon-bad-'));
+    await writeFile(path.join(dir, 'package.json'), '{ not json');
+    const step = { type: 'moon-tasks' as const, label: 'moon', dir, framework: 'nestjs', packageManager: 'npm' as const };
+    await expect(runSteps([step])).rejects.toThrow(`Invalid JSON in ${path.join(dir, 'package.json')}`);
+  });
+
+  it('writes fixed tasks for apps without a package.json', async () => {
+    const { runSteps } = await import('../src/scaffold/run.js');
+    const { readFile } = await import('node:fs/promises');
+    const dir = await mkdtemp(path.join(tmpdir(), 'agent-initiator-moon-py-'));
+    await runSteps([{ type: 'moon-tasks', label: 'moon', dir, framework: 'fastapi', packageManager: 'npm' }]);
+    expect(await readFile(path.join(dir, 'moon.yml'), 'utf8')).toContain("command: 'uv run pytest'");
+  });
 });

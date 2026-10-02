@@ -3,6 +3,11 @@
 Newest entries first. Format:
 
 ```
+## 2026-10-02 — fix(TASK-7342): report broken package.json instead of swallowing the error
+- What: The moon-tasks scaffold step reads package.json with `readJson`: a missing file means "no scripts", a broken file stops with an error that names its path.
+- Why: The step used `.catch(() => null)`, which hid every read error, against the error-handling rule.
+- Files: src/scaffold/run.ts, test/scaffold.test.ts
+
 ## 2026-10-02 — fix(TASK-5131): skip root install without package.json and document moon setup
 - What: Monorepos without a root package.json (for example a Go + Python moon repo) no longer get an `npm install` root command. The README explains how to use the CLI before it is published to npm and lists the moon prerequisites.
 - Why: A root `npm install` has nothing to install there, and `npx agent-initiator` returns 404 until the package is published.

@@ -1,7 +1,7 @@
 import { spawn } from 'node:child_process';
 import { appendFile, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
-import { exists } from '../fs-utils.js';
+import { exists, readJson } from '../fs-utils.js';
 import { moonProjectConfig } from './templates.js';
 import type { Step } from './types.js';
 
@@ -58,8 +58,9 @@ export async function runSteps(steps: Step[], log: StepLogger = () => {}): Promi
       case 'moon-tasks': {
         const target = path.join(step.dir, 'moon.yml');
         if (await exists(target)) break; // the scaffolder (or the user) already defined the tasks
-        const pkg = await readFile(path.join(step.dir, 'package.json'), 'utf8').catch(() => null);
-        const scripts = pkg === null ? [] : Object.keys((JSON.parse(pkg) as { scripts?: Record<string, string> }).scripts ?? {});
+        // Python and Go apps have no package.json (null); a broken one throws with its path so the user can fix it.
+        const pkg = await readJson<{ scripts?: Record<string, string> }>(path.join(step.dir, 'package.json'));
+        const scripts = Object.keys(pkg?.scripts ?? {});
         await writeFile(target, moonProjectConfig(step.framework, step.packageManager, scripts), 'utf8');
         break;
       }
