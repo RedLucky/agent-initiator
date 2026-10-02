@@ -83,6 +83,9 @@ Content lives in plain Markdown and JSON **presets**. The code only detects, mer
 
 Requirements: Node.js ≥ 20. For scaffolding you also need the matching toolchain: a package manager for Node apps, [`uv`](https://docs.astral.sh/uv/) for Python, and `go` for Go.
 
+> **Not on npm yet:** until the package is published, `npx agent-initiator` returns a 404. Install it from a clone instead:
+> `git clone … && cd agent-initiator && pnpm install && pnpm run build && pnpm link --global` (run `pnpm setup` once if pnpm reports `ERR_PNPM_NO_GLOBAL_BIN_DIR`), then use `agent-initiator …` instead of `npx agent-initiator …`.
+
 ### 1. Existing repository
 
 ```bash
@@ -231,9 +234,11 @@ Commands come from your real `package.json` scripts. If `test` or `build` is mis
 
 - **Package manager:** decided by the lockfile.
 - **Folders without a workspace tool** (e.g. `web/` + `api/`) are treated as a multi-package (fullstack) repo.
-- **moonrepo:**
-  - Multi-language workspaces (Node/TS, Go, Python) via `.moon/workspace.yml`.
-  - Target pipelines (`moon run <project>:<task>`, `moon check`, `moon ci`), toolchains, and build caching.
+- **moonrepo (v2):**
+  - Multi-language workspaces (Node/TS, Go, Python), detected from `.moon/workspace.yml` or `.config/moon/workspace.yml`.
+  - Per-package commands use moon project IDs (folder name or map key), not package.json names.
+  - Scaffolding adds `@moonrepo/cli` and a `moon.yml` per app, mapping `build`/`test`/`lint` to real commands (moon does not read package.json scripts).
+  - Before running tasks in a new repo: make the first git commit and run `moon setup`.
 - **Nx:**
   - Apps are created with Nx generators and use Vitest.
   - The official Nx skills are kept.

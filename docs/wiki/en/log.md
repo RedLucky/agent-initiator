@@ -3,6 +3,11 @@
 Newest entries first. Format:
 
 ```
+## 2026-10-02 — fix(TASK-5131): skip root install without package.json and document moon setup
+- What: Monorepos without a root package.json (for example a Go + Python moon repo) no longer get an `npm install` root command. The README explains how to use the CLI before it is published to npm and lists the moon prerequisites.
+- Why: A root `npm install` has nothing to install there, and `npx agent-initiator` returns 404 until the package is published.
+- Files: src/detect/index.ts, src/generate.ts, test/generate.test.ts, README.md
+
 ## 2026-10-02 — docs(TASK-5130): require tests and plain-language doc comments for every function
 - What: Testing and code-quality rules state they win over plugin defaults (ponytail): every function, including small private helpers, needs a unit test and a doc comment written in plain words; duplicated constraints were merged; new requirement guards.
 - Why: The goal is code that junior and senior developers can both understand; the old wording contradicted ponytail and repeated the same constraints.

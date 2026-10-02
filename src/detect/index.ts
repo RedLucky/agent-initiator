@@ -46,7 +46,8 @@ async function detectLayout(root: string, options: DetectOptions): Promise<Detec
       name,
       monorepo: workspace.tool,
       rootScripts: Object.keys(rootPkg?.scripts ?? {}),
-      rootPackageManager: await detectNodePackageManager([root], options.nodePackageManager),
+      // No root package.json (e.g. a Go + Python moon repo) means there is no root Node install to run.
+      rootPackageManager: rootPkg ? await detectNodePackageManager([root], options.nodePackageManager) : undefined,
       packages: withMoonIds(await detectAll(root, workspace.packageDirs, options), workspace.moonProjectIds),
     };
   }

@@ -137,6 +137,12 @@ describe('generateFiles', () => {
     expect(service).toContain('Language:** go');
   });
 
+  it('skips the root install command when a moon repo has no root package.json', async () => {
+    const agents = (await generate('moon-config')).file('AGENTS.md') ?? '';
+    expect(agents).toContain('`rtk test moon run :test`');
+    expect(agents).not.toContain('npm install');
+  });
+
   it.each(['nextjs', 'turborepo', 'fullstack', 'django', 'moonrepo'])('keeps %s AGENTS.md under the 32 KiB agent limit', async (name) => {
     const agents = (await generate(name)).file('AGENTS.md') ?? '';
     expect(Buffer.byteLength(agents)).toBeLessThan(AGENTS_MD_MAX_BYTES);

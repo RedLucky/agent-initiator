@@ -51,7 +51,9 @@ function rootCommands(project: DetectedProject, registry: Registry, configs: Pac
   if (!project.monorepo) return [];
 
   const pm = project.rootPackageManager ?? 'npm';
-  const monorepoCommands = resolvePresets(registry, [project.monorepo]).commands;
+  const { install, ...withoutInstall } = resolvePresets(registry, [project.monorepo]).commands;
+  // Without a root package.json there is nothing for a root `<pm> install` to install.
+  const monorepoCommands = project.rootPackageManager && install ? { install, ...withoutInstall } : withoutInstall;
   const scripts = scriptCommands(project.rootScripts ?? [], pm);
   return toCommandList({ ...monorepoCommands, ...scripts }, templateVars({ packageManager: pm, manifests: [] }));
 }

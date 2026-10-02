@@ -3,6 +3,11 @@
 Entri terbaru di atas. Format:
 
 ```
+## 2026-10-02 — fix(TASK-5131): skip root install without package.json and document moon setup
+- Apa: Monorepo tanpa package.json di root (misalnya repo moon Go + Python) tidak lagi mendapat command `npm install` di root. README menjelaskan cara memakai CLI sebelum dipublish ke npm dan prasyarat moon.
+- Kenapa: `npm install` di root tidak menginstal apa pun di sana, dan `npx agent-initiator` menghasilkan 404 sampai package dipublish.
+- File: src/detect/index.ts, src/generate.ts, test/generate.test.ts, README.md
+
 ## 2026-10-02 — docs(TASK-5130): require tests and plain-language doc comments for every function
 - Apa: Rule testing dan code-quality menyatakan diri lebih kuat dari default plugin (ponytail): setiap function, termasuk helper private kecil, wajib punya unit test dan doc comment dengan bahasa sederhana; constraint yang dobel digabung; guard requirement baru.
 - Kenapa: Tujuannya kode yang bisa dipahami developer junior maupun senior; kalimat lama bertentangan dengan ponytail dan mengulang constraint yang sama.
