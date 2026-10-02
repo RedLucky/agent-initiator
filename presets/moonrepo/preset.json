@@ -2,15 +2,24 @@
   "id": "moonrepo",
   "name": "moonrepo",
   "category": "monorepo",
-  "description": "moonrepo multi-language workspace: task runner, project graph, and cached builds.",
+  "description": "moonrepo multi-language workspace: task runner, project graph, toolchain, and cached builds.",
   "extends": [
     "monorepo"
+  ],
+  "must": [
+    "Run tasks through moon (`moon run <target>`) to utilize dependency graph and build caching.",
+    "Define tasks with explicit `inputs` and `outputs` in `moon.yml` or `.moon/tasks.yml` to maintain deterministic caching."
+  ],
+  "never": [
+    "Commit `.moon/cache/` directories or temporary build artifacts.",
+    "Bypass toolchain configurations defined in `.moon/toolchain.yml`."
   ],
   "commands": {
     "install": "{{pm}} install",
     "build": "moon run :build",
     "test": "moon run :test",
-    "lint": "moon check"
+    "lint": "moon check",
+    "affected": "moon ci"
   },
   "docs": [
     "https://moonrepo.dev/docs — official moon documentation. Read it before changing .moon/ configs or tasks.",

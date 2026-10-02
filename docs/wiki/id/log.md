@@ -9,6 +9,11 @@ Entri terbaru di atas. Format:
 - File: ...
 ```
 
+## 2026-10-02 — feat(TASK-4192): add moonrepo rules, constraints, and task guidelines
+- Apa: Menambahkan file rule khusus moonrepo (`rules/moonrepo.md`) serta batasan workspace (`must`/`never`) yang mencakup project/action graph, versi toolchain, caching build, target task, dan generator scaffolding.
+- Kenapa: Memandu coding agent agar mematuhi konvensi moonrepo (inputs/outputs, caching, toolchain, dan inspeksi graph) saat bekerja di workspace moonrepo.
+- File: presets/moonrepo/rules/moonrepo.md, presets/moonrepo/preset.json, test/generate.test.ts
+
 ## 2026-10-02 — feat(TASK-6182): support moonrepo multi-language workspaces
 - Apa: Menambahkan deteksi workspace moonrepo (`.moon/workspace.yml`), parser pola proyek (glob dan map), preset `moonrepo`, runner target root, dan dukungan multi-bahasa (Go, Python, TypeScript).
 - Kenapa: Memungkinkan monorepo berbasis moonrepo (seperti template zero-one-group monorepo) secara otomatis menghasilkan root dan nested AGENTS.md lintas bahasa pemrograman.

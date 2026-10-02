@@ -104,7 +104,12 @@ describe('generateFiles', () => {
     const { kind, paths, file } = await generate('moonrepo');
     expect(kind).toBe('monorepo');
     expect(paths).toEqual(
-      expect.arrayContaining(['apps/web/AGENTS.md', 'apps/api/AGENTS.md', 'apps/service/AGENTS.md']),
+      expect.arrayContaining([
+        'apps/web/AGENTS.md',
+        'apps/api/AGENTS.md',
+        'apps/service/AGENTS.md',
+        '.agents/rules/moonrepo.md',
+      ]),
     );
 
     const root = file('AGENTS.md') ?? '';
@@ -113,6 +118,9 @@ describe('generateFiles', () => {
     expect(root).toContain('[`apps/web`](apps/web/AGENTS.md)');
     expect(root).toContain('[`apps/api`](apps/api/AGENTS.md)');
     expect(root).toContain('[`apps/service`](apps/service/AGENTS.md)');
+    expect(root).toContain('| [moonrepo](.agents/rules/moonrepo.md) |');
+    expect(root).toContain('Run tasks through moon');
+    expect(root).toContain('.moon/cache/');
 
     const web = file('apps/web/AGENTS.md') ?? '';
     expect(web).toContain('From the repo root: `rtk test moon run web:test`');
