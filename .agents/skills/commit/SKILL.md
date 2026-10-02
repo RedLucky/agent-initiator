@@ -16,4 +16,4 @@ description: Prepare a git commit with the project's message format and get expl
    ```
    Types: feat, fix, refactor, perf, test, docs, build, ci, chore, style, revert.
 5. **Ask for approval** — show the file list and the exact message, then **stop and wait**. Do not run `git commit` until the user explicitly says yes.
-6. **Commit** only after approval. **Push** requires its own separate approval.
+6. **Commit** only after approval, with **exactly** the approved message: no `Co-Authored-By:` or other attribution trailers, nothing added or reworded. **Push** requires its own separate approval.

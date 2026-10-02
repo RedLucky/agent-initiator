@@ -117,6 +117,7 @@ graphify install   # or: graphify <codex|cursor|gemini|copilot> install
 
 ### NEVER
 - Commit or push without explicit approval.
+- Add `Co-Authored-By:` or other AI/tool attribution trailers to commit messages, or commit a message that differs from the one the user approved.
 - Commit secrets, credentials, tokens or `.env` files.
 - Refactor, reformat or "improve" code unrelated to the task.
 - Add speculative abstractions, options or features that were not requested.

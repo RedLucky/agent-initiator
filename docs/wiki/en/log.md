@@ -3,6 +3,11 @@
 Newest entries first. Format:
 
 ```
+## 2026-10-02 — docs(TASK-2638): forbid attribution trailers and changed commit messages
+- What: The git-workflow rule, the commit skill and the NEVER constraints forbid `Co-Authored-By:` and other AI/tool attribution trailers, and require committing exactly the approved message. Requirement guards protect it.
+- Why: Agent defaults added a `Co-Authored-By: Claude` trailer that was not in the approved messages and is not part of the repo's commit format; the product owner decided not to use it.
+- Files: presets/base/*, .agents/*, .claude/skills/commit, AGENTS.md, test/requirements.test.ts, test/__snapshots__
+
 ## 2026-10-02 — docs(TASK-9157): make one task = one commit an explicit rule
 - What: The git-workflow rule, the commit and plan-task skills and the MUST constraints now say explicitly: each task gets exactly one commit with its own reference, committed before the next task starts. Requirement guards protect it.
 - Why: The plan-task skill only said "each ≈ one commit", and several tasks were once batched into a single commit that later had to be split.

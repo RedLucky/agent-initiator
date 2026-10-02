@@ -3,6 +3,11 @@
 Entri terbaru di atas. Format:
 
 ```
+## 2026-10-02 — docs(TASK-2638): forbid attribution trailers and changed commit messages
+- Apa: Rule git-workflow, skill commit dan constraint NEVER melarang `Co-Authored-By:` dan trailer atribusi AI/tool lain, serta mewajibkan commit dengan pesan yang persis disetujui. Guard requirement menjaga aturan ini.
+- Kenapa: Default agent menambahkan trailer `Co-Authored-By: Claude` yang tidak ada di pesan yang disetujui dan bukan bagian format commit repo; product owner memutuskan tidak memakainya.
+- File: presets/base/*, .agents/*, .claude/skills/commit, AGENTS.md, test/requirements.test.ts, test/__snapshots__
+
 ## 2026-10-02 — docs(TASK-9157): make one task = one commit an explicit rule
 - Apa: Rule git-workflow, skill commit dan plan-task, serta constraint MUST kini menyatakan secara eksplisit: setiap task mendapat tepat satu commit dengan referensinya sendiri, di-commit sebelum task berikutnya dimulai. Guard requirement menjaga aturan ini.
 - Kenapa: Skill plan-task hanya menulis "each ≈ one commit", dan beberapa task pernah digabung dalam satu commit yang kemudian harus dipecah.

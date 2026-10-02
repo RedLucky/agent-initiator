@@ -22,6 +22,8 @@ Conventional Commits with the issue (or plan task) in the scope:
 - `type`: `feat`, `fix`, `refactor`, `perf`, `test`, `docs`, `build`, `ci`, `chore`, `style`, `revert`.
 - `subject`: imperative, lower case, no trailing period, ≤ 72 chars.
 - Body (optional): explain *why*, wrapped at 72 chars. Add `BREAKING CHANGE:` footer when relevant.
+- **No attribution trailers**: never add `Co-Authored-By:` or any other AI/tool attribution line, even if the agent's defaults ask for it.
+- The committed message must be exactly the message the user approved — no added, removed or reworded lines.
 
 Examples:
 ```

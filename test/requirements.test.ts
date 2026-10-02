@@ -43,6 +43,8 @@ const BASE_REQUIREMENTS: Array<[string, string, string[]]> = [
   ['mandatory doc comments in plain language', '.agents/rules/code-quality.md', ['This rule wins over plugin defaults', 'JSDoc', 'GoDoc', 'docstrings', '**Plain language**', 'junior']],
   ['constraints: tests, mocking, doc comments', 'AGENTS.md', ['including small private helpers', 'Always mock external boundaries', 'doc comment in the standard format']],
   ['no auto commit/push, always confirm', '.agents/rules/git-workflow.md', ['Never commit or push automatically', 'wait for explicit approval', 'Approval covers only that one commit/push']],
+  ['no attribution trailers, exact approved message', '.agents/rules/git-workflow.md', ['**No attribution trailers**', 'exactly the message the user approved']],
+  ['commit skill commits the exact approved message', '.agents/skills/commit/SKILL.md', ['with **exactly** the approved message', 'Co-Authored-By:']],
   ['one task = one commit', '.agents/rules/git-workflow.md', ['**One task = one commit.**', 'never batch several tasks into one commit']],
   ['commit skill checks a single task', '.agents/skills/commit/SKILL.md', ['exactly one task']],
   ['plan-task commits each task before the next', '.agents/skills/plan-task/SKILL.md', ['each task = exactly one commit', 'before starting the next task']],
