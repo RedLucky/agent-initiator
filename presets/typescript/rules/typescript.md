@@ -15,3 +15,5 @@ alwaysApply: false
 - Prefer `import type` for type-only imports.
 - No enums unless the codebase already uses them; prefer string literal unions.
 - Avoid type assertions (`as`); if unavoidable, add a comment explaining why it is safe.
+- **Mandatory JSDoc**: Document all functions, classes, methods, interfaces, type aliases, and object schemas with JSDoc (`/** ... */`): explain purpose, generic parameters, `@param`, `@returns`, and `@throws`.
+- **Specific inline comments**: Use targeted inline comments to explain non-obvious type narrowing, business rules, or why a type assertion is safe.

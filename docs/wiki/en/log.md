@@ -9,6 +9,11 @@ Newest entries first. Format:
 - Files: ...
 ```
 
+## 2026-10-02 — feat(TASK-3814): enforce beginner-friendly doc comments, unit tests, and external mocking
+- What: Added mandatory documentation rules (JSDoc for JS/TS, GoDoc for Go, docstrings for Python) across functions, classes, objects, and data types in plain, beginner-friendly language, specific inline comments explaining the "why", strict mandatory unit test requirements, and mandatory mocking of external boundaries (databases, Redis/caches, queues, HTTP APIs) across presets and agent rules.
+- Why: Ensure high code maintainability, beginner-friendly clarity, non-obvious logic rationale, rigorous unit test verification, and isolated, non-flaky testing without hitting real external infrastructure.
+- Files: presets/base/rules/code-quality.md, presets/base/rules/testing.md, presets/base/preset.json, presets/node/rules/javascript.md, presets/typescript/rules/typescript.md, presets/go/rules/go.md, presets/python/rules/python.md, AGENTS.md, .agents/rules/, test/__snapshots__/generate.test.ts.snap
+
 ## 2026-10-02 — docs(TASK-8819): update README with moonrepo support and scaffolding command
 - What: Updated README.md diagram, quickstart section 3, CLI reference, and supported stacks table to reflect moonrepo support and add `--layout moonrepo` example command. Added moonrepo layout scaffolding support.
 - Why: Clearly document moonrepo monorepo capabilities for users and CI automation.

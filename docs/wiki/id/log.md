@@ -9,6 +9,11 @@ Entri terbaru di atas. Format:
 - File: ...
 ```
 
+## 2026-10-02 — feat(TASK-3814): enforce beginner-friendly doc comments, unit tests, and external mocking
+- Apa: Menambahkan aturan wajib dokumentasi (JSDoc untuk JS/TS, GoDoc untuk Go, docstrings untuk Python) pada function, class, object, dan tipe data dengan bahasa yang mudah dipahami pemula (beginner-friendly), komentar inline spesifik untuk alasan non-obvious, kewajiban mutlak unit test, serta kewajiban mock untuk batas eksternal (database, Redis/cache, antrean, API HTTP) pada preset dan aturan agent.
+- Kenapa: Menjamin maintainability kode, kemudahan pemahaman bahkan bagi pemula, alasan logika yang transparan, pengujian ketat pada setiap perubahan, dan pengujian unit yang terisolasi tanpa menyentuh layanan eksternal langsung.
+- File: presets/base/rules/code-quality.md, presets/base/rules/testing.md, presets/base/preset.json, presets/node/rules/javascript.md, presets/typescript/rules/typescript.md, presets/go/rules/go.md, presets/python/rules/python.md, AGENTS.md, .agents/rules/, test/__snapshots__/generate.test.ts.snap
+
 ## 2026-10-02 — docs(TASK-8819): update README with moonrepo support and scaffolding command
 - Apa: Memperbarui diagram README.md, bagian quickstart nomor 3, referensi CLI, dan tabel supported stacks untuk mencerminkan dukungan moonrepo serta menambahkan contoh command `--layout moonrepo`. Menambahkan dukungan scaffolding untuk layout moonrepo.
 - Kenapa: Mendokumentasikan kapabilitas monorepo moonrepo secara jelas untuk pengguna dan automasi CI.

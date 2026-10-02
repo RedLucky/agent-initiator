@@ -27,8 +27,11 @@ alwaysApply: true
 - No magic numbers/strings: use named constants.
 - Prefer explicit, boring code over clever one-liners.
 
-## Comments
-- Every exported function/class/module gets a short doc comment: what it does, key params, errors thrown.
-- Inline comments explain **why** (business rule, constraint, trade-off, workaround link) — never restate the code.
+## Comments & Documentation (Mandatory)
+- **Mandatory comments**: Always document every function, class, object, and data type (interface, struct, type alias).
+  - Classes, functions, and methods: Use language-standard documentation comments (**JSDoc** for JS/TS, **GoDoc** for Go, **docstrings** for Python) detailing what it does, parameters, return types, and potential errors thrown.
+  - Types, interfaces, and objects: Document their intent, fields, invariants, and constraints.
+- **Beginner-friendly**: Write comments in simple, clear, and accessible language that even a beginner can easily understand. Avoid overly cryptic jargon, state assumptions clearly, and explain the rationale simply.
+- **Specific inline comments**: Use targeted inline comments to explain **why** (business rule, constraint, trade-off, workaround link) — never restate the code.
 - Only comment new or changed code; do not rewrite comments in untouched code.
 - Keep comments true: update or delete them when the code changes.

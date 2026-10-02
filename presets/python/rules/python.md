@@ -24,3 +24,7 @@ alwaysApply: false
 
 ## Tests
 - `pytest` with fixtures; parametrize edge cases with `@pytest.mark.parametrize`.
+
+## Documentation & Comments (Docstrings)
+- **Mandatory docstrings**: Use PEP 257 docstrings (`"""..."""`) on all functions, classes, methods, modules, and data models: detail purpose, `Args:`, `Returns:`, and `Raises:`.
+- **Specific inline comments**: Use targeted inline comments (`# ...`) to explain non-obvious logic, business rules, or edge case handling.

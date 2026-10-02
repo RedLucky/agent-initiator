@@ -27,3 +27,7 @@ alwaysApply: false
 ## Tests
 - Table-driven tests with `t.Run`; `t.Helper()` in helpers; `httptest` for handlers.
 - Keep `gofmt` and `go vet` clean.
+
+## Documentation & Comments (GoDoc)
+- **Mandatory GoDoc**: Document all exported and package-level functions, methods, structs, interfaces, and types. Comments start with the identifier name and form complete sentences.
+- **Specific inline comments**: Use targeted inline comments to explain non-obvious algorithms, synchronization/concurrency logic, or domain rules.

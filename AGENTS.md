@@ -100,7 +100,10 @@ graphify install   # or: graphify <codex|cursor|gemini|copilot> install
 - State assumptions and ask when a requirement is unclear or contradictory instead of guessing.
 - Read the version-matched framework docs listed in AGENTS.md → Framework docs before using framework APIs; never rely on memory for APIs that may have changed.
 - Plan multi-step work with the `plan-task` skill and get the plan approved before implementing.
+- Always write unit tests for functions, classes, and behaviour changes; never deliver code without accompanying unit tests.
+- Always mock external boundaries (databases, Redis/caches, HTTP clients, message queues) in unit tests; never connect to real services in unit tests.
 - Write or update unit tests for every behaviour change.
+- Always provide comments for functions, classes, objects, and types using standard doc formats (JSDoc, GoDoc, docstrings), and use specific inline comments for non-obvious logic (clear and understandable even for beginners).
 - Handle errors explicitly and log them with enough context to debug (see the error-handling-logging rule).
 - Validate all external input at the boundary (HTTP, CLI, files, env, third-party responses).
 - Run the `self-review` skill on your diff before the Definition of Done.
@@ -136,7 +139,7 @@ A task is done only when every step passes (use the `definition-of-done` skill):
 ## Conventions
 
 - Existing repository conventions win; these rules only fill the gaps.
-- Comments explain *why* (intent, constraints, trade-offs), not *what*. Add them to new or changed code only.
+- Comments are mandatory: document functions, classes, objects, and types with standard doc comments (JSDoc, GoDoc, docstrings); explain *why* (intent, constraints, trade-offs) in specific inline comments. Write in clear, plain language understandable by a beginner. Add them to new or changed code only.
 - Code must be readable by a beginner: clear names, small functions, early returns, no clever tricks.
 - Use the package manager already locked in the repo; never mix lockfiles.
 

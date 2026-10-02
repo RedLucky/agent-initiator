@@ -22,3 +22,7 @@ alwaysApply: false
 - Throw `Error` subclasses (`class NotFoundError extends Error`) and pass `{ cause }` when wrapping.
 - Use a structured logger (e.g. `pino`) with child loggers per module/request; no `console.log` in production code.
 - Handle `unhandledRejection`/`uncaughtException` once at the entry point: log and exit non-zero.
+
+## Documentation & Comments
+- **Mandatory JSDoc**: Use JSDoc (`/** ... */`) on all functions, classes, methods, and complex objects/schemas: describe purpose, `@param`, `@returns`, and `@throws`.
+- **Inline comments**: Use specific inline comments to explain the "why" behind non-obvious logic, business constraints, or workarounds.
