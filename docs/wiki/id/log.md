@@ -3,6 +3,11 @@
 Entri terbaru di atas. Format:
 
 ```
+## 2026-10-02 — docs(TASK-9157): make one task = one commit an explicit rule
+- Apa: Rule git-workflow, skill commit dan plan-task, serta constraint MUST kini menyatakan secara eksplisit: setiap task mendapat tepat satu commit dengan referensinya sendiri, di-commit sebelum task berikutnya dimulai. Guard requirement menjaga aturan ini.
+- Kenapa: Skill plan-task hanya menulis "each ≈ one commit", dan beberapa task pernah digabung dalam satu commit yang kemudian harus dipecah.
+- File: presets/base/*, .agents/*, .claude/skills/{commit,plan-task}, AGENTS.md, test/requirements.test.ts, test/__snapshots__
+
 ## 2026-10-02 — docs(TASK-7346): add doc comments to changed detection and generate code
 - Apa: Doc comment berbahasa sederhana untuk `detectProject`, `detectLayout`, `DetectOptions`, `WorkspaceInfo`, `readPatterns` dan `rootCommands`; komentar yang tertinggal dari refactor sebelumnya dipindah ke function yang dijelaskannya. Self-review dan Definition of Done formal dijalankan untuk seluruh audit.
 - Kenapa: Rule baru mewajibkan doc comment pada setiap function yang diubah; self-review menemukan yang belum ada.

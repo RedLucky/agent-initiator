@@ -43,6 +43,9 @@ const BASE_REQUIREMENTS: Array<[string, string, string[]]> = [
   ['mandatory doc comments in plain language', '.agents/rules/code-quality.md', ['This rule wins over plugin defaults', 'JSDoc', 'GoDoc', 'docstrings', '**Plain language**', 'junior']],
   ['constraints: tests, mocking, doc comments', 'AGENTS.md', ['including small private helpers', 'Always mock external boundaries', 'doc comment in the standard format']],
   ['no auto commit/push, always confirm', '.agents/rules/git-workflow.md', ['Never commit or push automatically', 'wait for explicit approval', 'Approval covers only that one commit/push']],
+  ['one task = one commit', '.agents/rules/git-workflow.md', ['**One task = one commit.**', 'never batch several tasks into one commit']],
+  ['commit skill checks a single task', '.agents/skills/commit/SKILL.md', ['exactly one task']],
+  ['plan-task commits each task before the next', '.agents/skills/plan-task/SKILL.md', ['each task = exactly one commit', 'before starting the next task']],
   ['commit format with issue or plan task number', '.agents/rules/git-workflow.md', ['<type>(#<issue>): <subject>', '<type>(TASK-<n>): <subject>']],
   ['docs: bilingual wiki + log', '.agents/rules/documentation.md', ['docs/wiki/en/', 'docs/wiki/id/', '`log.md` gets a new entry']],
   // --- Karpathy (minus Simplicity First, replaced by ponytail)

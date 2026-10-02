@@ -30,6 +30,7 @@ fix(TASK-4821): handle empty cart in checkout total
 ```
 
 ## Hygiene
+- **One task = one commit.** Each planned task (`TASK-<n>` or `#<issue>`) gets exactly one commit with its own reference. Finish a task (Definition of Done, approval, commit) before starting the next one; never batch several tasks into one commit.
 - One logical change per commit; do not mix refactors with features.
 - Never commit secrets, `.env` files, build output or local tooling files.
 - Use the `commit` skill to prepare commits.

@@ -110,6 +110,7 @@ graphify install   # or: graphify <codex|cursor|gemini|copilot> install
 - Update the LLM wiki in both `docs/wiki/en/` and `docs/wiki/id/` (`index.md` and `log.md`) for every change.
 - Ask for explicit confirmation, showing the proposed message, before every `git commit` and `git push`.
 - Use commit format `type(#<issue>): subject`, or `type(TASK-<n>): subject` with the plan's task number when there is no issue.
+- Commit each task separately (one task = one commit, with its own reference) before starting the next task; never batch several tasks into one commit.
 - Prefix shell commands with `rtk`.
 - Record hard-to-reverse architecture decisions as ADRs (`write-adr` skill).
 - Keep `strict` TypeScript; fix type errors instead of silencing them.

@@ -3,6 +3,11 @@
 Newest entries first. Format:
 
 ```
+## 2026-10-02 — docs(TASK-9157): make one task = one commit an explicit rule
+- What: The git-workflow rule, the commit and plan-task skills and the MUST constraints now say explicitly: each task gets exactly one commit with its own reference, committed before the next task starts. Requirement guards protect it.
+- Why: The plan-task skill only said "each ≈ one commit", and several tasks were once batched into a single commit that later had to be split.
+- Files: presets/base/*, .agents/*, .claude/skills/{commit,plan-task}, AGENTS.md, test/requirements.test.ts, test/__snapshots__
+
 ## 2026-10-02 — docs(TASK-7346): add doc comments to changed detection and generate code
 - What: Plain-language doc comments for `detectProject`, `detectLayout`, `DetectOptions`, `WorkspaceInfo`, `readPatterns` and `rootCommands`; an orphaned comment left by an earlier refactor was moved to the function it describes. The formal self-review and Definition of Done ran for the whole audit.
 - Why: The new rule requires a doc comment on every changed function; the self-review found these missing.
