@@ -3,6 +3,11 @@
 Newest entries first. Format:
 
 ```
+## 2026-10-02 — docs(TASK-7345): allow test-created temp folders as file-system fakes
+- What: The testing rule allows temporary folders and fixture files that a test creates itself (`mkdtemp`, `test/fixtures/`) as a local fake instead of mocking the file system; real user folders, home directories and shared paths stay forbidden. A requirement guard protects this.
+- Why: For tools that read files, mocking the file system would test nothing; the rule needed an explicit, safe exception (decision: option a).
+- Files: presets/base/rules/testing.md, .agents/rules/testing.md, test/requirements.test.ts
+
 ## 2026-10-02 — test(TASK-7344): measure coverage and cover scaffold runner and guards
 - What: Coverage is measured with `pnpm run test:coverage` (`@vitest/coverage-v8` 5.0.3, MIT, official vitest package). New tests cover every step type of the scaffold runner, the scaffold guards (offline, with fake tools on PATH) and `overridePresets`. AGENTS.md lists the coverage command in Commands and the Definition of Done.
 - Why: The Definition of Done asks for at least 80% coverage on changed code, but coverage was never measured.

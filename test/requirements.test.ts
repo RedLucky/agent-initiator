@@ -38,6 +38,7 @@ const BASE_REQUIREMENTS: Array<[string, string, string[]]> = [
   ['scalability', '.agents/rules/architecture.md', ['## Scalability', 'Stateless processes', 'Idempotency', 'measure before optimising']],
   ['always unit test', '.agents/rules/testing.md', ['Every function, class and behaviour change MUST have unit tests', 'including small private helpers', 'failing test that reproduces the bug']],
   ['mock external boundaries in unit tests', '.agents/rules/testing.md', ['Mandatory mocking for external boundaries', 'NEVER connect to a real database']],
+  ['temp folders and fixtures may stand in for the file system', '.agents/rules/testing.md', ['Exception for the file system', 'mkdtemp', 'Never read or write real user folders']],
   ['repo rules win over plugin defaults (tests)', '.agents/rules/testing.md', ['This rule wins over plugin defaults']],
   ['mandatory doc comments in plain language', '.agents/rules/code-quality.md', ['This rule wins over plugin defaults', 'JSDoc', 'GoDoc', 'docstrings', '**Plain language**', 'junior']],
   ['constraints: tests, mocking, doc comments', 'AGENTS.md', ['including small private helpers', 'Always mock external boundaries', 'doc comment in the standard format']],

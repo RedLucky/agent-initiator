@@ -3,6 +3,11 @@
 Entri terbaru di atas. Format:
 
 ```
+## 2026-10-02 — docs(TASK-7345): allow test-created temp folders as file-system fakes
+- Apa: Rule testing mengizinkan folder sementara dan fixture buatan test itu sendiri (`mkdtemp`, `test/fixtures/`) sebagai pengganti mock file system; folder milik user, home directory dan path bersama tetap dilarang. Guard requirement menjaga aturan ini.
+- Kenapa: Untuk tool yang membaca file, me-mock file system membuat test tidak menguji apa-apa; rule butuh pengecualian yang jelas dan aman (keputusan: opsi a).
+- File: presets/base/rules/testing.md, .agents/rules/testing.md, test/requirements.test.ts
+
 ## 2026-10-02 — test(TASK-7344): measure coverage and cover scaffold runner and guards
 - Apa: Coverage diukur dengan `pnpm run test:coverage` (`@vitest/coverage-v8` 5.0.3, MIT, package resmi vitest). Test baru mencakup semua jenis step di runner scaffold, guard scaffold (offline, dengan tool palsu di PATH) dan `overridePresets`. AGENTS.md mencantumkan command coverage di Commands dan Definition of Done.
 - Kenapa: Definition of Done meminta coverage minimal 80% untuk kode yang berubah, tetapi coverage belum pernah diukur.

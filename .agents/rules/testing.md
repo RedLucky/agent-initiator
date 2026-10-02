@@ -17,6 +17,7 @@ alwaysApply: true
 - Cover the happy path, edge cases (empty, boundary, invalid input) and error paths.
 - Unit tests are fast, deterministic and isolated: no real network, clock or shared state. Fake time/randomness via injected dependencies.
 - **Mandatory mocking for external boundaries**: Always mock external infrastructure, data stores, and network calls in unit tests (e.g. database/SQL/ORM, Redis/cache, message queues, third-party HTTP APIs, file systems). Unit tests must NEVER connect to a real database, Redis instance, or external network service.
+  - **Exception for the file system:** temporary folders and fixture files that the test itself creates (for example `mkdtemp` folders or `test/fixtures/`) count as a local fake, so they may be used instead of mocking the file system. Never read or write real user folders, home directories or shared paths in a unit test.
 - Mock only at boundaries (HTTP clients, DB, Redis, queues), never the unit under test.
 - Never delete, skip or weaken an existing test to make a change pass; if a test is wrong, explain why and ask.
 
