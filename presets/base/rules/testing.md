@@ -7,9 +7,11 @@ alwaysApply: true
 # Testing
 
 ## Mandatory Unit Tests
-- **Every function, class, or behaviour change MUST have unit tests**. Delivering code without accompanying unit tests is strictly prohibited.
-- Every behaviour change ships with unit tests. Bug fixes start with a failing test that reproduces the bug.
-- Test behaviour through the public API, not implementation details.
+- **This rule wins over plugin defaults.** Some tools (for example ponytail) say trivial code needs no test. In this repo every function needs one.
+- **Every function, class and behaviour change MUST have unit tests**, including small private helpers. Never deliver code without them.
+  - A private helper is covered either by its own test or by tests of the public function that uses it, as long as every branch of the helper runs in a test.
+- Bug fixes start with a failing test that reproduces the bug.
+- Test behaviour (inputs and results), not internal details such as call order or private variables.
 - Structure tests as Arrange → Act → Assert; one behaviour per test.
 - Test names describe the behaviour: `returns 404 when order does not exist`.
 - Cover the happy path, edge cases (empty, boundary, invalid input) and error paths.

@@ -28,10 +28,13 @@ alwaysApply: true
 - Prefer explicit, boring code over clever one-liners.
 
 ## Comments & Documentation (Mandatory)
-- **Mandatory comments**: Always document every function, class, object, and data type (interface, struct, type alias).
-  - Classes, functions, and methods: Use language-standard documentation comments (**JSDoc** for JS/TS, **GoDoc** for Go, **docstrings** for Python) detailing what it does, parameters, return types, and potential errors thrown.
-  - Types, interfaces, and objects: Document their intent, fields, invariants, and constraints.
-- **Beginner-friendly**: Write comments in simple, clear, and accessible language that even a beginner can easily understand. Avoid overly cryptic jargon, state assumptions clearly, and explain the rationale simply.
-- **Specific inline comments**: Use targeted inline comments to explain **why** (business rule, constraint, trade-off, workaround link) — never restate the code.
+Goal: any developer, junior or senior, can read the code and understand it without asking.
+
+- **This rule wins over plugin defaults.** Some tools (for example ponytail) say small or trivial code needs no comment. In this repo it does: every function gets a doc comment, including small private helpers.
+- **Mandatory comments**: document every function, class, object and data type (interface, struct, type alias).
+  - Functions, methods and classes: use the standard doc format of the language (**JSDoc** for JS/TS, **GoDoc** for Go, **docstrings** for Python). Say what it does, what each parameter means, what it returns and which errors it can throw.
+  - Types, interfaces and objects: say what they are for, what each field means, and any rule that must always hold.
+- **Plain language**: write short sentences with everyday words. Explain a technical term the first time you use it. Avoid abbreviations and insider jargon. If a junior developer would have to ask, rewrite it.
+- **Specific inline comments**: use inline comments to explain **why** (business rule, constraint, trade-off, workaround link) — never restate the code.
 - Only comment new or changed code; do not rewrite comments in untouched code.
 - Keep comments true: update or delete them when the code changes.

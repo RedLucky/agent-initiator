@@ -6,7 +6,7 @@ description: Workflow for writing focused, deterministic unit tests. Use when ad
 # Write Unit Test
 
 1. **Find the convention** — locate existing tests near the code; copy their framework, file naming and folder layout.
-2. **List behaviours** — happy path, edge cases (empty, boundary, invalid input), and error paths. One test per behaviour.
+2. **List behaviours** — happy path, edge cases (empty, boundary, invalid input), and error paths. One test per behaviour. Every function needs coverage, including small private helpers (directly, or through the public function that uses them).
 3. **Bug fix?** Write the failing test that reproduces the bug *first* and run it to see it fail.
 4. **Write the test** with Arrange → Act → Assert and a behaviour-describing name.
 5. **Isolate** — fake only boundaries (HTTP, DB, clock, randomness) via injected dependencies. No real network or shared state.

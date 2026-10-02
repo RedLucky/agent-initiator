@@ -3,6 +3,11 @@
 Entri terbaru di atas. Format:
 
 ```
+## 2026-10-02 — docs(TASK-5130): require tests and plain-language doc comments for every function
+- Apa: Rule testing dan code-quality menyatakan diri lebih kuat dari default plugin (ponytail): setiap function, termasuk helper private kecil, wajib punya unit test dan doc comment dengan bahasa sederhana; constraint yang dobel digabung; guard requirement baru.
+- Kenapa: Tujuannya kode yang bisa dipahami developer junior maupun senior; kalimat lama bertentangan dengan ponytail dan mengulang constraint yang sama.
+- File: presets/base/*, .agents/*, .claude/skills/write-unit-test, AGENTS.md, test/requirements.test.ts, test/__snapshots__
+
 ## 2026-10-02 — docs(TASK-5129): update moonrepo rule for moon v2 and detect .config/moon
 - Apa: Rule dan preset moonrepo mengikuti moon v2: `.moon/toolchains.yml`, `.moon/tasks.*` dan `.moon/tasks/**`, `moon templates`, command task sederhana, bagian "Before running tasks" (commit pertama, `moon setup`, tanpa inferensi script) dan `moon mcp` di Framework docs. Deteksi juga mengenali `.config/moon`.
 - Kenapa: Rule masih menggambarkan moon v1 padahal versi sekarang 2.5.6; v2 mengganti nama file toolchain dan menerima `.config/moon`.
