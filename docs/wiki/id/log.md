@@ -3,6 +3,11 @@
 Entri terbaru di atas. Format:
 
 ```
+## 2026-10-02 — fix(TASK-5127): add moon CLI and per-app moon.yml when scaffolding
+- Apa: Scaffold moonrepo menambahkan `@moonrepo/cli` sebagai dev dependency root dan menulis `moon.yml` per app (task dari script package yang ada; command tetap untuk Python dan Go), serta mengingatkan commit pertama dan `moon setup`.
+- Kenapa: moon tidak membaca script package.json, sehingga repo moon baru gagal di semua command Definition of Done dengan "No tasks found".
+- File: src/scaffold/*, src/cli.ts, test/scaffold.test.ts
+
 ## 2026-10-02 — fix(TASK-5128): use moon project IDs and moon run :lint
 - Apa: Target moon per package memakai ID project moon (key map di .moon/workspace.yml, atau nama folder), bukan nama di package.json; `lint` memakai `moon run :lint`, bukan `moon check`.
 - Kenapa: `moon check` butuh ID project di shell non-interaktif dan menjalankan build+test, dan `moon run @acme/web:test` bukan target yang valid.

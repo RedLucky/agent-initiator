@@ -42,6 +42,10 @@ async function scaffold(spec: ScaffoldSpec): Promise<void> {
     if (step.type === 'run' || step.type === 'mkdir') p.log.step(`${pc.dim(`[${index + 1}/${total}]`)} ${step.label}`);
   });
   p.log.success('Project scaffolded.');
+  // moon cannot run tasks before the first commit, and we never commit for the user.
+  if (spec.layout === 'moonrepo') {
+    p.log.info('moonrepo: make the first git commit, then run `moon setup` to install pinned tool versions before `moon run`.');
+  }
 }
 
 /**

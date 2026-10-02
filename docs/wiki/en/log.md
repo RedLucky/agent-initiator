@@ -3,6 +3,11 @@
 Newest entries first. Format:
 
 ```
+## 2026-10-02 — fix(TASK-5127): add moon CLI and per-app moon.yml when scaffolding
+- What: moonrepo scaffolding adds `@moonrepo/cli` as a root dev dependency and writes a `moon.yml` per app (tasks from the package scripts that exist; fixed commands for Python and Go), and reminds the user about the first commit and `moon setup`.
+- Why: moon does not read package.json scripts, so a new moon repo failed every Definition of Done command with "No tasks found".
+- Files: src/scaffold/*, src/cli.ts, test/scaffold.test.ts
+
 ## 2026-10-02 — fix(TASK-5128): use moon project IDs and moon run :lint
 - What: Per-package moon targets use the moon project ID (map key in .moon/workspace.yml, else folder name) instead of the package.json name; `lint` runs `moon run :lint` instead of `moon check`.
 - Why: `moon check` needs a project ID in non-interactive shells and runs build+test, and `moon run @acme/web:test` is not a valid target.

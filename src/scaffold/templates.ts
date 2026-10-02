@@ -286,3 +286,28 @@ export function workspaceRootFiles(
   }
   return files;
 }
+
+/** moon tasks we map for every app: the commands the Definition of Done relies on. */
+const MOON_TASKS = ['build', 'test', 'lint', 'typecheck'];
+
+// Python and Go apps have no package.json, so their tasks are fixed per framework.
+const MOON_FIXED_TASKS: Record<string, Record<string, string>> = {
+  fastapi: { build: 'uv run python -m compileall -q app', test: 'uv run pytest', lint: 'uv run ruff check .' },
+  django: { build: 'uv run python manage.py check', test: 'uv run python manage.py test', lint: 'uv run ruff check .' },
+  'go-http': { build: 'go build ./...', test: 'go test ./...', lint: 'go vet ./...' },
+};
+
+/**
+ * Builds a project-level moon.yml for one app.
+ * moon v2 does not turn package.json scripts into tasks, so without this file `moon run :test` finds nothing.
+ * Node apps get one task per script that exists (`<pm> run <script>`); other runtimes use MOON_FIXED_TASKS.
+ */
+export function moonProjectConfig(framework: string, pm: NodePackageManager, scripts: string[]): string {
+  const fixed = MOON_FIXED_TASKS[framework];
+  const tasks = fixed
+    ? Object.entries(fixed)
+    : MOON_TASKS.filter((task) => scripts.includes(task)).map((task) => [task, `${pm} run ${task}`] as const);
+  const lines = ['# Tasks for `moon run <project>:<task>` — keep in sync with package scripts.', 'tasks:'];
+  for (const [task, command] of tasks) lines.push(`  ${task}:`, `    command: '${command}'`);
+  return `${lines.join('\n')}\n`;
+}

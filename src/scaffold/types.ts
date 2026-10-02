@@ -35,6 +35,11 @@ export type Step =
   | { type: 'replace'; label: string; path: string; search: string; replace: string }
   /** Appends to a file a scaffolder just created (e.g. a [tool.fastapi] section in pyproject.toml). */
   | { type: 'append'; label: string; path: string; content: string }
+  /**
+   * Writes <dir>/moon.yml so moon can run the app's build/test/lint tasks.
+   * Done at run time because Node tasks depend on the scripts the scaffolder actually created.
+   */
+  | { type: 'moon-tasks'; label: string; dir: string; framework: string; packageManager: NodePackageManager }
   /** Deletes a file or folder that a scaffolder just generated (never pre-existing user files). */
   | { type: 'remove'; label: string; path: string }
   // Some scaffolders exit 0 even when they fail (create-hono), so we verify their output exists.

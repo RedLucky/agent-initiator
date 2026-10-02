@@ -81,8 +81,11 @@ describe('buildScaffoldSteps', () => {
     expect(runs(steps)).toEqual([
       '.$ npx --yes create-next-app@latest apps/web --yes --ts --app --eslint --src-dir --import-alias @/* --use-pnpm --disable-git --no-agents-md --skip-install',
       '.$ npx --yes @nestjs/cli@latest new api --directory apps/api --package-manager pnpm --skip-git --language TS --strict --skip-install',
+      '.$ pnpm add -D -w @moonrepo/cli',
       '.$ pnpm install',
     ]);
+    const moonSteps = steps.filter((s) => s.type === 'moon-tasks').map((s) => (s.type === 'moon-tasks' ? path.relative(root, s.dir) : ''));
+    expect(moonSteps).toEqual(['apps/web', 'apps/api']);
   });
 
   it('uses Nx generators when a plugin exists and falls back otherwise', () => {
@@ -190,5 +193,35 @@ describe('scaffoldEnv', () => {
   it('drops agent-detection variables but keeps the rest', async () => {
     const { scaffoldEnv } = await import('../src/scaffold/run.js');
     expect(scaffoldEnv({ CLAUDECODE: '1', OPENCODE: '1', PATH: '/bin', HOME: '/home/u' })).toEqual({ PATH: '/bin', HOME: '/home/u' });
+  });
+});
+
+describe('moon project tasks', () => {
+  it('maps only the package scripts that exist', async () => {
+    const { moonProjectConfig } = await import('../src/scaffold/templates.js');
+    const yaml = moonProjectConfig('nextjs', 'pnpm', ['dev', 'build', 'lint']);
+    expect(yaml).toContain("  build:\n    command: 'pnpm run build'");
+    expect(yaml).toContain("  lint:\n    command: 'pnpm run lint'");
+    expect(yaml).not.toContain('test:');
+    expect(yaml).not.toContain('dev:');
+  });
+
+  it('uses fixed commands for Python and Go apps', async () => {
+    const { moonProjectConfig } = await import('../src/scaffold/templates.js');
+    expect(moonProjectConfig('fastapi', 'pnpm', [])).toContain("command: 'uv run pytest'");
+    expect(moonProjectConfig('go-http', 'pnpm', [])).toContain("command: 'go test ./...'");
+  });
+
+  it('writes moon.yml from the real package.json and never overwrites an existing one', async () => {
+    const { runSteps } = await import('../src/scaffold/run.js');
+    const { readFile } = await import('node:fs/promises');
+    const dir = await mkdtemp(path.join(tmpdir(), 'agent-initiator-moon-'));
+    await writeFile(path.join(dir, 'package.json'), JSON.stringify({ scripts: { test: 'vitest run' } }));
+    const step = { type: 'moon-tasks' as const, label: 'moon', dir, framework: 'nestjs', packageManager: 'npm' as const };
+    await runSteps([step]);
+    expect(await readFile(path.join(dir, 'moon.yml'), 'utf8')).toContain("command: 'npm run test'");
+    await writeFile(path.join(dir, 'moon.yml'), 'mine');
+    await runSteps([step]);
+    expect(await readFile(path.join(dir, 'moon.yml'), 'utf8')).toBe('mine');
   });
 });

@@ -2,6 +2,7 @@ import { spawn } from 'node:child_process';
 import { appendFile, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { exists } from '../fs-utils.js';
+import { moonProjectConfig } from './templates.js';
 import type { Step } from './types.js';
 
 export type StepLogger = (step: Step, index: number, total: number) => void;
@@ -54,6 +55,14 @@ export async function runSteps(steps: Step[], log: StepLogger = () => {}): Promi
         // Only ever points at files a scaffolder just generated inside the new project.
         await rm(step.path, { force: true, recursive: true });
         break;
+      case 'moon-tasks': {
+        const target = path.join(step.dir, 'moon.yml');
+        if (await exists(target)) break; // the scaffolder (or the user) already defined the tasks
+        const pkg = await readFile(path.join(step.dir, 'package.json'), 'utf8').catch(() => null);
+        const scripts = pkg === null ? [] : Object.keys((JSON.parse(pkg) as { scripts?: Record<string, string> }).scripts ?? {});
+        await writeFile(target, moonProjectConfig(step.framework, step.packageManager, scripts), 'utf8');
+        break;
+      }
       case 'expect':
         if (!(await exists(step.path))) throw new Error(`Scaffolding did not create ${step.path} — the scaffolder probably failed; see its output above.`);
         break;

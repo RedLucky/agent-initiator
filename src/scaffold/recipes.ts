@@ -228,9 +228,17 @@ function finishSteps(spec: ScaffoldSpec): Step[] {
       steps.push({ type: 'remove', label: `remove nested ${dir}/${file}`, path: path.join(root, dir, file) });
     }
   }
-  if (layout === 'turborepo') {
-    const args = pm === 'pnpm' ? ['add', '-D', '-w', 'turbo'] : pm === 'yarn' ? ['add', '-D', '-W', 'turbo'] : addArgs(pm, ['turbo'], true)[1];
-    steps.push({ type: 'run', label: 'add turbo', cwd: root, command: pm, args });
+  // The task runner is a root dev dependency so `pnpm run build` etc. work without a global install.
+  const runner = layout === 'turborepo' ? 'turbo' : layout === 'moonrepo' ? '@moonrepo/cli' : null;
+  if (runner) {
+    const args = pm === 'pnpm' ? ['add', '-D', '-w', runner] : pm === 'yarn' ? ['add', '-D', '-W', runner] : addArgs(pm, [runner], true)[1];
+    steps.push({ type: 'run', label: `add ${runner}`, cwd: root, command: pm, args });
+  }
+  if (layout === 'moonrepo') {
+    for (const app of apps) {
+      const dir = appDir(layout, app);
+      steps.push({ type: 'moon-tasks', label: `write ${dir}/moon.yml`, dir: path.join(root, dir), framework: app.framework, packageManager: pm });
+    }
   }
   if (spec.install) steps.push({ type: 'run', label: 'install workspace dependencies', cwd: root, command: pm, args: ['install'] });
   return steps;
