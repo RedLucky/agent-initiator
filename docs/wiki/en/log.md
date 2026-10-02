@@ -9,6 +9,11 @@ Newest entries first. Format:
 - Files: ...
 ```
 
+## 2026-10-02 — fix(TASK-7114): close the coverage and graphify gaps from the evaluation
+- What: A `test:coverage`, `coverage` or `test:cov` script becomes a `coverage` command (shown with `rtk test`; Go presets get `go test -cover ./...`) and the Definition of Done uses it. Without one, the DoD coverage step says to use the runner's coverage option or report coverage as not measured, asking before adding a dependency. Project knowledge tells agents to run `graphify update .` when `graphify-out/` does not exist yet. The evaluation page records which gaps were fixed and why the other two were left.
+- Why: In the cross-model evaluation all three models got stuck on an unmeasurable coverage step, and Opus queried graphify before a graph existed.
+- Files: src/render/{commands,agents-md}.ts, presets/go/preset.json, AGENTS.md, docs/wiki/*/features/{evaluation,generated-files}.md, test/*
+
 ## 2026-10-02 — docs(TASK-7107): record a cross-model evaluation of agent instructions
 - What: New page features/evaluation.md (en/id): Claude Haiku 4.5, Sonnet 5.5 and Opus 5.5 each did the same slugify task in a repository set up by `init --yes`. All kept the hard limits (no commit, tests, doc comments, rtk commands); Sonnet and Opus followed the whole workflow, while Haiku skipped the wiki, the commit format and plan approval. Four gaps were found: no coverage command for the DoD, no rtk prefix on file/script commands, graphify queried before the graph exists, and MUST items skipped by the smallest model.
 - Why: Claims of consistency across models needed evidence; this is a first, small sample (Claude models only, one run each).

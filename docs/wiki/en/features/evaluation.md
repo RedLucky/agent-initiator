@@ -44,6 +44,12 @@ In words: every model kept the hard limits (no commit, tests, doc comments, the 
 3. **graphify was asked before the graph existed.** Opus followed Project knowledge and ran `graphify explain`, which failed because `graphify-out/` had not been built yet in a fresh setup.
 4. **The smallest model skipped MUST items.** Writing them in AGENTS.md was not enough for Haiku; this is a model limit more than an instruction problem.
 
+### What was changed afterwards (TASK-7114)
+- Gap 1, fixed: a `test:coverage`, `coverage` or `test:cov` script becomes a `coverage` command (Go gets `go test -cover ./...`), and the Definition of Done uses it. Without one, the step now says what to do: use the test runner's coverage option or report coverage as not measured, and ask before adding a dependency.
+- Gap 3, fixed: Project knowledge tells agents to build the graph with `graphify update .` when `graphify-out/` does not exist yet.
+- Gap 2, left as is: the rule already says "every shell command", and the output of `mkdir` or `cat >` is nearly empty, so another sentence would cost more tokens per session than it saves.
+- Gap 4, left as is: the rule is already a MUST; repeating it elsewhere costs tokens without a guarantee. Use a larger model for work that needs the whole workflow.
+
 ## Limits of this evaluation
 - Claude models only; Codex, Gemini or Cursor were not tested.
 - One task and one run per model, so this finds clear problems but is not a statistic.

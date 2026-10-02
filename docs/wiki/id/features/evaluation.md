@@ -44,6 +44,12 @@ Dengan kata-kata: setiap model menjaga batasan keras (tidak commit, test, doc co
 3. **graphify ditanya sebelum graph-nya ada.** Opus mengikuti Project knowledge dan menjalankan `graphify explain`, yang gagal karena `graphify-out/` belum dibangun di setup yang baru.
 4. **Model terkecil melewati butir MUST.** Menuliskannya di AGENTS.md belum cukup untuk Haiku; ini lebih merupakan batas model daripada masalah instruksi.
 
+### Apa yang diubah setelahnya (TASK-7114)
+- Celah 1, diperbaiki: script `test:coverage`, `coverage` atau `test:cov` menjadi command `coverage` (Go mendapat `go test -cover ./...`), dan Definition of Done memakainya. Kalau tidak ada, langkah itu sekarang menjelaskan apa yang harus dilakukan: pakai opsi coverage dari test runner atau laporkan coverage tidak diukur, dan tanya dulu sebelum menambah dependency.
+- Celah 3, diperbaiki: Project knowledge meminta agent membangun graph dengan `graphify update .` kalau `graphify-out/` belum ada.
+- Celah 2, dibiarkan: rule sudah menyebut "every shell command", dan output `mkdir` atau `cat >` hampir kosong, jadi tambahan kalimat memakan lebih banyak token per sesi daripada yang dihemat.
+- Celah 4, dibiarkan: aturannya sudah MUST; mengulangnya di tempat lain menambah token tanpa jaminan. Pakai model yang lebih besar untuk pekerjaan yang butuh seluruh alur kerja.
+
 ## Batasan evaluasi ini
 - Hanya model Claude; Codex, Gemini atau Cursor tidak diuji.
 - Satu tugas dan satu kali jalan per model, jadi ini menemukan masalah yang jelas tetapi bukan statistik.

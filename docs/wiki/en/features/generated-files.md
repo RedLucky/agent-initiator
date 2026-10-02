@@ -32,7 +32,7 @@ In words: the file list is built in memory first. Each file is written only when
 
 ## Details
 - AGENTS.md has a **Project knowledge** section that tells AI agents the cheapest way to learn the project: the English wiki first (`index.md`, then only the pages the task needs, no `log.md`), then graphify for structure questions, and grep last. Package AGENTS.md files point back to it.
-- Commands come from the real `package.json` scripts and are prefixed with `rtk`. A missing `test` or `build` script is flagged in the Definition of Done instead of invented.
+- Commands come from the real `package.json` scripts and are prefixed with `rtk`. A missing `test` or `build` script is flagged in the Definition of Done instead of invented. A coverage script (`test:coverage`, `coverage`, `test:cov`) is used for the coverage step; without one, the step tells agents to use the runner's coverage option or report coverage as not measured.
 - Next.js apps get the official `nextjs-agent-rules` block, so `next dev` leaves AGENTS.md alone.
 - Skills already in `.agents/skills/` (for example Nx's official skills) are listed in AGENTS.md and copied to `.claude/skills/`.
 - The root AGENTS.md stays small: at most 12 KiB, about 2,500 tokens, because agents read it at the start of every session (a test checks every fixture; Codex's hard limit is 32 KiB). It lists rules and skills by name and keeps one usage line per required tool; install steps are in the generated rule `.agents/rules/required-tooling.md`, and each rule and skill carries its own description.

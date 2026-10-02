@@ -6,7 +6,7 @@ export interface Command {
 }
 
 // Display order in AGENTS.md; unknown tasks are appended alphabetically.
-const TASK_ORDER = ['install', 'dev', 'start', 'build', 'test', 'lint', 'typecheck', 'format', 'audit', 'affected'];
+const TASK_ORDER = ['install', 'dev', 'start', 'build', 'test', 'coverage', 'lint', 'typecheck', 'format', 'audit', 'affected'];
 
 // package.json script names that map to a canonical task (first match wins).
 const SCRIPT_ALIASES: Record<string, string[]> = {
@@ -14,6 +14,7 @@ const SCRIPT_ALIASES: Record<string, string[]> = {
   start: ['start'],
   build: ['build', 'build:ts'],
   test: ['test'],
+  coverage: ['test:coverage', 'coverage', 'test:cov'],
   lint: ['lint'],
   typecheck: ['typecheck', 'type-check', 'check-types'],
   format: ['format', 'format:check'],
@@ -22,6 +23,7 @@ const SCRIPT_ALIASES: Record<string, string[]> = {
 // rtk mode per task: `test` shows only test failures, `err` only errors and warnings, other tasks use `proxy`.
 const RTK_MODE: Record<string, string> = {
   test: 'test',
+  coverage: 'test',
   build: 'err',
   lint: 'err',
   typecheck: 'err',

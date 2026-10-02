@@ -50,7 +50,7 @@ describe('generateFiles', () => {
   it('lists real scripts and rtk-prefixed DoD commands', async () => {
     const agents = (await generate('nextjs')).file('AGENTS.md') ?? '';
     expect(agents).toContain('| test | `rtk test pnpm run test` |');
-    expect(agents).toContain('changed code: `rtk test pnpm run test`');
+    expect(agents).toContain('2. Unit tests pass: `rtk test pnpm run test`. Coverage ≥ 80% on changed code: no coverage command yet');
     expect(agents).toContain('Dependencies audited when they changed: `rtk proxy pnpm audit --audit-level high`');
     expect(agents).toContain('Build succeeds: `rtk err pnpm run build`');
     expect(agents).toContain('ui-ux-pro-max');
@@ -296,6 +296,21 @@ describe('Project knowledge section', () => {
       expect(always, rule).not.toContain(`[${rule}]`);
       expect(agents).toContain(`- [${rule}](.agents/rules/${rule}.md) — on demand: `);
     }
+  });
+
+  it('uses a coverage command in the Definition of Done when the project has one', async () => {
+    const { renderRootAgentsMd } = await import('../src/render/agents-md.js');
+    const withCoverage = renderRootAgentsMd({ ...input([]), commands: [{ task: 'test', command: 'pnpm run test' }, { task: 'coverage', command: 'pnpm run test:coverage' }] });
+    expect(withCoverage).toContain('2. Unit tests pass with coverage ≥ 80% on changed code: `pnpm run test:coverage`');
+    const goAgents = (await generate('go')).file('AGENTS.md') ?? '';
+    expect(goAgents).toContain('| coverage | `rtk test go test -cover ./...` |');
+    expect(goAgents).toContain('on changed code: `rtk test go test -cover ./...`');
+  });
+
+  it('tells agents to build the graphify graph before querying a fresh repository', async () => {
+    const { renderRootAgentsMd } = await import('../src/render/agents-md.js');
+    expect(renderRootAgentsMd(input(['graphify']))).toContain('No `graphify-out/` yet? Build it first: `graphify update .`');
+    expect(renderRootAgentsMd(input([]))).not.toContain('graphify-out');
   });
 });
 

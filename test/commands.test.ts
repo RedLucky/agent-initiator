@@ -56,6 +56,11 @@ describe('commands', () => {
     expect(commands).toEqual([{ task: 'test', command: 'rtk test uv run pytest' }]);
   });
 
+  it('maps coverage scripts to a coverage task shown with rtk test', () => {
+    expect(scriptCommands(['test', 'test:coverage'], 'pnpm')).toEqual({ test: 'pnpm run test', coverage: 'pnpm run test:coverage' });
+    expect(withRtk('coverage', 'pnpm run test:coverage')).toBe('rtk test pnpm run test:coverage');
+  });
+
   it('builds workspace filter commands', () => {
     expect(filterCommand('turborepo', 'pnpm', '@acme/web', 'test')).toBe('pnpm exec turbo run test --filter=@acme/web');
     expect(filterCommand('nx', 'npm', 'admin', 'build')).toBe('npx nx run admin:build');

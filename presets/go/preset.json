@@ -10,6 +10,7 @@
     "install": "go mod download",
     "build": "go build ./...",
     "test": "go test ./...",
+    "coverage": "go test -cover ./...",
     "lint": "go vet ./...",
     "format": "gofmt -l .",
     "audit": "go run golang.org/x/vuln/cmd/govulncheck@latest ./..."

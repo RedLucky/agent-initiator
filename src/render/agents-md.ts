@@ -138,6 +138,7 @@ function projectKnowledgeSection(toolIds: string[]): string[] {
     ...(toolIds.includes('graphify')
       ? [
           '- For structure and impact questions, ask graphify with a symbol name: `graphify affected "<symbol>"`, `graphify path "<A>" "<B>"`, `graphify explain "<symbol>"` (add `--budget <tokens>` to cap the answer).',
+          '- No `graphify-out/` yet? Build it first: `graphify update .` (code only, no tokens).',
           '- If `graphify hook status` shows missing hooks (e.g. in a fresh clone), run `graphify hook install` once so the graph is rebuilt after every commit.',
         ]
       : []),
@@ -171,6 +172,11 @@ function toolingSection(toolIds: string[]): string[] {
   ];
 }
 
+/**
+ * The Definition of Done for AGENTS.md, with the real commands for each step.
+ * Coverage uses the project's coverage command when it has one; otherwise the step says what to do instead, because
+ * agents otherwise get stuck on a check they cannot run (seen in the cross-model evaluation).
+ */
 function dodSection(commands: Command[], hasPackages: boolean): string[] {
   const find = (task: string) => commands.find((c) => c.task === task)?.command;
   const missing = (task: string) => `_no \`${task}\` command configured yet — add one before relying on this step_`;
@@ -187,7 +193,9 @@ function dodSection(commands: Command[], hasPackages: boolean): string[] {
     'A task is done only when every step passes (use the `definition-of-done` skill):',
     '',
     '1. Code follows the conventions, constraints and rules in this file, and the `self-review` skill found nothing left to fix.',
-    `2. Unit tests pass with coverage ≥ 80% on changed code: ${step('test')}`,
+    find('coverage') || perPackage
+      ? `2. Unit tests pass with coverage ≥ 80% on changed code: ${step(find('coverage') ? 'coverage' : 'test')}`
+      : `2. Unit tests pass: ${step('test')}. Coverage ≥ 80% on changed code: no coverage command yet, so use the runner's coverage option or report it as not measured (ask before adding a dependency).`,
     `3. Build succeeds: ${step('build')}`,
     `4. Dependencies audited when they changed: ${step('audit')}`,
     '5. Wiki updated in both `docs/wiki/en/` and `docs/wiki/id/`: the page of the topic you worked on (create it if missing), related pages, `index.md` and a new `log.md` entry — a log entry alone is not enough; ADR for architecture decisions.',

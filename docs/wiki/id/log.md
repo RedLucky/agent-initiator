@@ -9,6 +9,11 @@ Entri terbaru di atas. Format:
 - File: ...
 ```
 
+## 2026-10-02 — fix(TASK-7114): close the coverage and graphify gaps from the evaluation
+- Apa: Script `test:coverage`, `coverage` atau `test:cov` menjadi command `coverage` (ditampilkan dengan `rtk test`; preset Go mendapat `go test -cover ./...`) dan Definition of Done memakainya. Kalau tidak ada, langkah coverage di DoD meminta memakai opsi coverage dari test runner atau melaporkan coverage tidak diukur, dan bertanya dulu sebelum menambah dependency. Project knowledge meminta agent menjalankan `graphify update .` kalau `graphify-out/` belum ada. Halaman evaluasi mencatat celah mana yang diperbaiki dan kenapa dua lainnya dibiarkan.
+- Kenapa: Di evaluasi lintas model ketiga model mentok di langkah coverage yang tidak bisa diukur, dan Opus menanyai graphify sebelum graph-nya ada.
+- File: src/render/{commands,agents-md}.ts, presets/go/preset.json, AGENTS.md, docs/wiki/*/features/{evaluation,generated-files}.md, test/*
+
 ## 2026-10-02 — docs(TASK-7107): record a cross-model evaluation of agent instructions
 - Apa: Halaman baru features/evaluation.md (en/id): Claude Haiku 4.5, Sonnet 5.5 dan Opus 5.5 masing-masing mengerjakan tugas slugify yang sama di repository yang disiapkan dengan `init --yes`. Semuanya menjaga batasan keras (tidak commit, test, doc comment, command rtk); Sonnet dan Opus mengikuti seluruh alur kerja, sedangkan Haiku melewati wiki, format commit dan persetujuan rencana. Ditemukan empat celah: tidak ada command coverage untuk DoD, tanpa awalan rtk di perintah file/script, graphify ditanya sebelum graph ada, dan butir MUST dilewati oleh model terkecil.
 - Kenapa: Klaim konsistensi lintas model butuh bukti; ini sampel pertama yang kecil (hanya model Claude, satu kali jalan per model).
