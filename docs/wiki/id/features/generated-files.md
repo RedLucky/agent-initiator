@@ -26,10 +26,10 @@ flowchart LR
     G --> W{File sudah ada?}
     W -- tidak --> C[Buat file]
     W -- ya --> K[Biarkan apa adanya]
-    K --> M[Cetak apa yang perlu ditambah manual<br/>untuk AGENTS.md dan CLAUDE.md]
+    K --> M[Cetak apa yang perlu ditambah manual<br/>untuk AGENTS.md, CLAUDE.md dan lefthook.yml]
 ```
 
-Dengan kata-kata: daftar file disusun dulu di memori. Setiap file hanya ditulis kalau belum ada. Untuk `AGENTS.md` atau `CLAUDE.md` yang sudah ada, tool mencetak bagian yang bisa Anda tambahkan sendiri.
+Dengan kata-kata: daftar file disusun dulu di memori. Setiap file hanya ditulis kalau belum ada. Untuk `AGENTS.md`, `CLAUDE.md` atau `lefthook.yml` yang sudah ada, tool mencetak bagian yang bisa Anda tambahkan sendiri. Script shell (`.sh`) ditulis sebagai file executable, supaya git hook berjalan dan tidak muncul perubahan mode di kemudian hari.
 
 ## Detail
 - AGENTS.md punya bagian **Project knowledge** yang memberi tahu AI agent cara paling hemat mempelajari project: wiki bahasa Inggris dulu (`index.md`, lalu hanya halaman yang dibutuhkan task, tanpa `log.md`), lalu graphify untuk pertanyaan struktur, dan grep paling akhir. AGENTS.md per package menunjuk balik ke bagian ini.

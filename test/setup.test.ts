@@ -66,4 +66,12 @@ describe('selectDefaultActions (--yes without --setup-tools)', () => {
     expect(withHusky.run).toEqual([]);
     expect(withHusky.skipped[0]?.reason).toContain('.husky already exists');
   });
+
+  it('runs lefthook install only after the files are written', async () => {
+    const { splitByTiming } = await import('../src/setup.js');
+    const { before, after } = splitByTiming(planToolSetup(['graphify', 'lefthook']));
+    expect(before.map((a) => `${a.command} ${a.args.join(' ')}`)).toEqual(['graphify update .', 'graphify hook install']);
+    expect(after.map((a) => `${a.command} ${a.args.join(' ')}`)).toEqual(['lefthook install']);
+  });
 });
+

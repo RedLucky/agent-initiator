@@ -26,10 +26,10 @@ flowchart LR
     G --> W{File already exists?}
     W -- no --> C[Create it]
     W -- yes --> K[Keep it unchanged]
-    K --> M[Print what to add by hand<br/>for AGENTS.md and CLAUDE.md]
+    K --> M[Print what to add by hand<br/>for AGENTS.md, CLAUDE.md and lefthook.yml]
 ```
 
-In words: the file list is built in memory first. Each file is written only when it is missing. For an existing `AGENTS.md` or `CLAUDE.md`, the tool prints the sections you can add yourself.
+In words: the file list is built in memory first. Each file is written only when it is missing. For an existing `AGENTS.md`, `CLAUDE.md` or `lefthook.yml`, the tool prints the sections you can add yourself. Shell scripts (`.sh`) are written as executable, so git hooks run and no mode change shows up later.
 
 ## Details
 - AGENTS.md has a **Project knowledge** section that tells AI agents the cheapest way to learn the project: the English wiki first (`index.md`, then only the pages the task needs, no `log.md`), then graphify for structure questions, and grep last. Package AGENTS.md files point back to it.

@@ -11,7 +11,7 @@ import { resolvePresets } from './presets/resolve.js';
 import { choosePresets, defaultPackageManager, promptNewProject } from './prompts.js';
 import { specFromFlags, type ScaffoldFlags } from './scaffold/flags.js';
 import { inspectDir, isInsideGitRepo, LAYOUTS, postScaffoldNotes, scaffoldProject, type NodePackageManager, type ScaffoldSpec } from './scaffold/index.js';
-import { planToolSetup, runToolSetup, selectDefaultActions, type SetupAction, type SetupResult } from './setup.js';
+import { planToolSetup, runToolSetup, selectDefaultActions, splitByTiming, type SetupAction, type SetupResult } from './setup.js';
 import type { DetectedProject } from './types.js';
 import { applyPlan, manualSteps, planFiles } from './write/index.js';
 
@@ -140,10 +140,11 @@ async function runInit(dir: string, options: InitOptions): Promise<void> {
   const rootIds = [...new Set(['base', ...(project.monorepo ? [project.monorepo] : []), ...project.packages.flatMap((pkg) => pkg.presets)])];
   const tooling = resolvePresets(registry, rootIds).tooling;
 
-  // Runs before generation so skills installed by tools (UI UX Pro Max) get indexed in AGENTS.md.
-  const setupActions = await chooseSetupActions(root, options, planToolSetup(tooling));
-  if (setupActions.length > 0) {
-    await runToolSetup(root, setupActions, logSetupResult);
+  // Most setup runs before generation so skills installed by tools (UI UX Pro Max) get indexed in AGENTS.md;
+  // actions that read generated files (lefthook.yml) run after the files are written.
+  const setup = splitByTiming(await chooseSetupActions(root, options, planToolSetup(tooling)));
+  if (setup.before.length > 0) {
+    await runToolSetup(root, setup.before, logSetupResult);
     project = { ...project, existingSkills: await detectExistingSkills(root) };
   }
 
@@ -158,6 +159,7 @@ async function runInit(dir: string, options: InitOptions): Promise<void> {
   if (options.dryRun) return p.outro('Dry run — nothing written.');
 
   const written = await applyPlan(root, plan);
+  if (setup.after.length > 0) await runToolSetup(root, setup.after, logSetupResult);
   for (const step of await manualSteps(root, plan)) p.log.warn(step);
 
   console.log(pc.bold('\nRequired tooling on this machine:'));

@@ -9,6 +9,11 @@ Entri terbaru di atas. Format:
 - File: ...
 ```
 
+## 2026-10-02 — fix(TASK-7109): install lefthook hooks after init writes lefthook.yml
+- Apa: `lefthook install` sekarang berjalan setelah file ditulis; sebelumnya ia berjalan duluan dan menulis `lefthook.yml` bawaan lefthook, sehingga milik kita tidak ditulis dan cek commit-msg tidak pernah berjalan. `lefthook.yml` yang dipertahankan mendapat langkah manual berisi blok `commit-msg`. File `.sh` ditulis executable, sehingga chmod dari lefthook tidak lagi meninggalkan perubahan mode setelah commit pertama.
+- Kenapa: Smoke run nyata dengan lefthook terinstal menunjukkan `init --yes` menerima pesan commit apa pun, dan script hook muncul sebagai berubah setelah commit pertama.
+- File: src/setup.ts, src/cli.ts, src/write/index.ts, .lefthook/commit-msg/check-message.sh (mode), test/setup.test.ts, test/write.test.ts
+
 ## 2026-10-02 — docs(TASK-7108): close the log format example before the entries
 - Apa: Pagar penutup contoh format di `log.md` berada di bawah sebagian besar entri, sehingga entri tampil sebagai satu blok kode. Pagar itu sekarang ditutup tepat setelah contoh, di kedua bahasa, dan `test/wiki.test.ts` mengeceknya.
 - Kenapa: Selama beberapa task entri ditambahkan di atas pagar penutup, sehingga log tidak terbaca di GitHub dan GitLab.

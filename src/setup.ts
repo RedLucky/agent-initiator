@@ -17,6 +17,8 @@ export interface SetupAction {
    * either the command would change that existing file, or the repo already uses another tool for the same job.
    */
   runsByDefaultUnlessExists?: string[];
+  /** Runs after init has written its files, because the command reads one of them (e.g. lefthook.yml). */
+  afterFiles?: boolean;
 }
 
 /** A setup action left out of the default run, with the reason shown to the user. */
@@ -56,6 +58,8 @@ const TOOL_SETUP: Record<string, SetupAction[]> = {
       args: ['install'],
       requiresGit: true,
       runsByDefaultUnlessExists: ['.husky', '.pre-commit-config.yaml'],
+      // Without lefthook.yml, `lefthook install` writes its own default config, which would then keep ours out.
+      afterFiles: true,
     },
   ],
 };
@@ -65,6 +69,15 @@ export function planToolSetup(toolIds: string[]): SetupAction[] {
   return Object.keys(TOOL_SETUP)
     .filter((tool) => toolIds.includes(tool))
     .flatMap((tool) => TOOL_SETUP[tool] ?? []);
+}
+
+/**
+ * Splits the chosen actions by when they run: before init writes its files, or after.
+ * @param actions - The actions chosen to run.
+ * @returns `before` (e.g. skills that AGENTS.md must list) and `after` (commands that read generated files).
+ */
+export function splitByTiming(actions: SetupAction[]): { before: SetupAction[]; after: SetupAction[] } {
+  return { before: actions.filter((a) => !a.afterFiles), after: actions.filter((a) => a.afterFiles) };
 }
 
 /**

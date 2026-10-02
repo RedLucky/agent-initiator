@@ -9,6 +9,11 @@ Newest entries first. Format:
 - Files: ...
 ```
 
+## 2026-10-02 — fix(TASK-7109): install lefthook hooks after init writes lefthook.yml
+- What: `lefthook install` now runs after the files are written; before, it ran first, wrote lefthook's default `lefthook.yml`, so ours was kept out and the commit-msg check never ran. A kept `lefthook.yml` gets a manual step with the `commit-msg` block. `.sh` files are written executable, so lefthook's chmod no longer leaves a mode change after the first commit.
+- Why: A real smoke run with lefthook installed showed that `init --yes` accepted any commit message, and that the hook script showed up as modified after each first commit.
+- Files: src/setup.ts, src/cli.ts, src/write/index.ts, .lefthook/commit-msg/check-message.sh (mode), test/setup.test.ts, test/write.test.ts
+
 ## 2026-10-02 — docs(TASK-7108): close the log format example before the entries
 - What: The closing fence of the format example in `log.md` sat below most entries, so they rendered as one code block. The fence now closes right after the example, in both languages, and `test/wiki.test.ts` checks it.
 - Why: Entries were added above the closing fence for several tasks, so the log was unreadable on GitHub and GitLab.
