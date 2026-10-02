@@ -151,7 +151,6 @@ Then review the generated files and commit them when you are happy. The tool nev
 | `--lang <ts\|js>` | Language for Node apps (default `ts`; TS-only frameworks ignore `js`) |
 | `--pm <pm>` | `pnpm` · `npm` · `yarn` · `bun` (default: pnpm if installed, else npm) |
 | `--skip-install` | Do not install dependencies, where the scaffolder allows it |
-| `--ci <github\|gitlab\|none>` | CI pipeline to write. Default: none when the repo already has CI, GitLab when the `origin` remote mentions gitlab, otherwise GitHub Actions |
 | `--setup-tools` | Run per-repo tool setup without asking (see [Required tooling](#required-tooling)) |
 
 In `--yes` mode, an empty folder without `--framework`, `--apps` or `--preset` stops with an error and example commands. It does not silently write a base-only setup.
@@ -162,8 +161,6 @@ In `--yes` mode, an empty folder without `--framework`, `--apps` or `--preset` s
 AGENTS.md                           entry point for every agent (see "What you get")
 CLAUDE.md                           "@AGENTS.md" so Claude Code reads the same instructions
 lefthook.yml, .lefthook/            git hooks for every language: lint + message check on commit, typecheck + tests + wiki reminder on push
-.github/workflows/ci.yml            GitHub Actions: lint → typecheck → test → build → audit, one job per package
-.gitlab-ci.yml                      the same for GitLab (GitLab remote or --ci gitlab); no CI file if the repo has CI
 .agents/rules/*.md                  rules (frontmatter: description, globs, alwaysApply)
 .agents/skills/<name>/SKILL.md      skills (Agent Skills format)
 .claude/skills/<name>/SKILL.md      copy of the skills for Claude Code

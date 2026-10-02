@@ -23,8 +23,8 @@ Read the English pages only (`docs/wiki/en/`); `docs/wiki/id/` is the same conte
 | Change AGENTS.md or other generated output | [features/generated-files.md](features/generated-files.md) | `src/generate.ts`, `src/render/` |
 | Add or change a scaffolder or layout | [features/scaffolding.md](features/scaffolding.md) | `src/scaffold/` |
 | Change required tools, doctor or setup | [features/tool-setup.md](features/tool-setup.md) | `src/tooling.ts`, `src/setup.ts`, `src/doctor.ts` |
-| Change git hooks, the commit message check or the CI workflow | [features/quality-gates.md](features/quality-gates.md) | `src/render/lefthook.ts`, `presets/base/files/.lefthook/` |
-| Change the wiki rules | [features/quality-gates.md](features/quality-gates.md) | Git hooks and CI (GitHub Actions or GitLab CI) for every language: lint, commit message, typecheck, tests, build, audit |
+| Change git hooks or the commit message check | [features/quality-gates.md](features/quality-gates.md) | `src/render/lefthook.ts`, `presets/base/files/.lefthook/` |
+| Change the wiki rules | [features/quality-gates.md](features/quality-gates.md) | Git hooks for every language: lint, commit message, typecheck, tests, wiki reminder |
 | [features/wiki-knowledge-base.md](features/wiki-knowledge-base.md) | `presets/base/rules/documentation.md` |
 
 ## All pages

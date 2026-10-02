@@ -234,49 +234,13 @@ describe('Project knowledge section', () => {
     expect(multi).not.toContain('ruff format');
   });
 
-  it('adds a GitHub Actions workflow with one job per package and the same commands', async () => {
-    const single = await generate('nextjs');
-    const ci = single.file('.github/workflows/ci.yml') ?? '';
-    expect(ci).toContain('run: "pnpm install --frozen-lockfile"');
-    expect(ci).toMatch(/name: lint[\s\S]*name: typecheck[\s\S]*name: test[\s\S]*name: build[\s\S]*name: audit/);
-    expect(ci).toContain('run: "pnpm audit --audit-level high"');
-    expect(ci).not.toContain('rtk ');
-
-    const multi = (await generate('fullstack')).file('.github/workflows/ci.yml') ?? '';
-    expect(multi).toContain('working-directory: "api"');
-    expect(multi).toContain('run: "poetry install"');
-    expect(multi).toContain('working-directory: "web"');
+  it('audits Go modules without installing govulncheck first', async () => {
+    expect((await generate('go')).file('AGENTS.md')).toContain('`rtk proxy go run golang.org/x/vuln/cmd/govulncheck@latest ./...`');
   });
 
-  it('installs workspace packages from the repo root', async () => {
-    const ci = (await generate('turborepo')).file('.github/workflows/ci.yml') ?? '';
-    expect(ci).toContain('  apps-web:');
-    expect(ci).toContain('run: "pnpm install --frozen-lockfile"\n        working-directory: .');
-  });
-
-  it('asks to pin pnpm/yarn when package.json has no packageManager field, once per install folder', async () => {
-    const single = await generate('nextjs');
-    expect(single.notes).toEqual([expect.stringContaining('in the repo root: npm pkg set packageManager=pnpm@$(pnpm -v)')]);
-    expect((await generate('turborepo')).notes).toHaveLength(1);
-    expect((await generate('fullstack')).notes).toEqual([expect.stringContaining('in web:')]);
-    expect((await generate('fastapi')).notes).toEqual([]);
-  });
-
-  it('audits Go modules without installing govulncheck, even when it needs a newer Go than the module', async () => {
-    expect((await generate('go')).file('.github/workflows/ci.yml')).toContain('run: "GOTOOLCHAIN=auto go run golang.org/x/vuln/cmd/govulncheck@latest ./..."');
-  });
-
-  it('writes GitLab CI instead of GitHub Actions when asked, and no CI at all for none', async () => {
-    const project = await detectProject(fixture('nextjs'));
-    const gitlab = generateFiles(project, registry, { ...options, ci: 'gitlab' });
-    const paths = gitlab.files.map((f) => f.path);
-    expect(paths).toContain('.gitlab-ci.yml');
-    expect(paths).not.toContain('.github/workflows/ci.yml');
-    expect(gitlab.notes).toHaveLength(1);
-
-    const none = generateFiles(project, registry, { ...options, ci: 'none' });
-    expect(none.files.map((f) => f.path).filter((p) => p.includes('ci.yml'))).toEqual([]);
-    expect(none.notes).toEqual([]);
+  it('writes no CI pipeline: CI stays the repository owner\'s choice', async () => {
+    const { paths } = await generate('turborepo');
+    expect(paths.filter((p) => p.startsWith('.github/') || p === '.gitlab-ci.yml')).toEqual([]);
   });
 
   it('keeps AGENTS.md compact: always rules on one line, on-demand rules with their purpose, skills by name', async () => {

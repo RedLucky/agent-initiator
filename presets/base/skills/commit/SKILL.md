@@ -15,6 +15,6 @@ description: Prepare a git commit with the project's message format and get expl
    <optional body: why this change, wrapped at 72 chars>
    ```
    Types: feat, fix, refactor, perf, test, docs, build, ci, chore, style, revert.
-   If the change touches code but truly needs no wiki update (e.g. a dependency bump), add a body line `Wiki: not needed (<reason>)`; the pre-push hook and CI warn otherwise.
+   If the change touches code but truly needs no wiki update (e.g. a dependency bump), add a body line `Wiki: not needed (<reason>)`; the pre-push hook warns otherwise.
 5. **Ask for approval** — show the file list and the exact message, then **stop and wait**. Do not run `git commit` until the user explicitly says yes.
 6. **Commit** only after approval, with **exactly** the approved message: no `Co-Authored-By:` or other attribution trailers, nothing added or reworded. **Push** requires its own separate approval.

@@ -64,10 +64,9 @@ const BASE_REQUIREMENTS: Array<[string, string, string[]]> = [
   ['git hooks for every language: lefthook commit-msg check', 'lefthook.yml', ['commit-msg:', '"check-message.sh":', 'lefthook install']],
   ['commit-msg script enforces the format and rejects attribution trailers', '.lefthook/commit-msg/check-message.sh', ['TASK-[0-9]+', 'co-authored-by']],
   ['never bypass git hooks', 'AGENTS.md', ['Bypass git hooks with `--no-verify`']],
-  ['wiki reminder before push and in CI, with a stated escape', '.agents/rules/documentation.md', ['warn (without blocking)', '`Wiki: not needed (<reason>)`']],
+  ['wiki reminder before push and in CI, with a stated escape', '.agents/rules/documentation.md', ['warns (without blocking)', '`Wiki: not needed (<reason>)`']],
   ['commit skill explains the wiki escape line', '.agents/skills/commit/SKILL.md', ['Wiki: not needed (<reason>)']],
   ['pre-push wiki check script', '.lefthook/pre-push/check-wiki.sh', ['docs/wiki/en/', 'Wiki: not needed', '--range']],
-  ['CI pipeline: least privilege, locked install, gates in order', '.github/workflows/ci.yml', ['permissions:\n  contents: read', '--frozen-lockfile', 'name: install']],
   ['wiki skeleton: task table for AI agents', 'docs/wiki/en/index.md', ['## For AI agents: task → page', 'AI agents read the English pages only']],
   ['DoD rejects log-only wiki updates', '.agents/skills/definition-of-done/SKILL.md', ['A log entry alone does not pass']],
   // --- Karpathy (minus Simplicity First, replaced by ponytail)

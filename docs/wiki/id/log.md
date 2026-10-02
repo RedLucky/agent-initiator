@@ -9,6 +9,11 @@ Entri terbaru di atas. Format:
 - File: ...
 ```
 
+## 2026-10-02 — refactor(TASK-7110): remove CI pipeline generation
+- Apa: `init` tidak lagi menulis file GitHub Actions atau GitLab CI: renderer CI, opsi `--ci`, deteksi remote dan CI yang sudah ada, deteksi `packageManager` beserta catatan pin, dan job wiki khusus peringatan dihapus. Repository ini membuang `.github/workflows/ci.yml` dan pin pnpm. Yang tetap: audit hanya gagal untuk advisory high dan critical, dan audit Go memakai `go run …govulncheck@latest`. Rule ci-quality-gates kembali menjadi panduan umum.
+- Kenapa: CI hasil generate butuh perawatan terus-menerus (versi action, image Docker, trik corepack dan toolchain) dan melampaui konfigurasi agent; tujuannya tool yang minimalis, termasuk saat instal dari awal.
+- File: src/generate.ts, src/cli.ts, src/types.ts, src/detect/*, src/render/{github-ci,gitlab-ci}.ts (removed), presets/base/rules/ci-quality-gates.md, package.json, docs/wiki/*, README.md, test/*
+
 ## 2026-10-02 — perf(TASK-7106): slim AGENTS.md to about 2,500 tokens
 - Apa: AGENTS.md root menyusut dari sekitar 4.000 menjadi sekitar 2.500 token (16–17 KB menjadi 9,5–11 KB): Required tooling menyisakan satu baris cara pakai per tool dan tujuan serta langkah instal pindah ke rule hasil generate `.agents/rules/required-tooling.md`; rule `always` dicantumkan dalam satu baris dan rule berlingkup dengan pola file-nya (rule tanpa globs tampil sebagai "on demand" dengan deskripsinya, sekaligus memperbaiki `api-design` yang tadinya tampil sebagai always); skill dicantumkan berdasarkan nama. Constraints dan Definition of Done tidak berubah. Sebuah test menjaga AGENTS.md root setiap fixture maksimal 12 KiB. AGENTS.md repository ini memakai bagian yang sama.
 - Kenapa: Agent membaca AGENTS.md di awal setiap sesi, jadi perintah instal dan deskripsi yang berulang memakan token setiap kali tanpa mengubah perilaku.

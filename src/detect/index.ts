@@ -43,7 +43,7 @@ export async function detectProject(root: string, options: DetectOptions = {}): 
  * then a single manifest at the root, then one level of sub-folders (for example `web/` + `api/`).
  */
 async function detectLayout(root: string, options: DetectOptions): Promise<DetectedProject> {
-  const rootPkg = await readJson<{ name?: string; scripts?: Record<string, string>; packageManager?: string }>(path.join(root, 'package.json'));
+  const rootPkg = await readJson<{ name?: string; scripts?: Record<string, string> }>(path.join(root, 'package.json'));
   const name = rootPkg?.name ?? path.basename(root);
 
   const workspace = await detectWorkspace(root);
@@ -55,7 +55,6 @@ async function detectLayout(root: string, options: DetectOptions): Promise<Detec
       rootScripts: Object.keys(rootPkg?.scripts ?? {}),
       // No root package.json (e.g. a Go + Python moon repo) means there is no root Node install to run.
       rootPackageManager: rootPkg ? await detectNodePackageManager([root], options.nodePackageManager) : undefined,
-      ...(typeof rootPkg?.packageManager === 'string' ? { rootPinnedPackageManager: rootPkg.packageManager } : {}),
       packages: withMoonIds(await detectAll(root, workspace.packageDirs, options), workspace.moonProjectIds),
     };
   }

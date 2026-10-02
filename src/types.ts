@@ -28,8 +28,6 @@ export interface PackageInfo {
   manifests: string[];
   /** ID the monorepo task runner uses for this package when it differs from `name` (moon: folder name or map key). */
   taskRunnerId?: string;
-  /** The `packageManager` field of package.json (e.g. "pnpm@10.19.0"); CI installs exactly this version. */
-  pinnedPackageManager?: string;
 }
 
 export interface DetectedProject {
@@ -40,8 +38,6 @@ export interface DetectedProject {
   /** Root package.json scripts and package manager (monorepos only), used for workspace-wide commands. */
   rootScripts?: string[];
   rootPackageManager?: PackageManager;
-  /** The `packageManager` field of the root package.json (monorepos only). */
-  rootPinnedPackageManager?: string;
   packages: PackageInfo[];
   /** Skills already present in .agents/skills (e.g. shipped by Nx) that are not from our presets. */
   existingSkills?: Skill[];
@@ -130,21 +126,4 @@ export type FileStatus = 'create' | 'skip';
 
 export interface FilePlanEntry extends PlannedFile {
   status: FileStatus;
-}
-
-/** Where the generated CI pipeline runs; `none` writes no CI file. */
-export type CiProvider = 'github' | 'gitlab' | 'none';
-
-/** One CI job: the checks of one package, run in that package's folder. */
-export interface CiJob {
-  /** Package folder relative to the repo root ("." for a single-package repo). */
-  path: string;
-  language: Language;
-  packageManager: PackageManager;
-  /** Install command that refuses to change the lockfile, e.g. `pnpm install --frozen-lockfile`. */
-  install: string;
-  /** Run the install from the repo root: packages of a JavaScript workspace share one lockfile there. */
-  installAtRoot: boolean;
-  /** The checks in the order they run (lint, typecheck, test, build, audit); missing ones are left out. */
-  steps: Array<{ name: string; run: string }>;
 }

@@ -9,6 +9,11 @@ Newest entries first. Format:
 - Files: ...
 ```
 
+## 2026-10-02 — refactor(TASK-7110): remove CI pipeline generation
+- What: `init` no longer writes GitHub Actions or GitLab CI files: removed the CI renderers, the `--ci` option, remote and existing-CI detection, the `packageManager` detection and pin notes, and the warning-only wiki job. This repository drops its `.github/workflows/ci.yml` and the pnpm pin. Kept: audits fail on high and critical advisories only, and Go audits with `go run …govulncheck@latest`. The ci-quality-gates rule is back to general guidance.
+- Why: Generated CI needed constant upkeep (action versions, Docker images, corepack and toolchain workarounds) and went beyond agent configuration; the goal is a minimal tool, also for a fresh install.
+- Files: src/generate.ts, src/cli.ts, src/types.ts, src/detect/*, src/render/{github-ci,gitlab-ci}.ts (removed), presets/base/rules/ci-quality-gates.md, package.json, docs/wiki/*, README.md, test/*
+
 ## 2026-10-02 — perf(TASK-7106): slim AGENTS.md to about 2,500 tokens
 - What: The root AGENTS.md shrank from about 4,000 to about 2,500 tokens (16–17 KB to 9.5–11 KB): Required tooling keeps one usage line per tool and the purposes and install steps move to the generated rule `.agents/rules/required-tooling.md`; `always` rules are listed on one line and scoped rules with their file patterns (rules without globs show as "on demand" with their description, which also fixes `api-design` being shown as always); skills are listed by name. Constraints and the Definition of Done are unchanged. A test keeps every fixture's root AGENTS.md at or below 12 KiB. This repository's AGENTS.md uses the same sections.
 - Why: Agents read AGENTS.md at the start of every session, so install commands and repeated descriptions cost tokens every time without changing behaviour.

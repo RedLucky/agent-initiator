@@ -1,10 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { mkdir, mkdtemp, writeFile } from 'node:fs/promises';
+import { mkdtemp } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { chooseCiProvider, ciHostFromRemote, findExistingCi, readOriginUrl } from '../src/detect/ci.js';
 import { detectProject, overridePresets } from '../src/detect/index.js';
-import { spawnSync } from 'node:child_process';
 import { parseMoonProjectIds, parseMoonWorkspace } from '../src/detect/workspace.js';
 
 const fixture = (name: string) => path.join(import.meta.dirname, 'fixtures', name);
@@ -90,65 +88,6 @@ describe('detectProject extras', () => {
   it('records python manifests', async () => {
     const project = await detectProject(fixture('django'));
     expect(project.packages[0]?.manifests).toEqual(['requirements.txt']);
-  });
-});
-
-describe('detectProject pinned package manager', () => {
-  it('reads the packageManager field of a single package', async () => {
-    const dir = await mkdtemp(path.join(tmpdir(), 'agent-initiator-pin-'));
-    await writeFile(path.join(dir, 'package.json'), JSON.stringify({ name: 'app', packageManager: 'pnpm@10.19.0' }));
-    expect((await detectProject(dir)).packages[0]?.pinnedPackageManager).toBe('pnpm@10.19.0');
-  });
-
-  it('reads the root packageManager field of a workspace and leaves it out when missing', async () => {
-    const dir = await mkdtemp(path.join(tmpdir(), 'agent-initiator-pin-'));
-    await mkdir(path.join(dir, 'apps', 'web'), { recursive: true });
-    await writeFile(path.join(dir, 'apps', 'web', 'package.json'), JSON.stringify({ name: 'web' }));
-    await writeFile(path.join(dir, 'package.json'), JSON.stringify({ name: 'ws', workspaces: ['apps/*'], packageManager: 'yarn@4.5.0' }));
-    const project = await detectProject(dir);
-    expect(project.rootPinnedPackageManager).toBe('yarn@4.5.0');
-    expect(project.packages[0]?.pinnedPackageManager).toBeUndefined();
-  });
-});
-
-describe('CI host from the git remote', () => {
-  it('picks GitLab for gitlab.com and self-hosted gitlab servers, GitHub for everything else', () => {
-    expect(ciHostFromRemote('git@gitlab.com:acme/shop.git')).toBe('gitlab');
-    expect(ciHostFromRemote('https://gitlab.acme.internal/team/shop.git')).toBe('gitlab');
-    expect(ciHostFromRemote('git@github.com:acme/shop.git')).toBe('github');
-    expect(ciHostFromRemote('https://bitbucket.org/acme/shop.git')).toBe('github');
-    expect(ciHostFromRemote(null)).toBe('github');
-  });
-
-  it('reads the origin URL, and returns null without a remote or outside a repo', async () => {
-    const dir = await mkdtemp(path.join(tmpdir(), 'agent-initiator-remote-'));
-    expect(readOriginUrl(dir)).toBeNull();
-    spawnSync('git', ['init', '-q'], { cwd: dir });
-    expect(readOriginUrl(dir)).toBeNull();
-    spawnSync('git', ['remote', 'add', 'origin', 'git@gitlab.com:acme/shop.git'], { cwd: dir });
-    expect(readOriginUrl(dir)).toBe('git@gitlab.com:acme/shop.git');
-  });
-});
-
-describe('existing CI', () => {
-  it('finds GitHub workflows and other CI services, and nothing in a repo without CI', async () => {
-    const dir = await mkdtemp(path.join(tmpdir(), 'agent-initiator-ci-'));
-    expect(await findExistingCi(dir)).toEqual([]);
-    await mkdir(path.join(dir, '.github', 'workflows'), { recursive: true });
-    await writeFile(path.join(dir, '.github', 'workflows', 'test.yaml'), 'on: push\n');
-    await writeFile(path.join(dir, '.github', 'workflows', 'README.md'), 'notes');
-    await writeFile(path.join(dir, 'Jenkinsfile'), 'pipeline {}');
-    expect(await findExistingCi(dir)).toEqual(['.github/workflows/test.yaml', 'Jenkinsfile']);
-  });
-
-  it('lets --ci win, skips CI when the repo has one, and otherwise follows the remote', () => {
-    const existing = ['.github/workflows/test.yml'];
-    expect(chooseCiProvider({ flag: 'gitlab', existingCi: existing, remoteUrl: null }).provider).toBe('gitlab');
-    const skipped = chooseCiProvider({ existingCi: existing, remoteUrl: 'git@gitlab.com:a/b.git' });
-    expect(skipped.provider).toBe('none');
-    expect(skipped.reason).toContain('existing CI found (.github/workflows/test.yml)');
-    expect(chooseCiProvider({ existingCi: [], remoteUrl: 'git@gitlab.com:a/b.git' })).toEqual({ provider: 'gitlab', reason: 'from the git remote origin' });
-    expect(chooseCiProvider({ existingCi: [], remoteUrl: null }).provider).toBe('github');
   });
 });
 
