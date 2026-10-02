@@ -42,7 +42,7 @@ Dengan kata-kata: setelah preset diketahui, tool mendaftar langkah per repositor
 Setelah meng-clone repository, setiap kontributor menjalankan `graphify hook install` lalu `lefthook install` sekali (hook ada di `.git/` dan tidak ikut di-commit). Halaman getting-started hasil generate dan AGENTS.md → Project knowledge sama-sama menyebutkannya.
 
 ## Letaknya di kode
-`src/tooling.ts` (daftar tool dan teksnya), `src/setup.ts` (langkah per repo), `src/doctor.ts` (cek mesin).
+`src/tooling.ts` (daftar tool dan teksnya: baris cara pakai masuk ke AGENTS.md, tujuan dan langkah instal ke rule hasil generate `.agents/rules/required-tooling.md` lewat `src/render/tooling-rule.ts`), `src/setup.ts` (langkah per repo), `src/doctor.ts` (cek mesin).
 
 ## Cara mengeceknya
 `rtk test pnpm vitest run test/setup.test.ts`.

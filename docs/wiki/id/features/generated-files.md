@@ -38,10 +38,10 @@ Dengan kata-kata: daftar file disusun dulu di memori. Setiap file hanya ditulis 
 - Command diambil dari script `package.json` yang sebenarnya dan diberi prefix `rtk`. Script `test` atau `build` yang tidak ada ditandai di Definition of Done, bukan dikarang.
 - App Next.js mendapat blok resmi `nextjs-agent-rules`, sehingga `next dev` tidak mengubah AGENTS.md.
 - Skill yang sudah ada di `.agents/skills/` (misalnya skill resmi Nx) didaftarkan di AGENTS.md dan disalin ke `.claude/skills/`.
-- AGENTS.md di root dijaga tetap di bawah 32 KiB, batas yang dibaca sebagian assistant.
+- AGENTS.md di root dijaga tetap kecil: maksimal 12 KiB, sekitar 2.500 token, karena agent membacanya di awal setiap sesi (sebuah test mengecek setiap fixture; batas keras Codex 32 KiB). AGENTS.md mencantumkan rule dan skill berdasarkan nama dan satu baris cara pakai per tool wajib; langkah instalasi ada di rule hasil generate `.agents/rules/required-tooling.md`, dan setiap rule dan skill membawa deskripsinya sendiri.
 
 ## Letaknya di kode
-`src/generate.ts`, `src/render/agents-md.ts`, `src/render/commands.ts`, `src/write/index.ts`.
+`src/generate.ts`, `src/render/agents-md.ts`, `src/render/commands.ts`, `src/render/tooling-rule.ts` (rule required-tooling), `src/write/index.ts`.
 
 ## Cara mengeceknya
 `rtk test pnpm vitest run test/generate.test.ts test/write.test.ts`.

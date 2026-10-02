@@ -45,10 +45,12 @@ agent-initiator fixes this by generating a **consistent, opinionated and stack-a
 - **An `AGENTS.md` entry point**, read automatically by most agents. It contains:
   - a project overview
   - the exact commands for your stack
-  - required tooling
+  - how to use each required tool (install steps are in `.agents/rules/required-tooling.md`)
   - MUST/NEVER constraints
   - the Definition of Done
   - links to every rule and skill
+  
+  It stays small (about 2,500 tokens, at most 12 KiB) because agents read it at the start of every session; details live in the files it links to.
 - **Detailed rules** (`.agents/rules/`): code quality, naming, error handling and logging, security, architecture, testing, git workflow, documentation, privacy and more, plus framework-specific rules.
 - **Skills** (`.agents/skills/`, in the open [Agent Skills](https://agentskills.io) format): step-by-step workflows such as `plan-task`, `self-review`, `debugging`, `definition-of-done`, `commit`, and framework recipes like `nextjs-add-route` or `nestjs-add-module`.
 - **Claude Code support**: `CLAUDE.md` imports `AGENTS.md`, and skills are mirrored to `.claude/skills/`.
@@ -175,12 +177,12 @@ docs/wiki/{en,id}/                  bilingual wiki knowledge base: index (readin
 - Project overview (plus a package table in monorepos)
 - Commands, prefixed with `rtk`
 - Framework docs
-- Required tooling
+- Required tooling (one usage line per tool)
 - Constraints (MUST / NEVER)
 - Definition of Done
 - Conventions
-- Rules index
-- Skills index
+- Rules index (`always` rules on one line, scoped rules with their file patterns)
+- Skills index (names only; agents read each skill's description themselves)
 
 Commands come from your real `package.json` scripts. If `test` or `build` is missing, the Definition of Done says so instead of inventing a command.
 

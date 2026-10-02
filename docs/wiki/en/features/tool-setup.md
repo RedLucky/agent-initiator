@@ -42,7 +42,7 @@ In words: after the presets are known, the tool lists the per-repository steps. 
 After cloning a repository, each contributor runs `graphify hook install` and then `lefthook install` once (hooks live in `.git/` and are not committed). The generated getting-started page and AGENTS.md → Project knowledge both say so.
 
 ## Where it lives in the code
-`src/tooling.ts` (the tool list and texts), `src/setup.ts` (per-repo steps), `src/doctor.ts` (machine check).
+`src/tooling.ts` (the tool list and texts: the usage line goes into AGENTS.md, purpose and install steps into the generated rule `.agents/rules/required-tooling.md` via `src/render/tooling-rule.ts`), `src/setup.ts` (per-repo steps), `src/doctor.ts` (machine check).
 
 ## How to test it
 `rtk test pnpm vitest run test/setup.test.ts`.

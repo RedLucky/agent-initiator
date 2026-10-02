@@ -24,17 +24,18 @@ export const TOOLS: Tool[] = [
       'brew install rtk   # or: cargo install --git https://github.com/rtk-ai/rtk  (NOT `cargo install rtk`, a different crate)',
       'rtk init -g   # Claude Code / Copilot; use --codex, --gemini or --agent <name> for other agents',
     ],
-    usage: 'Prefix every shell command with `rtk`, including git, file and script commands (commands in this file already are). rtk filters the tools it knows (`rtk --help`) and runs any other command unchanged, keeping its exit code, so the prefix is always safe. Use `rtk proxy <cmd>` only when you need the raw, unfiltered output of a filtered tool.',
+    usage: 'Prefix every shell command with `rtk`, including git, file and script commands. rtk filters the tools it knows and runs any other command unchanged, keeping its exit code, so the prefix is always safe. Use `rtk proxy <cmd>` only for the raw output of a filtered tool.',
     check: { bins: ['rtk'] },
   },
   {
     id: 'graphify',
     name: 'graphify',
     url: 'https://github.com/Graphify-Labs/graphify',
-    purpose: 'Builds a queryable knowledge graph of the codebase.',
+    purpose:
+      'Builds a queryable knowledge graph of the codebase. Output goes to `graphify-out/` (git-ignored unless the team shares it); `.graphifyignore` keeps the Indonesian wiki and change logs out of the graph. The git hooks from `graphify hook install` rebuild it after each commit.',
     install: ['uv tool install graphifyy   # package name has two "y"', 'graphify install   # or: graphify <codex|cursor|gemini|copilot> install'],
     usage:
-      'Build or refresh the code graph with `graphify update .` (reads the code only: no LLM, no tokens; the git hooks from `graphify hook install` keep it current). Run the full `/graphify` extraction, which uses an LLM on documents, only occasionally: the English wiki already explains the concepts. Ask with symbol names and a budget — `graphify affected "X"`, `graphify path "A" "B"`, `graphify explain "X"`, `--budget <tokens>` — before broad grep/find; broad questions return noise. Output goes to `graphify-out/` (git-ignored unless the team shares it); `.graphifyignore` keeps the Indonesian wiki and change logs out of the graph.',
+      'Ask it before broad grep/find, with symbol names and `--budget <tokens>` (see Project knowledge); broad questions return noise. Refresh with `graphify update .` (code only: no LLM, no tokens). Run the full `/graphify` extraction, which uses an LLM, only occasionally: the English wiki already explains the concepts.',
     check: { bins: ['graphify'] },
   },
   {

@@ -49,34 +49,47 @@ function commandTable(commands: Command[]): string[] {
   return ['| Task | Command |', '|------|---------|', ...commands.map((c) => `| ${c.task} | \`${c.command}\` |`)];
 }
 
+/** Markdown link to a rule file, named after the file. */
+const ruleLink = (rule: RuleFile, base: string) => `[${rule.file.replace(/\.md$/, '')}](${base}.agents/rules/${rule.file})`;
+
+/** When a rule applies: `always`, a package scope, its file globs, or on demand (described by its summary). */
 function ruleScope(rule: RuleFile & { scope?: string }): string {
   if (rule.scope) return rule.scope;
-  if (rule.alwaysApply || rule.globs.length === 0) return 'always';
-  return rule.globs.map((g) => `\`${g}\``).join(', ');
+  if (rule.alwaysApply) return 'always';
+  if (rule.globs.length > 0) return rule.globs.map((g) => `\`${g}\``).join(', ');
+  return `on demand: ${rule.description}`;
 }
 
+/**
+ * Lists the rules compactly: `always` rules on one line (they are read for every task anyway, so a summary adds
+ * nothing), then each scoped or on-demand rule with when it applies. Each rule file carries its own description.
+ */
 function rulesSection(rules: Array<RuleFile & { scope?: string }>, base: string): string[] {
   if (rules.length === 0) return [];
+  const always = rules.filter((r) => ruleScope(r) === 'always');
+  const scoped = rules.filter((r) => ruleScope(r) !== 'always');
   return [
     '## Rules',
     '',
-    'Read the matching rule before working in its area. `always` rules apply to every task.',
+    'Read every `always` rule before you start, and a scoped rule before you change matching files.',
     '',
-    '| Rule | Applies | Summary |',
-    '|------|---------|---------|',
-    ...rules.map((r) => `| [${r.file.replace(/\.md$/, '')}](${base}.agents/rules/${r.file}) | ${ruleScope(r)} | ${r.description} |`),
+    ...(always.length > 0 ? [`- **Always:** ${always.map((r) => ruleLink(r, base)).join(', ')}`] : []),
+    ...scoped.map((r) => `- ${ruleLink(r, base)} — ${ruleScope(r)}`),
     '',
   ];
 }
 
+/**
+ * Lists the skills by name only. Agents already read each skill's description from `.agents/skills/` or
+ * `.claude/skills/` to decide when to load it, so repeating the descriptions here only costs tokens.
+ */
 function skillsSection(skills: Skill[], base: string): string[] {
   if (skills.length === 0) return [];
   return [
     '## Skills',
     '',
-    'Skills live in `.agents/skills/` (mirrored to `.claude/skills/` for Claude Code). Load a skill when its description matches the task.',
-    '',
-    ...skills.map((s) => `- [${s.name}](${base}.agents/skills/${s.name}/SKILL.md) — ${s.description}`),
+    'In `.agents/skills/` (mirrored to `.claude/skills/` for Claude Code). Load a skill when its description matches the task:',
+    skills.map((s) => `[${s.name}](${base}.agents/skills/${s.name}/SKILL.md)`).join(', '),
     '',
   ];
 }
@@ -136,18 +149,17 @@ function projectKnowledgeSection(toolIds: string[]): string[] {
   ];
 }
 
+/** How to use each required tool, one line each; install steps live in the required-tooling rule. */
 function toolingSection(toolIds: string[]): string[] {
   if (toolIds.length === 0) return [];
-  const lines = [
+  return [
     '## Required tooling',
     '',
-    'Mandatory for every contributor and agent. Install once per machine (`npx agent-initiator doctor` checks them).',
+    'Mandatory for every contributor and agent. Install steps: [required-tooling](.agents/rules/required-tooling.md); `npx agent-initiator doctor` checks them.',
+    '',
+    ...toolIds.map(getTool).map((tool) => `- **${tool.name}** — ${tool.usage}`),
     '',
   ];
-  for (const tool of toolIds.map(getTool)) {
-    lines.push(`### [${tool.name}](${tool.url})`, tool.purpose, '', `**Use:** ${tool.usage}`, '', '```bash', ...tool.install, '```', '');
-  }
-  return lines;
 }
 
 function dodSection(commands: Command[], hasPackages: boolean): string[] {

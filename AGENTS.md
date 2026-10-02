@@ -63,58 +63,13 @@ Before exploring the code, read the wiki: `docs/wiki/en/index.md` lists every pa
 
 ## Required tooling
 
-Mandatory for every contributor and agent. Install once per machine (`npx agent-initiator doctor` checks them).
+Mandatory for every contributor and agent. Install steps: [required-tooling](.agents/rules/required-tooling.md); `npx agent-initiator doctor` checks them.
 
-### [ponytail](https://github.com/DietrichGebert/ponytail)
-Keeps generated code minimal: the least code that fully solves the task.
-
-**Use:** Write the smallest solution that fully meets the requirement. Never drop validation, security, error handling or accessibility to save lines.
-
-```bash
-# Claude Code (run inside a session):
-/plugin marketplace add DietrichGebert/ponytail
-/plugin install ponytail@ponytail
-# Other agents: see the README (Codex plugin, Gemini extension, Cursor/Windsurf rule files)
-```
-
-### [caveman](https://github.com/JuliusBrussee/caveman)
-Terse response mode that cuts output tokens without losing technical accuracy.
-
-**Use:** Keep chat responses terse. Code, commit messages, PR descriptions and security warnings stay in normal, complete prose.
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/JuliusBrussee/caveman/main/install.sh | bash   # review the script first
-```
-
-### [rtk (Rust Token Killer)](https://github.com/rtk-ai/rtk)
-Filters shell command output so agents spend fewer tokens.
-
-**Use:** Prefix every shell command with `rtk`, including git, file and script commands (commands in this file already are). rtk filters the tools it knows (`rtk --help`) and runs any other command unchanged, keeping its exit code, so the prefix is always safe. Use `rtk proxy <cmd>` only when you need the raw, unfiltered output of a filtered tool.
-
-```bash
-brew install rtk   # or: cargo install --git https://github.com/rtk-ai/rtk  (NOT `cargo install rtk`, a different crate)
-rtk init -g   # Claude Code / Copilot; use --codex, --gemini or --agent <name> for other agents
-```
-
-### [graphify](https://github.com/Graphify-Labs/graphify)
-Builds a queryable knowledge graph of the codebase.
-
-**Use:** Build or refresh the code graph with `graphify update .` (reads the code only: no LLM, no tokens; the git hooks from `graphify hook install` keep it current). Run the full `/graphify` extraction, which uses an LLM on documents, only occasionally: the English wiki already explains the concepts. Ask with symbol names and a budget — `graphify affected "X"`, `graphify path "A" "B"`, `graphify explain "X"`, `--budget <tokens>` — before broad grep/find; broad questions return noise. Output goes to `graphify-out/` (git-ignored unless the team shares it); `.graphifyignore` keeps the Indonesian wiki and change logs out of the graph.
-
-```bash
-uv tool install graphifyy   # package name has two "y"
-graphify install   # or: graphify <codex|cursor|gemini|copilot> install
-```
-
-### [lefthook](https://github.com/evilmartians/lefthook)
-Runs the git hooks in lefthook.yml for every language (commit message check, lint before commit, typecheck and tests before push, graph refresh).
-
-**Use:** The hooks run on every commit. Never bypass them with `--no-verify`; fix what they report. After cloning, run `lefthook install` once.
-
-```bash
-npm i -g lefthook   # or: uv tool install lefthook | go install github.com/evilmartians/lefthook/v2@latest | brew install lefthook
-lefthook install    # once per clone: activates the hooks in lefthook.yml
-```
+- **ponytail** — Write the smallest solution that fully meets the requirement. Never drop validation, security, error handling or accessibility to save lines.
+- **caveman** — Keep chat responses terse. Code, commit messages, PR descriptions and security warnings stay in normal, complete prose.
+- **rtk (Rust Token Killer)** — Prefix every shell command with `rtk`, including git, file and script commands. rtk filters the tools it knows and runs any other command unchanged, keeping its exit code, so the prefix is always safe. Use `rtk proxy <cmd>` only for the raw output of a filtered tool.
+- **graphify** — Ask it before broad grep/find, with symbol names and `--budget <tokens>` (see Project knowledge); broad questions return noise. Refresh with `graphify update .` (code only: no LLM, no tokens). Run the full `/graphify` extraction, which uses an LLM, only occasionally: the English wiki already explains the concepts.
+- **lefthook** — The hooks run on every commit. Never bypass them with `--no-verify`; fix what they report. After cloning, run `lefthook install` once.
 
 ## Constraints
 
@@ -169,36 +124,17 @@ A task is done only when every step passes (use the `definition-of-done` skill):
 
 ## Rules
 
-Read the matching rule before working in its area. `always` rules apply to every task.
+Read every `always` rule before you start, and a scoped rule before you change matching files.
 
-| Rule | Applies | Summary |
-|------|---------|---------|
-| [architecture](.agents/rules/architecture.md) | always | Architecture for reusability, testability, maintainability and scalability |
-| [ci-quality-gates](.agents/rules/ci-quality-gates.md) | `.github/workflows/**`, `.gitlab-ci.yml`, `.husky/**`, `lefthook.yml`, `.pre-commit-config.yaml`, `commitlint.config.*` | CI quality gates — pipeline order, pre-commit hooks, commit linting, branch protection |
-| [code-quality](.agents/rules/code-quality.md) | always | Code quality baseline — clean, SOLID, DRY, KISS, readable, no AI slop or over-engineering |
-| [data-privacy](.agents/rules/data-privacy.md) | always | Data privacy — PII classification, minimisation, masking, retention (UU PDP No. 27/2022, GDPR) |
-| [dependencies](.agents/rules/dependencies.md) | `package.json`, `pyproject.toml`, `requirements*.txt`, `go.mod` | Dependency management — minimal, pinned, audited, licence-checked third-party packages |
-| [documentation](.agents/rules/documentation.md) | always | Documentation — the bilingual wiki (docs/wiki/en and docs/wiki/id) is a knowledge base for new and experienced developers and non-developers; every change updates the pages of its topic |
-| [error-handling-logging](.agents/rules/error-handling-logging.md) | always | Error handling and structured logging standards |
-| [git-workflow](.agents/rules/git-workflow.md) | always | Git workflow — no auto commit/push, confirmation first, commit message format with issue/task prefix |
-| [llm-discipline](.agents/rules/llm-discipline.md) | always | LLM engineering discipline (Karpathy-inspired) — think first, surgical changes, goal-driven execution |
-| [naming-conventions](.agents/rules/naming-conventions.md) | always | Naming conventions for variables, functions, classes, files and folders |
-| [observability](.agents/rules/observability.md) | always | Observability — structured logs, metrics, tracing, correlation IDs, health checks, error tracking |
-| [release-versioning](.agents/rules/release-versioning.md) | `CHANGELOG.md`, `package.json`, `pyproject.toml` | Release and versioning — SemVer, changelog from conventional commits, feature flags, safe rollout |
-| [security](.agents/rules/security.md) | always | Security awareness and guardrails for all code and agent actions |
-| [testing](.agents/rules/testing.md) | always | Testing standards — mandatory unit tests, coverage threshold, integration tests at boundaries |
-| [javascript](.agents/rules/javascript.md) | `**/*.js`, `**/*.mjs`, `**/*.cjs`, `**/*.jsx`, `**/*.ts`, `**/*.tsx` | JavaScript/Node.js conventions — naming, modules, async, errors and logging |
-| [typescript](.agents/rules/typescript.md) | `**/*.ts`, `**/*.tsx`, `**/*.mts`, `**/*.cts` | TypeScript conventions — strict typing, runtime validation at boundaries, type naming |
+- **Always:** [architecture](.agents/rules/architecture.md), [code-quality](.agents/rules/code-quality.md), [data-privacy](.agents/rules/data-privacy.md), [documentation](.agents/rules/documentation.md), [error-handling-logging](.agents/rules/error-handling-logging.md), [git-workflow](.agents/rules/git-workflow.md), [llm-discipline](.agents/rules/llm-discipline.md), [naming-conventions](.agents/rules/naming-conventions.md), [observability](.agents/rules/observability.md), [security](.agents/rules/security.md), [testing](.agents/rules/testing.md)
+- [ci-quality-gates](.agents/rules/ci-quality-gates.md) — `.github/workflows/**`, `.gitlab-ci.yml`, `.husky/**`, `lefthook.yml`, `.pre-commit-config.yaml`, `commitlint.config.*`
+- [dependencies](.agents/rules/dependencies.md) — `package.json`, `pyproject.toml`, `requirements*.txt`, `go.mod`
+- [release-versioning](.agents/rules/release-versioning.md) — `CHANGELOG.md`, `package.json`, `pyproject.toml`
+- [javascript](.agents/rules/javascript.md) — `**/*.js`, `**/*.mjs`, `**/*.cjs`, `**/*.jsx`, `**/*.ts`, `**/*.tsx`
+- [typescript](.agents/rules/typescript.md) — `**/*.ts`, `**/*.tsx`, `**/*.mts`, `**/*.cts`
+- [required-tooling](.agents/rules/required-tooling.md) — on demand: Required tooling — what each tool is for, how to install it once per machine and set it up per repository
 
 ## Skills
 
-Skills live in `.agents/skills/` (mirrored to `.claude/skills/` for Claude Code). Load a skill when its description matches the task.
-
-- [commit](.agents/skills/commit/SKILL.md) — Prepare a git commit with the project's message format and get explicit user approval first. Use whenever changes are ready to be committed or the user asks to commit/push.
-- [debugging](.agents/skills/debugging/SKILL.md) — Systematic debugging workflow — reproduce, isolate, hypothesise, prove with a failing test, fix, verify. Use for any bug, failing test, crash or unexpected behaviour, before changing code.
-- [definition-of-done](.agents/skills/definition-of-done/SKILL.md) — Mandatory completion checklist. Use before claiming any coding task is done, fixed or ready — verifies self-review, unit tests and coverage, build, dependency audit and bilingual wiki/log updates.
-- [plan-task](.agents/skills/plan-task/SKILL.md) — Break a feature or change into a numbered plan of small, verifiable tasks (TASK-<n>) with acceptance criteria. Use before any multi-step work, and whenever a commit needs a task number because there is no issue.
-- [self-review](.agents/skills/self-review/SKILL.md) — Review your own diff like a strict senior reviewer before declaring work done. Use after implementing a change and before running the definition-of-done checklist or proposing a commit.
-- [update-wiki](.agents/skills/update-wiki/SKILL.md) — Update the bilingual wiki knowledge base (docs/wiki/en and docs/wiki/id) — the page of the topic you worked on (create it if missing), related pages, index and change log. Use after any change to behaviour, architecture, setup, APIs or conventions, as part of the definition of done.
-- [write-adr](.agents/skills/write-adr/SKILL.md) — Record an Architecture Decision Record (ADR) in the bilingual wiki. Use when choosing or changing a framework, database, architecture pattern, integration, or any decision that is costly to reverse.
-- [write-unit-test](.agents/skills/write-unit-test/SKILL.md) — Workflow for writing focused, deterministic unit tests. Use when adding a feature, fixing a bug (reproduce first), or when code lacks tests.
+In `.agents/skills/` (mirrored to `.claude/skills/` for Claude Code). Load a skill when its description matches the task:
+[commit](.agents/skills/commit/SKILL.md), [debugging](.agents/skills/debugging/SKILL.md), [definition-of-done](.agents/skills/definition-of-done/SKILL.md), [plan-task](.agents/skills/plan-task/SKILL.md), [self-review](.agents/skills/self-review/SKILL.md), [update-wiki](.agents/skills/update-wiki/SKILL.md), [write-adr](.agents/skills/write-adr/SKILL.md), [write-unit-test](.agents/skills/write-unit-test/SKILL.md)

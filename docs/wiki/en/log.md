@@ -9,6 +9,11 @@ Newest entries first. Format:
 - Files: ...
 ```
 
+## 2026-10-02 — perf(TASK-7106): slim AGENTS.md to about 2,500 tokens
+- What: The root AGENTS.md shrank from about 4,000 to about 2,500 tokens (16–17 KB to 9.5–11 KB): Required tooling keeps one usage line per tool and the purposes and install steps move to the generated rule `.agents/rules/required-tooling.md`; `always` rules are listed on one line and scoped rules with their file patterns (rules without globs show as "on demand" with their description, which also fixes `api-design` being shown as always); skills are listed by name. Constraints and the Definition of Done are unchanged. A test keeps every fixture's root AGENTS.md at or below 12 KiB. This repository's AGENTS.md uses the same sections.
+- Why: Agents read AGENTS.md at the start of every session, so install commands and repeated descriptions cost tokens every time without changing behaviour.
+- Files: src/render/agents-md.ts, src/render/tooling-rule.ts, src/generate.ts, src/tooling.ts, AGENTS.md, .agents/rules/required-tooling.md, README.md, test/*
+
 ## 2026-10-02 — feat(TASK-7105): warn when code changes without a wiki update
 - What: New `.lefthook/pre-push/check-wiki.sh` (POSIX sh) warns when code (anything outside `docs/` and Markdown) changed but `docs/wiki/en/` did not, unless a commit message has `Wiki: not needed (<reason>)`. It runs before every push (lefthook, `use_stdin`) and in a `wiki check (warning only)` job for pull/merge requests; it never blocks. The documentation rule and commit skill explain the escape line. This repository uses the same hook and CI job.
 - Why: Agents and people still forgot the wiki even though the rule requires it; a reminder at push and review time catches it while leaving the judgment to a person.

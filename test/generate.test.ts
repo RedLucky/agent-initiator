@@ -1,3 +1,4 @@
+import { readdirSync } from 'node:fs';
 import path from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { detectProject } from '../src/detect/index.js';
@@ -79,7 +80,7 @@ describe('generateFiles', () => {
     expect(root).toContain('| test | `rtk test pnpm run test` |');
     expect(root).toContain('[`apps/web`](apps/web/AGENTS.md)');
     expect(root).toContain('[add-package](.agents/skills/add-package/SKILL.md)');
-    expect(root).toContain('| [nextjs](.agents/rules/nextjs.md) | `apps/web` |');
+    expect(root).toContain('- [nextjs](.agents/rules/nextjs.md) — `apps/web`');
 
     expect(root).toContain('## Project knowledge');
     const web = file('apps/web/AGENTS.md') ?? '';
@@ -127,7 +128,7 @@ describe('generateFiles', () => {
     expect(root).toContain('[`apps/web`](apps/web/AGENTS.md)');
     expect(root).toContain('[`apps/api`](apps/api/AGENTS.md)');
     expect(root).toContain('[`apps/service`](apps/service/AGENTS.md)');
-    expect(root).toContain('| [moonrepo](.agents/rules/moonrepo.md) |');
+    expect(root).toContain('[moonrepo](.agents/rules/moonrepo.md)');
     expect(root).toContain('Run tasks through moon');
     expect(root).toContain('.moon/cache/');
 
@@ -155,6 +156,13 @@ describe('generateFiles', () => {
     expect(Buffer.byteLength(agents)).toBeLessThan(AGENTS_MD_MAX_BYTES);
   });
 
+  // Agents read the root AGENTS.md at the start of every session, so every byte costs tokens each time.
+  // 12 KiB is about 3,000 tokens; install steps and rule/skill details belong in the files AGENTS.md links to.
+  it.each(readdirSync(path.join(import.meta.dirname, 'fixtures')))('keeps the %s root AGENTS.md within the 12 KiB token budget', async (name) => {
+    const agents = (await generate(name)).file('AGENTS.md') ?? '';
+    expect(Buffer.byteLength(agents)).toBeLessThanOrEqual(12 * 1024);
+  });
+
   it('puts the official Next.js block in the AGENTS.md next to the Next.js app', async () => {
     const single = (await generate('nextjs')).file('AGENTS.md') ?? '';
     expect(single).toContain('<!-- BEGIN:nextjs-agent-rules -->');
@@ -173,7 +181,7 @@ describe('generateFiles', () => {
 
   it('indexes skills already in .agents/skills and mirrors them for Claude Code', async () => {
     const { file, paths } = await generate('nx-skills');
-    expect(file('AGENTS.md')).toContain('[nx-run-tasks](.agents/skills/nx-run-tasks/SKILL.md) — Helps with running tasks in an Nx workspace.');
+    expect(file('AGENTS.md')).toContain('[nx-run-tasks](.agents/skills/nx-run-tasks/SKILL.md)');
     expect(paths).toContain('.claude/skills/nx-run-tasks/SKILL.md');
     expect(paths).not.toContain('.agents/skills/nx-run-tasks/SKILL.md');
   });
@@ -269,6 +277,15 @@ describe('Project knowledge section', () => {
     const none = generateFiles(project, registry, { ...options, ci: 'none' });
     expect(none.files.map((f) => f.path).filter((p) => p.includes('ci.yml'))).toEqual([]);
     expect(none.notes).toEqual([]);
+  });
+
+  it('keeps AGENTS.md compact: always rules on one line, on-demand rules with their purpose, skills by name', async () => {
+    const agents = (await generate('express')).file('AGENTS.md') ?? '';
+    expect(agents).toMatch(/- \*\*Always:\*\* \[architecture\]\(\.agents\/rules\/architecture\.md\), /);
+    expect(agents).toContain('- [api-design](.agents/rules/api-design.md) — on demand: Backend/API standards');
+    expect(agents).toContain('- [required-tooling](.agents/rules/required-tooling.md) — on demand: Required tooling');
+    expect(agents).toContain('[commit](.agents/skills/commit/SKILL.md), ');
+    expect(agents).not.toContain('```bash');
   });
 });
 

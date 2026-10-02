@@ -9,6 +9,11 @@ Entri terbaru di atas. Format:
 - File: ...
 ```
 
+## 2026-10-02 — perf(TASK-7106): slim AGENTS.md to about 2,500 tokens
+- Apa: AGENTS.md root menyusut dari sekitar 4.000 menjadi sekitar 2.500 token (16–17 KB menjadi 9,5–11 KB): Required tooling menyisakan satu baris cara pakai per tool dan tujuan serta langkah instal pindah ke rule hasil generate `.agents/rules/required-tooling.md`; rule `always` dicantumkan dalam satu baris dan rule berlingkup dengan pola file-nya (rule tanpa globs tampil sebagai "on demand" dengan deskripsinya, sekaligus memperbaiki `api-design` yang tadinya tampil sebagai always); skill dicantumkan berdasarkan nama. Constraints dan Definition of Done tidak berubah. Sebuah test menjaga AGENTS.md root setiap fixture maksimal 12 KiB. AGENTS.md repository ini memakai bagian yang sama.
+- Kenapa: Agent membaca AGENTS.md di awal setiap sesi, jadi perintah instal dan deskripsi yang berulang memakan token setiap kali tanpa mengubah perilaku.
+- File: src/render/agents-md.ts, src/render/tooling-rule.ts, src/generate.ts, src/tooling.ts, AGENTS.md, .agents/rules/required-tooling.md, README.md, test/*
+
 ## 2026-10-02 — feat(TASK-7105): warn when code changes without a wiki update
 - Apa: `.lefthook/pre-push/check-wiki.sh` (sh POSIX) baru memberi peringatan kalau kode (apa pun di luar `docs/` dan Markdown) berubah tapi `docs/wiki/en/` tidak, kecuali ada pesan commit dengan `Wiki: not needed (<alasan>)`. Script berjalan sebelum setiap push (lefthook, `use_stdin`) dan di job `wiki check (warning only)` untuk pull/merge request; tidak pernah memblokir. Rule documentation dan skill commit menjelaskan baris pengecualiannya. Repository ini memakai hook dan job CI yang sama.
 - Kenapa: Agent dan orang masih lupa wiki walaupun rule mewajibkannya; pengingat saat push dan review menangkapnya sambil tetap menyerahkan penilaian ke manusia.

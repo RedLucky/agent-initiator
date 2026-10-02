@@ -38,10 +38,10 @@ In words: the file list is built in memory first. Each file is written only when
 - Commands come from the real `package.json` scripts and are prefixed with `rtk`. A missing `test` or `build` script is flagged in the Definition of Done instead of invented.
 - Next.js apps get the official `nextjs-agent-rules` block, so `next dev` leaves AGENTS.md alone.
 - Skills already in `.agents/skills/` (for example Nx's official skills) are listed in AGENTS.md and copied to `.claude/skills/`.
-- The root AGENTS.md stays under 32 KiB, the limit some assistants read.
+- The root AGENTS.md stays small: at most 12 KiB, about 2,500 tokens, because agents read it at the start of every session (a test checks every fixture; Codex's hard limit is 32 KiB). It lists rules and skills by name and keeps one usage line per required tool; install steps are in the generated rule `.agents/rules/required-tooling.md`, and each rule and skill carries its own description.
 
 ## Where it lives in the code
-`src/generate.ts`, `src/render/agents-md.ts`, `src/render/commands.ts`, `src/write/index.ts`.
+`src/generate.ts`, `src/render/agents-md.ts`, `src/render/commands.ts`, `src/render/tooling-rule.ts` (required-tooling rule), `src/write/index.ts`.
 
 ## How to test it
 `rtk test pnpm vitest run test/generate.test.ts test/write.test.ts`.

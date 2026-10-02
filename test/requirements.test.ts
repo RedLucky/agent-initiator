@@ -79,7 +79,8 @@ const BASE_REQUIREMENTS: Array<[string, string, string[]]> = [
   ['DoD skill: tests, build, wiki, log', '.agents/skills/definition-of-done/SKILL.md', ['Unit tests & coverage', '**Build**', '`docs/wiki/en/`', '`docs/wiki/id/`', '`log.md`']],
   ['DoD in AGENTS.md', 'AGENTS.md', ['## Definition of Done', 'Unit tests pass', 'Build succeeds', 'Dependencies audited', 'Wiki updated in both', 'a log entry alone is not enough']],
   // --- mandatory tooling
-  ['tooling: ponytail, caveman, rtk, graphify, lefthook', 'AGENTS.md', ['## Required tooling', 'ponytail', 'caveman', 'rtk (Rust Token Killer)', 'graphify', '[lefthook]']],
+  ['tooling: ponytail, caveman, rtk, graphify, lefthook', 'AGENTS.md', ['## Required tooling', 'ponytail', 'caveman', 'rtk (Rust Token Killer)', 'graphify', '**lefthook**', '.agents/rules/required-tooling.md']],
+  ['required-tooling rule: purpose and install steps per tool', '.agents/rules/required-tooling.md', ['## [ponytail]', '## [rtk (Rust Token Killer)]', 'uv tool install graphifyy', 'npm i -g lefthook', 'alwaysApply: false']],
   ['rtk prefix on every command', 'AGENTS.md', ['Prefix every shell command with `rtk`, including git, file and script commands', 'runs any other command unchanged, keeping its exit code', '`rtk test ']],
   // --- skills & industry additions (items 1-10, 13, 14)
   ['commit skill asks for approval', '.agents/skills/commit/SKILL.md', ['**Ask for approval**', 'stop and wait', 'Push** requires its own separate approval']],

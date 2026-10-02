@@ -5,6 +5,7 @@ import { renderPackageAgentsMd, renderRootAgentsMd, type PackageSummary } from '
 import { renderGithubCi } from './render/github-ci.js';
 import { renderGitlabCi } from './render/gitlab-ci.js';
 import { renderLefthookConfig, type HookCheck } from './render/lefthook.js';
+import { renderToolingRule } from './render/tooling-rule.js';
 import type { CiJob, CiProvider, DetectedProject, PackageInfo, PackageManager, PlannedFile, ProjectKind, ResolvedConfig, RuleFile } from './types.js';
 
 export interface GenerateOptions {
@@ -187,6 +188,9 @@ export function generateFiles(project: DetectedProject, registry: Registry, opti
   const presetSkillNames = new Set(root.skills.map((s) => s.name));
   const existingSkills = (project.existingSkills ?? []).filter((s) => !presetSkillNames.has(s.name));
   const allSkills = [...root.skills, ...existingSkills];
+  // Install steps for the required tools live in a rendered rule, so AGENTS.md only keeps how to use them.
+  const toolingRule = renderToolingRule(root.tooling);
+  const rootRules = toolingRule ? [...root.rules, toolingRule] : root.rules;
 
   files.push({
     path: 'AGENTS.md',
@@ -205,7 +209,7 @@ export function generateFiles(project: DetectedProject, registry: Registry, opti
       conventions: multi ? listFrom(registry, shared, 'conventions') : root.conventions,
       must: multi ? listFrom(registry, shared, 'must') : root.must,
       never: multi ? listFrom(registry, shared, 'never') : root.never,
-      rules: scopeRules(configs, root.rules, shared, multi),
+      rules: scopeRules(configs, rootRules, shared, multi),
       skills: allSkills,
     }),
   });
@@ -236,7 +240,7 @@ export function generateFiles(project: DetectedProject, registry: Registry, opti
     });
   }
 
-  for (const rule of root.rules) files.push({ path: `.agents/rules/${rule.file}`, content: rule.content });
+  for (const rule of rootRules) files.push({ path: `.agents/rules/${rule.file}`, content: rule.content });
 
   // Claude Code only reads .claude/skills, so every skill is mirrored there as a plain copy (symlinks break on Windows).
   for (const skill of root.skills) {
