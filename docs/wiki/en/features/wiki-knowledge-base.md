@@ -22,6 +22,22 @@ flowchart TD
 
 In words: when a change is finished, the agent looks for the wiki page about that topic. If there is none, it creates one and lists it in `index.md`. It then updates related pages, mirrors everything to Indonesian and adds a log entry. If only the log changed, the Definition of Done does not pass.
 
+## Reminder when the wiki is forgotten
+Rules are easy to forget, so a small script checks it before every push and on every pull or merge request:
+
+```
+code changed? ──no──▶ fine
+     │ yes
+docs/wiki/en/ changed too? ──yes──▶ fine
+     │ no
+a commit says "Wiki: not needed (<reason>)"? ──yes──▶ fine
+     │ no
+     ▼
+warning (the push or merge still goes through)
+```
+
+In words: files under `docs/` and Markdown files are not code; anything else is. When code changed but no English wiki page did, the script prints a warning that points to the `update-wiki` skill. Some changes truly need no wiki update, such as a dependency bump or a CI tweak; then one commit message gets a line like `Wiki: not needed (dependency bump only)`. It is a reminder, not a gate: it never blocks a push or a merge, because only a person can judge whether a page is really needed.
+
 ## Rules and skills
 - The rule `documentation` (in `.agents/rules/`) tells AI agents and people how to write and maintain the wiki:
   - every page starts with an **In short** section in everyday language, followed by details for developers;
@@ -40,6 +56,7 @@ In words: when a change is finished, the agent looks for the wiki page about tha
 | Workflow | `presets/base/skills/update-wiki/SKILL.md` |
 | Definition of Done line in generated AGENTS.md | `src/render/agents-md.ts` (`dodSection`) |
 | Starting pages for new repositories | `presets/base/files/docs/wiki/{en,id}/` |
+| Reminder script (pre-push and CI) | `presets/base/files/.lefthook/pre-push/check-wiki.sh`, tested in `test/check-wiki.test.ts` |
 | Guards that keep these rules from disappearing | `test/requirements.test.ts` |
 | Guard for this repository's own wiki (twins, In short, index, diagrams, log entries outside the format example) | `test/wiki.test.ts` |
 

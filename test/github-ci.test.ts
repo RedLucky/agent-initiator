@@ -83,4 +83,11 @@ describe('renderGithubCi', () => {
     const yaml = renderGithubCi([job({ steps: [{ name: 'build', run: "python -m compileall -x '\\.venv' ." }] })]);
     expect(yaml).toContain(`run: "python -m compileall -x '\\\\.venv' ."`);
   });
+  it('adds a wiki reminder for pull requests that never fails the check', () => {
+    const yaml = renderGithubCi([job({})]);
+    expect(yaml).toContain("  wiki-check:\n    name: \"wiki check (warning only)\"\n    if: github.event_name == 'pull_request'");
+    expect(yaml).toContain('          fetch-depth: 0');
+    expect(yaml).toContain('        continue-on-error: true');
+    expect(yaml).toContain('run: sh .lefthook/pre-push/check-wiki.sh --range "$BASE_SHA" "$HEAD_SHA"');
+  });
 });

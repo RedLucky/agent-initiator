@@ -9,6 +9,11 @@ Entri terbaru di atas. Format:
 - File: ...
 ```
 
+## 2026-10-02 — feat(TASK-7105): warn when code changes without a wiki update
+- Apa: `.lefthook/pre-push/check-wiki.sh` (sh POSIX) baru memberi peringatan kalau kode (apa pun di luar `docs/` dan Markdown) berubah tapi `docs/wiki/en/` tidak, kecuali ada pesan commit dengan `Wiki: not needed (<alasan>)`. Script berjalan sebelum setiap push (lefthook, `use_stdin`) dan di job `wiki check (warning only)` untuk pull/merge request; tidak pernah memblokir. Rule documentation dan skill commit menjelaskan baris pengecualiannya. Repository ini memakai hook dan job CI yang sama.
+- Kenapa: Agent dan orang masih lupa wiki walaupun rule mewajibkannya; pengingat saat push dan review menangkapnya sambil tetap menyerahkan penilaian ke manusia.
+- File: presets/base/files/.lefthook/pre-push/check-wiki.sh, src/render/{lefthook,github-ci,gitlab-ci}.ts, presets/base/rules/documentation.md, presets/base/skills/commit/SKILL.md, lefthook.yml, .github/workflows/ci.yml, test/*
+
 ## 2026-10-02 — feat(TASK-7104): choose GitLab or GitHub CI and keep existing CI
 - Apa: `init --ci github|gitlab|none` memilih pipeline. Tanpa itu, repository yang sudah punya CI (workflow GitHub, `.gitlab-ci.yml`, Jenkins, CircleCI, Azure, Bitbucket, Travis) tidak mendapat file CI dan mendapat catatan untuk mengecek urutannya; kalau tidak, git remote yang menyebut gitlab mendapat `.gitlab-ci.yml` (satu job per package, image resmi, merge request dan branch default), selain itu GitHub Actions. `CiJob` dipindah ke `src/types.ts` supaya dipakai kedua renderer.
 - Kenapa: Project GitLab mendapat workflow GitHub yang tidak bisa dijalankan, dan repository dengan CI sendiri mendapat pipeline kedua yang menjalankan cek yang sama dua kali.

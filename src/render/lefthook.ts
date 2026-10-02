@@ -24,10 +24,10 @@ export interface LefthookOptions {
  * Renders the commands of one hook as YAML lines. Values are JSON strings, which are valid YAML,
  * so quotes or colons in a command cannot break the file.
  */
-function checkLines(hook: HookCheck['hook'], checks: HookCheck[]): string[] {
+function commandLines(hook: HookCheck['hook'], checks: HookCheck[]): string[] {
   const own = checks.filter((check) => check.hook === hook);
   if (own.length === 0) return [];
-  const lines = ['', `${hook}:`, '  commands:'];
+  const lines = ['  commands:'];
   for (const check of own) {
     lines.push(`    ${JSON.stringify(check.name)}:`);
     if (check.packagePath) lines.push(`      root: ${JSON.stringify(`${check.packagePath}/`)}`);
@@ -41,6 +41,7 @@ function checkLines(hook: HookCheck['hook'], checks: HookCheck[]): string[] {
  * Renders lefthook.yml: git hooks that work for every language.
  * - commit-msg runs `.lefthook/commit-msg/check-message.sh` (format `type(#n|TASK-n): subject`, no attribution trailers).
  * - pre-commit runs the quick checks (lint), pre-push the slower ones (typecheck, test).
+ * - pre-push also runs `.lefthook/pre-push/check-wiki.sh`, which only warns when code changed without a wiki update.
  * - post-commit rebuilds the graphify graph. lefthook replaces existing git hooks, so graphify's own post-commit
  *   hook would stop running; listing it here keeps the graph current.
  * @param options - Which optional hooks to include.
@@ -56,9 +57,19 @@ export function renderLefthookConfig(options: LefthookOptions): string {
     '  scripts:',
     '    "check-message.sh":',
     '      runner: sh',
-    ...checkLines('pre-commit', options.checks),
-    ...checkLines('pre-push', options.checks),
   ];
+  const preCommit = commandLines('pre-commit', options.checks);
+  if (preCommit.length > 0) lines.push('', 'pre-commit:', ...preCommit);
+  lines.push(
+    '',
+    'pre-push:',
+    '  scripts:',
+    '    "check-wiki.sh":',
+    '      runner: sh',
+    // The script reads the pushed refs from stdin; without this lefthook would wait forever.
+    '      use_stdin: true',
+    ...commandLines('pre-push', options.checks),
+  );
   if (options.graphify) {
     lines.push(
       '',

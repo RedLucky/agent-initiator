@@ -159,7 +159,7 @@ In `--yes` mode, an empty folder without `--framework`, `--apps` or `--preset` s
 ```
 AGENTS.md                           entry point for every agent (see "What you get")
 CLAUDE.md                           "@AGENTS.md" so Claude Code reads the same instructions
-lefthook.yml, .lefthook/            git hooks for every language: lint + message check on commit, typecheck + tests on push
+lefthook.yml, .lefthook/            git hooks for every language: lint + message check on commit, typecheck + tests + wiki reminder on push
 .github/workflows/ci.yml            GitHub Actions: lint → typecheck → test → build → audit, one job per package
 .gitlab-ci.yml                      the same for GitLab (GitLab remote or --ci gitlab); no CI file if the repo has CI
 .agents/rules/*.md                  rules (frontmatter: description, globs, alwaysApply)

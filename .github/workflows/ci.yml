@@ -34,3 +34,18 @@ jobs:
         run: "pnpm run build"
       - name: audit
         run: "pnpm audit --audit-level high"
+
+  wiki-check:
+    name: "wiki check (warning only)"
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: wiki updated with the code?
+        continue-on-error: true
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: sh .lefthook/pre-push/check-wiki.sh --range "$BASE_SHA" "$HEAD_SHA"

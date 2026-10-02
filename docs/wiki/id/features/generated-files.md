@@ -10,7 +10,7 @@ AGENTS.md                         pintu masuk: gambaran, command, docs framework
                                   batasan MUST/NEVER, Definition of Done, konvensi, indeks rule dan skill
 CLAUDE.md                         "@AGENTS.md" supaya Claude Code membaca instruksi yang sama
 .graphifyignore                   mengeluarkan wiki bahasa Indonesia dan log perubahan dari graph graphify
-lefthook.yml, .lefthook/          git hook untuk semua bahasa: lint + cek pesan saat commit, typecheck + test saat push
+lefthook.yml, .lefthook/          git hook untuk semua bahasa: lint + cek pesan saat commit, typecheck + test + pengingat wiki saat push
 .github/workflows/ci.yml          GitHub Actions: lint → typecheck → test → build → audit per package
 .gitlab-ci.yml                    sebagai gantinya, untuk remote GitLab (atau --ci gitlab); tanpa file CI kalau repo sudah punya CI
 .agents/rules/*.md                rule yang rinci

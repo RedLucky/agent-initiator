@@ -8,6 +8,11 @@ commit-msg:
       runner: sh
 
 pre-push:
+  scripts:
+    "check-wiki.sh":
+      runner: sh
+      # The script reads the pushed refs from stdin; without this lefthook would wait forever.
+      use_stdin: true
   commands:
     "typecheck":
       run: "pnpm run typecheck"

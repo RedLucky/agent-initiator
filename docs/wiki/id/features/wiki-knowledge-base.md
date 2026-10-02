@@ -22,6 +22,22 @@ flowchart TD
 
 Dengan kata-kata: saat sebuah perubahan selesai, agent mencari halaman wiki tentang topik itu. Kalau belum ada, agent membuatnya dan mendaftarkannya di `index.md`. Lalu agent memperbarui halaman terkait, menyamakan semuanya ke dua bahasa, dan menambah entri log. Kalau yang berubah hanya log, Definition of Done tidak lolos.
 
+## Pengingat kalau wiki terlupa
+Rule mudah terlupa, jadi script kecil mengeceknya sebelum setiap push dan di setiap pull request atau merge request:
+
+```
+kode berubah? ──tidak──▶ aman
+     │ ya
+docs/wiki/en/ ikut berubah? ──ya──▶ aman
+     │ tidak
+ada commit yang bilang "Wiki: not needed (<alasan>)"? ──ya──▶ aman
+     │ tidak
+     ▼
+peringatan (push atau merge tetap jalan)
+```
+
+Dengan kata-kata: file di bawah `docs/` dan file Markdown bukan kode; selain itu adalah kode. Kalau kode berubah tapi tidak ada halaman wiki bahasa Inggris yang berubah, script menampilkan peringatan yang menunjuk ke skill `update-wiki`. Sebagian perubahan memang tidak butuh update wiki, misalnya kenaikan versi dependency atau perubahan kecil di CI; untuk itu salah satu pesan commit diberi baris seperti `Wiki: not needed (dependency bump only)`. Ini pengingat, bukan gerbang: tidak pernah memblokir push atau merge, karena hanya manusia yang bisa menilai apakah sebuah halaman memang perlu.
+
 ## Rule dan skill
 - Rule `documentation` (di `.agents/rules/`) memberi tahu AI agent dan manusia cara menulis dan merawat wiki:
   - setiap halaman dibuka dengan bagian **In short** (Singkatnya) berbahasa sehari-hari, lalu detail untuk developer;
@@ -40,6 +56,7 @@ Dengan kata-kata: saat sebuah perubahan selesai, agent mencari halaman wiki tent
 | Alur kerja | `presets/base/skills/update-wiki/SKILL.md` |
 | Baris Definition of Done di AGENTS.md hasil generate | `src/render/agents-md.ts` (`dodSection`) |
 | Halaman awal untuk repository baru | `presets/base/files/docs/wiki/{en,id}/` |
+| Script pengingat (pre-push dan CI) | `presets/base/files/.lefthook/pre-push/check-wiki.sh`, dites di `test/check-wiki.test.ts` |
 | Guard yang menjaga aturan ini tidak hilang | `test/requirements.test.ts` |
 | Guard untuk wiki repository ini sendiri (pasangan bahasa, Singkatnya, index, diagram, entri log di luar contoh format) | `test/wiki.test.ts` |
 

@@ -49,9 +49,29 @@ function jobLines(job: CiJob): string[] {
   return lines;
 }
 
+// Pull requests only: compares the PR's commits with its base. The step may fail without failing the check,
+// so a missing wiki update shows as a warning annotation instead of blocking the merge.
+const WIKI_JOB = [
+  '  wiki-check:',
+  '    name: "wiki check (warning only)"',
+  "    if: github.event_name == 'pull_request'",
+  '    runs-on: ubuntu-latest',
+  '    steps:',
+  `      - uses: ${ACTIONS.checkout}`,
+  '        with:',
+  '          fetch-depth: 0',
+  '      - name: wiki updated with the code?',
+  '        continue-on-error: true',
+  '        env:',
+  '          BASE_SHA: ${{ github.event.pull_request.base.sha }}',
+  '          HEAD_SHA: ${{ github.event.pull_request.head.sha }}',
+  '        run: sh .lefthook/pre-push/check-wiki.sh --range "$BASE_SHA" "$HEAD_SHA"',
+];
+
 /**
  * Renders .github/workflows/ci.yml: on every push to the main branch and every pull request, each package
  * installs from its lockfile and runs lint → typecheck → test → build → audit. Any failing step fails the check.
+ * Pull requests also get a wiki check that only warns.
  * @param jobs - One job per package that has at least one check.
  * @returns The YAML text.
  */
@@ -76,9 +96,7 @@ export function renderGithubCi(jobs: CiJob[]): string {
     '',
     'jobs:',
   ];
-  jobs.forEach((job, index) => {
-    if (index > 0) lines.push('');
-    lines.push(...jobLines(job));
-  });
+  for (const job of jobs) lines.push(...jobLines(job), '');
+  lines.push(...WIKI_JOB);
   return `${lines.join('\n')}\n`;
 }

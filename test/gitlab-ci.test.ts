@@ -61,4 +61,10 @@ describe('renderGitlabCi', () => {
     expect(renderGitlabCi([job({ language: 'python', packageManager: 'poetry', install: 'poetry install' })])).toContain('- "pip install poetry"');
     expect(renderGitlabCi([job({ language: 'python', packageManager: 'pip', install: 'pip install -e .' })])).not.toContain('before_script');
   });
+  it('adds a wiki reminder for merge requests that is allowed to fail', () => {
+    const yaml = renderGitlabCi([job({})]);
+    expect(yaml).toContain('"wiki check (warning only)":\n  image:\n    name: alpine/git\n    entrypoint: [""]');
+    expect(yaml).toContain('  allow_failure: true\n  variables:\n    GIT_DEPTH: "0"');
+    expect(yaml).toContain('--range \\"$CI_MERGE_REQUEST_DIFF_BASE_SHA\\" \\"$CI_COMMIT_SHA\\""');
+  });
 });

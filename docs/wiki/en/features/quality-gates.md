@@ -10,6 +10,7 @@ A quality gate is an automatic check that stops a change when it breaks an agree
 | `pre-commit` (before the commit is made) | The package's `lint` command. In a multi-package repo each package has its own check, run inside that package and only when staged files are in it. | the commit |
 | `commit-msg` (after you write the message) | Header is `type(#123): subject` or `type(TASK-123): subject`, subject at most 72 characters, no `Co-Authored-By` trailer. Messages made by git itself (`Merge …`, `Revert …`) pass. | the commit |
 | `pre-push` (before commits are sent) | The `typecheck` and `test` commands of every package, each run inside its package | the push |
+| `pre-push` | `check-wiki.sh`: a reminder when code changed but `docs/wiki/en/` did not ([details](wiki-knowledge-base.md#reminder-when-the-wiki-is-forgotten)) | never (warning only) |
 | `post-commit` (after the commit is saved) | `graphify update .` refreshes the code graph, only when graphify is a required tool | never |
 
 The commands are the same ones AGENTS.md lists, without the `rtk` prefix (hooks also run for people who do not use rtk). A package without a `lint`, `typecheck` or `test` command gets no check for it. `format` is left out on purpose: many format scripts rewrite files, and a hook must not change your code behind your back. lefthook does not filter pre-push commands by changed files, so every package is checked before a push, like CI does.
@@ -33,7 +34,7 @@ In words: when you commit, lefthook first runs lint in the packages you changed,
 
 ## What init generates
 - `lefthook.yml` — the hook list (rendered, because the checks depend on the detected packages and commands, and the graphify step on the required tools).
-- `.lefthook/commit-msg/check-message.sh` — plain POSIX `sh`, so it needs no Node, Python or Go.
+- `.lefthook/commit-msg/check-message.sh` and `.lefthook/pre-push/check-wiki.sh` — plain POSIX `sh`, so they need no Node, Python or Go.
 - AGENTS.md: lefthook under Required tooling (install with npm, uv, go or brew), a Project knowledge line, and the NEVER entry.
 
 ## Activating the hooks
@@ -79,6 +80,7 @@ Details worth knowing:
 - **Monorepos:** each package runs in its own folder; JavaScript workspace packages install from the repo root, where the shared lockfile is.
 - **pnpm and yarn** are installed with corepack, which reads `packageManager` in `package.json`. Without that field CI gets the newest version, which can reject your lockfile, so `init` asks you to pin it: `npm pkg set packageManager=pnpm@$(pnpm -v)`.
 - **Audit** fails on high and critical advisories only (`--audit-level high` for npm, pnpm and bun; plain `yarn audit` for yarn). Go uses `go run …govulncheck@latest`, so nothing has to be installed; on CI it runs with `GOTOOLCHAIN=auto` because the latest govulncheck can need a newer Go than the module.
+- **Wiki reminder:** pull and merge requests also get a `wiki check (warning only)` job that runs `check-wiki.sh` on the request's commits. It never blocks the merge: GitHub shows a warning annotation, GitLab shows "passed with warnings".
 - **GitLab images:** `node:lts`, `oven/bun:1`, `python:3` (uv or poetry installed with pip) and `golang:1`.
 - **Permissions:** on GitLab, job permissions come from the project settings; the generated file adds none.
 
@@ -88,6 +90,7 @@ Details worth knowing:
 | Hook list renderer | `src/render/lefthook.ts` |
 | Which task runs in which hook, per package | `hookChecks` in `src/generate.ts`, commands from `packageTaskCommands` in `src/render/commands.ts` |
 | Commit message check | `presets/base/files/.lefthook/commit-msg/check-message.sh` |
+| Wiki reminder (pre-push and CI) | `presets/base/files/.lefthook/pre-push/check-wiki.sh` |
 | `lefthook.yml` added to the output | `src/generate.ts` |
 | `lefthook install` setup step and its skip rule | `src/setup.ts` |
 | Tool entry (install, usage) | `src/tooling.ts` |
@@ -98,4 +101,4 @@ Details worth knowing:
 | Rule text | `presets/base/rules/ci-quality-gates.md` |
 
 ## How to test it
-`rtk test pnpm vitest run test/lefthook.test.ts test/setup.test.ts test/github-ci.test.ts test/gitlab-ci.test.ts`. To check a generated workflow's syntax: `go run github.com/rhysd/actionlint/cmd/actionlint@latest .github/workflows/ci.yml`; for GitLab, validate `.gitlab-ci.yml` against GitLab's JSON schema (`app/assets/javascripts/editor/schema/ci.json` in the gitlab repo) or use the project's CI Lint page. The message tests run the real script with `sh`, so they cover the exact regex git uses.
+`rtk test pnpm vitest run test/lefthook.test.ts test/setup.test.ts test/github-ci.test.ts test/gitlab-ci.test.ts test/check-wiki.test.ts`. To check a generated workflow's syntax: `go run github.com/rhysd/actionlint/cmd/actionlint@latest .github/workflows/ci.yml`; for GitLab, validate `.gitlab-ci.yml` against GitLab's JSON schema (`app/assets/javascripts/editor/schema/ci.json` in the gitlab repo) or use the project's CI Lint page. The message tests run the real script with `sh`, so they cover the exact regex git uses.

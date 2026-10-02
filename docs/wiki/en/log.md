@@ -9,6 +9,11 @@ Newest entries first. Format:
 - Files: ...
 ```
 
+## 2026-10-02 — feat(TASK-7105): warn when code changes without a wiki update
+- What: New `.lefthook/pre-push/check-wiki.sh` (POSIX sh) warns when code (anything outside `docs/` and Markdown) changed but `docs/wiki/en/` did not, unless a commit message has `Wiki: not needed (<reason>)`. It runs before every push (lefthook, `use_stdin`) and in a `wiki check (warning only)` job for pull/merge requests; it never blocks. The documentation rule and commit skill explain the escape line. This repository uses the same hook and CI job.
+- Why: Agents and people still forgot the wiki even though the rule requires it; a reminder at push and review time catches it while leaving the judgment to a person.
+- Files: presets/base/files/.lefthook/pre-push/check-wiki.sh, src/render/{lefthook,github-ci,gitlab-ci}.ts, presets/base/rules/documentation.md, presets/base/skills/commit/SKILL.md, lefthook.yml, .github/workflows/ci.yml, test/*
+
 ## 2026-10-02 — feat(TASK-7104): choose GitLab or GitHub CI and keep existing CI
 - What: `init --ci github|gitlab|none` chooses the pipeline. Without it, a repository that already has CI (GitHub workflows, `.gitlab-ci.yml`, Jenkins, CircleCI, Azure, Bitbucket, Travis) gets no CI file and a note to check its order; otherwise a git remote mentioning gitlab gets `.gitlab-ci.yml` (one job per package, official images, merge requests and the default branch), anything else GitHub Actions. `CiJob` moved to `src/types.ts` so both renderers share it.
 - Why: GitLab projects got a GitHub workflow they cannot run, and repositories with their own CI got a second pipeline running the same checks twice.

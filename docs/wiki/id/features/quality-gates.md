@@ -10,6 +10,7 @@ Quality gate adalah pengecekan otomatis yang menghentikan perubahan kalau melang
 | `pre-commit` (sebelum commit dibuat) | Command `lint` milik package. Di repo multi-package setiap package punya cek sendiri, dijalankan di dalam package itu dan hanya kalau ada file staged di dalamnya. | commit |
 | `commit-msg` (setelah Anda menulis pesan) | Header berupa `type(#123): subject` atau `type(TASK-123): subject`, subject maksimal 72 karakter, tanpa trailer `Co-Authored-By`. Pesan buatan git sendiri (`Merge …`, `Revert …`) lolos. | commit |
 | `pre-push` (sebelum commit dikirim) | Command `typecheck` dan `test` milik setiap package, masing-masing dijalankan di dalam package-nya | push |
+| `pre-push` | `check-wiki.sh`: pengingat kalau kode berubah tapi `docs/wiki/en/` tidak ([detail](wiki-knowledge-base.md#pengingat-kalau-wiki-terlupa)) | tidak pernah (hanya peringatan) |
 | `post-commit` (setelah commit tersimpan) | `graphify update .` memperbarui graph kode, hanya kalau graphify termasuk tool wajib | tidak pernah |
 
 Command-nya sama dengan yang tercantum di AGENTS.md, tanpa awalan `rtk` (hook juga berjalan untuk orang yang tidak memakai rtk). Package tanpa command `lint`, `typecheck` atau `test` tidak mendapat cek untuk itu. `format` sengaja tidak dimasukkan: banyak script format menulis ulang file, dan hook tidak boleh mengubah kode Anda diam-diam. lefthook tidak menyaring command pre-push berdasarkan file yang berubah, jadi setiap package dicek sebelum push, seperti di CI.
@@ -33,7 +34,7 @@ Dengan kata-kata: saat Anda commit, lefthook pertama menjalankan lint di package
 
 ## Apa yang dibuat oleh init
 - `lefthook.yml` — daftar hook (di-render, karena cek bergantung pada package dan command yang terdeteksi, dan langkah graphify pada tool wajib).
-- `.lefthook/commit-msg/check-message.sh` — `sh` POSIX biasa, jadi tidak butuh Node, Python atau Go.
+- `.lefthook/commit-msg/check-message.sh` dan `.lefthook/pre-push/check-wiki.sh` — `sh` POSIX biasa, jadi tidak butuh Node, Python atau Go.
 - AGENTS.md: lefthook di Required tooling (instal lewat npm, uv, go atau brew), satu baris di Project knowledge, dan entri NEVER.
 
 ## Mengaktifkan hook
@@ -79,6 +80,7 @@ Detail yang perlu diketahui:
 - **Monorepo:** setiap package berjalan di folder-nya sendiri; package workspace JavaScript meng-install dari root repo, tempat lockfile bersama berada.
 - **pnpm dan yarn** dipasang dengan corepack, yang membaca `packageManager` di `package.json`. Tanpa field itu CI memakai versi terbaru, yang bisa menolak lockfile Anda, jadi `init` meminta Anda mem-pin-nya: `npm pkg set packageManager=pnpm@$(pnpm -v)`.
 - **Audit** hanya gagal untuk advisory high dan critical (`--audit-level high` untuk npm, pnpm dan bun; `yarn audit` biasa untuk yarn). Go memakai `go run …govulncheck@latest`, jadi tidak ada yang perlu di-install; di CI perintah ini berjalan dengan `GOTOOLCHAIN=auto` karena govulncheck terbaru bisa membutuhkan Go yang lebih baru daripada modulnya.
+- **Pengingat wiki:** pull request dan merge request juga mendapat job `wiki check (warning only)` yang menjalankan `check-wiki.sh` pada commit di request itu. Job ini tidak pernah memblokir merge: GitHub menampilkan anotasi peringatan, GitLab menampilkan "passed with warnings".
 - **Image GitLab:** `node:lts`, `oven/bun:1`, `python:3` (uv atau poetry dipasang dengan pip) dan `golang:1`.
 - **Izin:** di GitLab, izin job berasal dari pengaturan project; file yang dibuat tidak menambah apa pun.
 
@@ -88,6 +90,7 @@ Detail yang perlu diketahui:
 | Renderer daftar hook | `src/render/lefthook.ts` |
 | Task mana berjalan di hook mana, per package | `hookChecks` di `src/generate.ts`, command dari `packageTaskCommands` di `src/render/commands.ts` |
 | Cek pesan commit | `presets/base/files/.lefthook/commit-msg/check-message.sh` |
+| Pengingat wiki (pre-push dan CI) | `presets/base/files/.lefthook/pre-push/check-wiki.sh` |
 | `lefthook.yml` masuk ke output | `src/generate.ts` |
 | Langkah setup `lefthook install` dan aturan lewatinya | `src/setup.ts` |
 | Entri tool (instal, cara pakai) | `src/tooling.ts` |
@@ -98,4 +101,4 @@ Detail yang perlu diketahui:
 | Teks rule | `presets/base/rules/ci-quality-gates.md` |
 
 ## Cara mengetesnya
-`rtk test pnpm vitest run test/lefthook.test.ts test/setup.test.ts test/github-ci.test.ts test/gitlab-ci.test.ts`. Untuk mengecek sintaks workflow hasil generate: `go run github.com/rhysd/actionlint/cmd/actionlint@latest .github/workflows/ci.yml`; untuk GitLab, validasi `.gitlab-ci.yml` dengan JSON schema GitLab (`app/assets/javascripts/editor/schema/ci.json` di repo gitlab) atau pakai halaman CI Lint project. Test pesan menjalankan script aslinya dengan `sh`, jadi mencakup regex yang sama persis dengan yang dipakai git.
+`rtk test pnpm vitest run test/lefthook.test.ts test/setup.test.ts test/github-ci.test.ts test/gitlab-ci.test.ts test/check-wiki.test.ts`. Untuk mengecek sintaks workflow hasil generate: `go run github.com/rhysd/actionlint/cmd/actionlint@latest .github/workflows/ci.yml`; untuk GitLab, validasi `.gitlab-ci.yml` dengan JSON schema GitLab (`app/assets/javascripts/editor/schema/ci.json` di repo gitlab) atau pakai halaman CI Lint project. Test pesan menjalankan script aslinya dengan `sh`, jadi mencakup regex yang sama persis dengan yang dipakai git.

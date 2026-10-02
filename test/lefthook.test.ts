@@ -36,7 +36,7 @@ describe('renderLefthookConfig', () => {
       ],
     });
     expect(yaml).toContain('pre-commit:\n  commands:\n    "lint":\n      run: "pnpm run lint"\n');
-    expect(yaml).toContain('pre-push:\n  commands:\n    "test":\n      run: "pnpm run test"\n');
+    expect(yaml).toContain('      use_stdin: true\n  commands:\n    "test":\n      run: "pnpm run test"\n');
     expect(yaml).not.toContain('root:');
   });
 
@@ -58,8 +58,11 @@ describe('renderLefthookConfig', () => {
     expect(yaml).toContain('run: "echo \\"a: b\\""');
   });
 
-  it('leaves out hooks that have no checks', () => {
-    expect(renderLefthookConfig({ graphify: false, checks: [] })).not.toMatch(/pre-commit|pre-push/);
+  it('leaves out pre-commit without checks, but always warns about missing wiki updates before a push', () => {
+    const yaml = renderLefthookConfig({ graphify: false, checks: [] });
+    expect(yaml).not.toContain('pre-commit:');
+    expect(yaml).toContain('pre-push:\n  scripts:\n    "check-wiki.sh":\n      runner: sh\n      use_stdin: true\n');
+    expect(yaml).not.toContain('  commands:');
   });
 
   it('refreshes the graphify graph after each commit when graphify is used', () => {

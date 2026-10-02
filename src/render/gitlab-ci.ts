@@ -40,9 +40,26 @@ function jobLines(job: CiJob): string[] {
   return lines;
 }
 
+// Merge requests only: compares the MR's commits with its base. allow_failure shows a missing wiki update
+// as a warning ("passed with warnings") instead of blocking the merge. alpine/git is a small image with git and sh.
+const WIKI_JOB = [
+  '"wiki check (warning only)":',
+  '  image:',
+  '    name: alpine/git',
+  '    entrypoint: [""]',
+  '  rules:',
+  '    - if: $CI_PIPELINE_SOURCE == "merge_request_event"',
+  '  allow_failure: true',
+  '  variables:',
+  '    GIT_DEPTH: "0"',
+  '  script:',
+  `    - ${JSON.stringify('sh .lefthook/pre-push/check-wiki.sh --range "$CI_MERGE_REQUEST_DIFF_BASE_SHA" "$CI_COMMIT_SHA"')}`,
+];
+
 /**
  * Renders .gitlab-ci.yml: for every merge request and every push to the default branch, each package installs
  * from its lockfile and runs lint → typecheck → test → build → audit. Any failing command fails the job.
+ * Merge requests also get a wiki check that only warns.
  * @param jobs - One job per package that has at least one check.
  * @returns The YAML text.
  */
@@ -61,5 +78,6 @@ export function renderGitlabCi(jobs: CiJob[]): string {
     '  COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"',
   ];
   for (const job of jobs) lines.push('', ...jobLines(job));
+  lines.push('', ...WIKI_JOB);
   return `${lines.join('\n')}\n`;
 }
