@@ -23,6 +23,13 @@ rtk pnpm link --global
 
 After `source ~/.bashrc` (or a new terminal) the `agent-initiator` command works in any folder. The link points at your clone, so after a code change `rtk pnpm run build` is enough.
 
+Then install the graphify git hooks once in your clone, so the code graph that AI agents query is rebuilt after every commit:
+
+```bash
+graphify hook install    # adds post-commit and post-checkout hooks; hooks live in .git/ and are not committed
+graphify hook status     # should show both hooks as installed
+```
+
 ## Use it
 
 ```mermaid

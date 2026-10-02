@@ -3,6 +3,11 @@
 Newest entries first. Format:
 
 ```
+## 2026-10-02 — chore(TASK-6208): install graphify git hooks in this repository
+- What: graphify post-commit and post-checkout hooks are installed in this repository and the getting-started page tells each contributor to run `graphify hook install` once after cloning. The `.gitattributes` merge driver line written by graphify is committed so it does not show up as an untracked file.
+- Why: The hooks were not installed, so the code graph only stayed current through manual `graphify update .` runs; hooks are local to each clone and are never committed.
+- Files: .gitattributes, docs/wiki/{en,id}/getting-started.md
+
 ## 2026-10-02 — feat(TASK-6206): route AI agents to the English wiki and graphify first
 - What: Generated AGENTS.md has a Project knowledge section (English wiki index first, no log, then graphify affected/path/explain with a budget, grep last); package AGENTS.md files point to it. init writes a .graphifyignore that keeps docs/wiki/id/ and change logs out of the graph. The graphify usage text prefers the free code graph. The documentation rule gains "Written for AI agents too" and the wiki skeleton index a task → page table. Topic pages generated-files, tool-setup and wiki-knowledge-base updated.
 - Why: AGENTS.md only told agents to update the wiki, never to read it, so they explored code with grep; reading both languages doubled the tokens; and the Indonesian wiki and logs polluted graphify answers.

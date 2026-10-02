@@ -23,6 +23,13 @@ rtk pnpm link --global
 
 Setelah `source ~/.bashrc` (atau membuka terminal baru), command `agent-initiator` bisa dipakai di folder mana pun. Link ini menunjuk ke hasil clone Anda, jadi setelah mengubah kode cukup jalankan `rtk pnpm run build`.
 
+Lalu pasang git hook graphify sekali di clone Anda, supaya graph kode yang ditanyai AI agent dibangun ulang setiap kali commit:
+
+```bash
+graphify hook install    # menambah hook post-commit dan post-checkout; hook ada di .git/ dan tidak ikut di-commit
+graphify hook status     # kedua hook harus berstatus installed
+```
+
 ## Memakainya
 
 ```mermaid

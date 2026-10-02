@@ -3,6 +3,11 @@
 Entri terbaru di atas. Format:
 
 ```
+## 2026-10-02 — chore(TASK-6208): install graphify git hooks in this repository
+- Apa: Hook graphify post-commit dan post-checkout terpasang di repository ini, dan halaman getting-started meminta setiap kontributor menjalankan `graphify hook install` sekali setelah clone. Baris merge driver di `.gitattributes` yang ditulis graphify ikut di-commit supaya tidak muncul sebagai file untracked.
+- Kenapa: Hook belum terpasang, sehingga graph kode hanya mutakhir lewat `graphify update .` manual; hook bersifat lokal per clone dan tidak pernah ikut di-commit.
+- File: .gitattributes, docs/wiki/{en,id}/getting-started.md
+
 ## 2026-10-02 — feat(TASK-6206): route AI agents to the English wiki and graphify first
 - Apa: AGENTS.md hasil generate punya bagian Project knowledge (index wiki bahasa Inggris dulu, tanpa log, lalu graphify affected/path/explain dengan budget, grep paling akhir); AGENTS.md per package menunjuk ke bagian itu. init menulis .graphifyignore yang mengeluarkan docs/wiki/id/ dan log dari graph. Teks pemakaian graphify mengutamakan graph kode yang gratis. Rule documentation mendapat bagian "Written for AI agents too" dan kerangka index mendapat tabel task → halaman. Halaman topik generated-files, tool-setup dan wiki-knowledge-base diperbarui.
 - Kenapa: AGENTS.md hanya menyuruh agent memperbarui wiki, tidak pernah membacanya, sehingga agent menjelajah kode dengan grep; membaca dua bahasa menggandakan token; dan wiki bahasa Indonesia serta log mengotori jawaban graphify.
