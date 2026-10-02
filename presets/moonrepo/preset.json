@@ -7,12 +7,13 @@
     "monorepo"
   ],
   "must": [
-    "Run tasks through moon (`moon run <target>`) to utilize dependency graph and build caching.",
-    "Define tasks with explicit `inputs` and `outputs` in `moon.yml` or `.moon/tasks.yml` to maintain deterministic caching."
+    "Run tasks through moon (`moon run <project>:<task>`) so the project graph and build cache are used.",
+    "Give every project tasks in `moon.yml` (or inherit them from `.moon/tasks.*`), with explicit `inputs` and `outputs` for deterministic caching.",
+    "Make the first git commit before running moon tasks in a new repo, and install pinned tool versions with `moon setup`."
   ],
   "never": [
     "Commit `.moon/cache/` directories or temporary build artifacts.",
-    "Bypass toolchain configurations defined in `.moon/toolchain.yml`."
+    "Bypass the toolchains configured in `.moon/toolchains.yml`."
   ],
   "commands": {
     "install": "{{pm}} install",
@@ -22,7 +23,8 @@
     "affected": "moon ci"
   },
   "docs": [
-    "https://moonrepo.dev/docs — official moon documentation. Read it before changing .moon/ configs or tasks.",
+    "https://moonrepo.dev/docs — official moon documentation (match it to `moon --version`). Read it before changing .moon/ configs or tasks.",
+    "`moon mcp` — moon's official MCP server for AI agents (projects, tasks, affected files).",
     "`moon <command> --help` — check CLI syntax and flags before executing."
   ]
 }

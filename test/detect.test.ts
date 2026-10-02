@@ -126,6 +126,12 @@ describe('parseMoonWorkspace', () => {
     expect(parseMoonProjectIds(yaml)).toEqual({ 'apps/web': 'website' });
   });
 
+  it('detects moon v2 config in .config/moon and uses map keys as project IDs', async () => {
+    const project = await detectProject(fixture('moon-config'));
+    expect(project.monorepo).toBe('moonrepo');
+    expect(project.packages.map((p) => [p.path, p.name, p.taskRunnerId])).toEqual([['apps/web', '@acme/site', 'site']]);
+  });
+
   it('uses the folder name as moon project ID, not the package.json name', async () => {
     const project = await detectProject(fixture('moonrepo'));
     expect(project.packages.find((p) => p.path === 'apps/web')?.taskRunnerId).toBe('web');

@@ -3,6 +3,11 @@
 Newest entries first. Format:
 
 ```
+## 2026-10-02 — docs(TASK-5129): update moonrepo rule for moon v2 and detect .config/moon
+- What: The moonrepo rule and preset follow moon v2: `.moon/toolchains.yml`, `.moon/tasks.*` and `.moon/tasks/**`, `moon templates`, simple task commands, a "Before running tasks" section (first commit, `moon setup`, no script inference) and `moon mcp` in Framework docs. Detection also accepts `.config/moon`.
+- Why: The rule described moon v1 while moon 2.5.6 is current; v2 renamed the toolchain file and accepts `.config/moon`.
+- Files: presets/moonrepo/*, src/detect/workspace.ts, test/detect.test.ts, test/fixtures/moon-config/
+
 ## 2026-10-02 — fix(TASK-5127): add moon CLI and per-app moon.yml when scaffolding
 - What: moonrepo scaffolding adds `@moonrepo/cli` as a root dev dependency and writes a `moon.yml` per app (tasks from the package scripts that exist; fixed commands for Python and Go), and reminds the user about the first commit and `moon setup`.
 - Why: moon does not read package.json scripts, so a new moon repo failed every Definition of Done command with "No tasks found".

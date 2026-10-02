@@ -3,6 +3,11 @@
 Entri terbaru di atas. Format:
 
 ```
+## 2026-10-02 — docs(TASK-5129): update moonrepo rule for moon v2 and detect .config/moon
+- Apa: Rule dan preset moonrepo mengikuti moon v2: `.moon/toolchains.yml`, `.moon/tasks.*` dan `.moon/tasks/**`, `moon templates`, command task sederhana, bagian "Before running tasks" (commit pertama, `moon setup`, tanpa inferensi script) dan `moon mcp` di Framework docs. Deteksi juga mengenali `.config/moon`.
+- Kenapa: Rule masih menggambarkan moon v1 padahal versi sekarang 2.5.6; v2 mengganti nama file toolchain dan menerima `.config/moon`.
+- File: presets/moonrepo/*, src/detect/workspace.ts, test/detect.test.ts, test/fixtures/moon-config/
+
 ## 2026-10-02 — fix(TASK-5127): add moon CLI and per-app moon.yml when scaffolding
 - Apa: Scaffold moonrepo menambahkan `@moonrepo/cli` sebagai dev dependency root dan menulis `moon.yml` per app (task dari script package yang ada; command tetap untuk Python dan Go), serta mengingatkan commit pertama dan `moon setup`.
 - Kenapa: moon tidak membaca script package.json, sehingga repo moon baru gagal di semua command Definition of Done dengan "No tasks found".

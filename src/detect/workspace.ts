@@ -76,9 +76,24 @@ export function parsePnpmWorkspace(yaml: string): string[] {
   return patterns;
 }
 
-/** Reads .moon/workspace.yml (or .yaml); null when the repo is not a moon workspace. */
+// moon v2 also accepts `.config/moon` instead of `.moon`.
+const MOON_DIRS = ['.moon', path.join('.config', 'moon')];
+
+/** Reads the moon workspace config (YAML only); null when the repo has none. */
 async function readMoonWorkspace(root: string): Promise<string | null> {
-  return (await readText(path.join(root, '.moon', 'workspace.yml'))) ?? (await readText(path.join(root, '.moon', 'workspace.yaml')));
+  for (const dir of MOON_DIRS) {
+    for (const file of ['workspace.yml', 'workspace.yaml']) {
+      const text = await readText(path.join(root, dir, file));
+      if (text !== null) return text;
+    }
+  }
+  return null;
+}
+
+/** True when the repo has a moon config folder (`.moon` or `.config/moon`). */
+async function isMoonWorkspace(root: string): Promise<boolean> {
+  for (const dir of MOON_DIRS) if (await exists(path.join(root, dir))) return true;
+  return false;
 }
 
 async function readPatterns(root: string): Promise<string[]> {
@@ -118,7 +133,7 @@ export async function detectWorkspace(root: string): Promise<WorkspaceInfo | nul
   let tool: WorkspaceInfo['tool'] | null = null;
   if (await exists(path.join(root, 'turbo.json'))) tool = 'turborepo';
   else if (await exists(path.join(root, 'nx.json'))) tool = 'nx';
-  else if (await exists(path.join(root, '.moon'))) tool = 'moonrepo';
+  else if (await isMoonWorkspace(root)) tool = 'moonrepo';
   else if (patterns.length > 0) tool = 'workspaces';
   if (!tool) return null;
 
