@@ -204,7 +204,7 @@ function rootSteps(spec: ScaffoldSpec, name: string): Step[] {
     ];
   }
   const steps: Step[] = [{ type: 'mkdir', label: `create ${path.basename(root)}`, path: root }];
-  if (layout === 'turborepo' || layout === 'workspaces') {
+  if (layout === 'turborepo' || layout === 'workspaces' || layout === 'moonrepo') {
     for (const file of workspaceRootFiles(name, pm, layout, spec.packageManagerVersion)) {
       steps.push({ type: 'write', label: `write ${file.path}`, path: path.join(root, file.path), content: file.content });
     }
@@ -239,7 +239,7 @@ function finishSteps(spec: ScaffoldSpec): Step[] {
 /** Turns a scaffold spec into an ordered list of steps. Pure: nothing is executed here. */
 export function buildScaffoldSteps(spec: ScaffoldSpec): Step[] {
   const name = path.basename(spec.root);
-  const monorepo = spec.layout === 'turborepo' || spec.layout === 'workspaces' || spec.layout === 'nx';
+  const monorepo = spec.layout === 'turborepo' || spec.layout === 'workspaces' || spec.layout === 'nx' || spec.layout === 'moonrepo';
   const addedPlugins = new Set<string>();
   const steps = rootSteps(spec, name);
 

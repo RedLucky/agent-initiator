@@ -1,7 +1,7 @@
 import type { PackageManager } from '../types.js';
 
 /** How apps are arranged in a new repo. */
-export type Layout = 'single' | 'folders' | 'turborepo' | 'nx' | 'workspaces';
+export type Layout = 'single' | 'folders' | 'turborepo' | 'nx' | 'workspaces' | 'moonrepo';
 
 export type NodePackageManager = Extract<PackageManager, 'npm' | 'pnpm' | 'yarn' | 'bun'>;
 

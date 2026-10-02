@@ -56,7 +56,7 @@ export function validateSpec(spec: ScaffoldSpec): void {
 export function requiredBinaries(spec: ScaffoldSpec): string[] {
   const runtimes = new Set(spec.apps.map((app) => getFramework(app.framework).runtime));
   const bins = new Set(['git']);
-  if (runtimes.has('node') || spec.layout === 'turborepo' || spec.layout === 'workspaces' || spec.layout === 'nx') {
+  if (runtimes.has('node') || spec.layout === 'turborepo' || spec.layout === 'workspaces' || spec.layout === 'nx' || spec.layout === 'moonrepo') {
     bins.add('npx');
     bins.add(spec.packageManager);
   }
@@ -97,6 +97,7 @@ export const LAYOUTS: Array<{ value: Layout; label: string; hint: string }> = [
   { value: 'folders', label: 'Multiple folders', hint: 'e.g. web/ + api/ without a monorepo tool (fullstack)' },
   { value: 'turborepo', label: 'Turborepo', hint: 'apps/* with turbo pipelines' },
   { value: 'nx', label: 'Nx', hint: 'apps/* via Nx generators' },
+  { value: 'moonrepo', label: 'moonrepo', hint: 'apps/* with moon multi-language pipelines' },
   { value: 'workspaces', label: 'Package-manager workspaces', hint: 'apps/* without a task runner' },
 ];
 

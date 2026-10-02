@@ -9,6 +9,11 @@ Entri terbaru di atas. Format:
 - File: ...
 ```
 
+## 2026-10-02 — docs(TASK-8819): update README with moonrepo support and scaffolding command
+- Apa: Memperbarui diagram README.md, bagian quickstart nomor 3, referensi CLI, dan tabel supported stacks untuk mencerminkan dukungan moonrepo serta menambahkan contoh command `--layout moonrepo`. Menambahkan dukungan scaffolding untuk layout moonrepo.
+- Kenapa: Mendokumentasikan kapabilitas monorepo moonrepo secara jelas untuk pengguna dan automasi CI.
+- File: README.md, src/scaffold/types.ts, src/scaffold/index.ts, src/scaffold/templates.ts, src/scaffold/recipes.ts, test/scaffold.test.ts
+
 ## 2026-10-02 — feat(TASK-4192): add moonrepo rules, constraints, and task guidelines
 - Apa: Menambahkan file rule khusus moonrepo (`rules/moonrepo.md`) serta batasan workspace (`must`/`never`) yang mencakup project/action graph, versi toolchain, caching build, target task, dan generator scaffolding.
 - Kenapa: Memandu coding agent agar mematuhi konvensi moonrepo (inputs/outputs, caching, toolchain, dan inspeksi graph) saat bekerja di workspace moonrepo.

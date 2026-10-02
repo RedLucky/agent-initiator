@@ -69,6 +69,22 @@ describe('buildScaffoldSteps', () => {
     expect(steps.some((s) => s.type === 'remove' && s.path === `${root}/apps/web/pnpm-workspace.yaml`)).toBe(true);
   });
 
+  it('builds a moonrepo root, scaffolds apps without installing, then installs once', () => {
+    const steps = buildScaffoldSteps(
+      spec({ layout: 'moonrepo', packageManagerVersion: '10.19.0', apps: [{ framework: 'nextjs', name: 'web' }, { framework: 'nestjs', name: 'api' }] }),
+    );
+    const written = steps.filter((s) => s.type === 'write').map((s) => (s.type === 'write' ? path.relative(root, s.path) : ''));
+    expect(written).toEqual(['package.json', '.gitignore', 'pnpm-workspace.yaml', '.moon/workspace.yml']);
+    expect(steps.some((s) => s.type === 'mkdir' && s.path === `${root}/apps`)).toBe(true);
+    const rootPkg = steps.find((s) => s.type === 'write' && s.path === `${root}/package.json`);
+    expect(rootPkg?.type === 'write' && JSON.parse(rootPkg.content).packageManager).toBe('pnpm@10.19.0');
+    expect(runs(steps)).toEqual([
+      '.$ npx --yes create-next-app@latest apps/web --yes --ts --app --eslint --src-dir --import-alias @/* --use-pnpm --disable-git --no-agents-md --skip-install',
+      '.$ npx --yes @nestjs/cli@latest new api --directory apps/api --package-manager pnpm --skip-git --language TS --strict --skip-install',
+      '.$ pnpm install',
+    ]);
+  });
+
   it('uses Nx generators when a plugin exists and falls back otherwise', () => {
     const steps = buildScaffoldSteps(
       spec({ layout: 'nx', apps: [{ framework: 'nextjs', name: 'web' }, { framework: 'nestjs', name: 'api' }, { framework: 'go-http', name: 'svc' }] }),

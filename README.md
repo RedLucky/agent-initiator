@@ -62,7 +62,7 @@ agent-initiator fixes this by generating a **consistent, opinionated and stack-a
  empty folder? ──► 0. scaffold   official CLIs (create-next-app, nest new, create-nx-workspace, uv, …)
                         │
                         ▼
-                  1. detect      package.json · pyproject.toml · go.mod · turbo.json · nx.json · lockfiles
+                  1. detect      package.json · pyproject.toml · go.mod · turbo.json · nx.json · .moon/workspace.yml · lockfiles
                         │
                         ▼
                   2. resolve     presets layered: base → language → shared → framework
@@ -113,6 +113,7 @@ npx agent-initiator init shop --framework nextjs --yes                          
 npx agent-initiator init acme --apps web:react-vite,api:fastapi --yes                 # web/ + api/ (fullstack)
 npx agent-initiator init acme --layout turborepo --apps web:nextjs,api:nestjs --pm pnpm --yes
 npx agent-initiator init acme --layout nx --apps web:nextjs,api:nestjs --yes
+npx agent-initiator init acme --layout moonrepo --apps web:nextjs,api:fastapi --pm pnpm --yes
 npx agent-initiator init acme --layout workspaces --apps web:vue-vite,api:hono --skip-install --yes
 ```
 
@@ -141,7 +142,7 @@ Then review the generated files and commit them when you are happy. The tool nev
 | `-p, --preset <ids>` | Use these presets instead of detection, e.g. `typescript,nestjs` |
 | `--framework <id>` | Scaffold a single-app project (new or empty folder only) |
 | `--apps <list>` | Scaffold several apps: `name:framework,…`, e.g. `web:nextjs,api:nestjs` |
-| `--layout <layout>` | `single` · `folders` · `turborepo` · `nx` · `workspaces` (default: `single`, or `folders` for several apps) |
+| `--layout <layout>` | `single` · `folders` · `turborepo` · `nx` · `moonrepo` · `workspaces` (default: `single`, or `folders` for several apps) |
 | `--lang <ts\|js>` | Language for Node apps (default `ts`; TS-only frameworks ignore `js`) |
 | `--pm <pm>` | `pnpm` · `npm` · `yarn` · `bun` (default: pnpm if installed, else npm) |
 | `--skip-install` | Do not install dependencies, where the scaffolder allows it |
@@ -226,10 +227,13 @@ Commands come from your real `package.json` scripts. If `test` or `build` is mis
 | Backend (Node) | `nestjs` · `express` · `fastify` · `hono` | `@nestjs/core` · `express` · `fastify` · `hono` | `@nestjs/cli` · minimal TS template · `fastify-cli` · `create-hono` |
 | Backend (other) | `fastapi` · `django` · `go-http` | `pyproject.toml` / `requirements.txt`, `go.mod` | `uv` · `uv` + `django-admin` · `go mod init` + Gin |
 | Language | `typescript` · `node` · `python` · `go` | `tsconfig.json` / deps, manifests | — |
-| Monorepo | `turborepo` · `nx` · `workspaces` | `turbo.json` · `nx.json` · `pnpm-workspace.yaml` / `workspaces` | root files + `turbo` · `create-nx-workspace` + Nx generators · root files |
+| Monorepo | `turborepo` · `nx` · `moonrepo` · `workspaces` | `turbo.json` · `nx.json` · `.moon/workspace.yml` · `pnpm-workspace.yaml` / `workspaces` | root files + `turbo` · `create-nx-workspace` + Nx generators · root files + `.moon` · root files |
 
 - **Package manager:** decided by the lockfile.
 - **Folders without a workspace tool** (e.g. `web/` + `api/`) are treated as a multi-package (fullstack) repo.
+- **moonrepo:**
+  - Multi-language workspaces (Node/TS, Go, Python) via `.moon/workspace.yml`.
+  - Target pipelines (`moon run <project>:<task>`, `moon check`, `moon ci`), toolchains, and build caching.
 - **Nx:**
   - Apps are created with Nx generators and use Vitest.
   - The official Nx skills are kept.

@@ -237,10 +237,22 @@ const WORKSPACE_RUN: Record<NodePackageManager, (task: string) => string> = {
   bun: (task) => `bun run --filter '*' ${task}`,
 };
 
-/** Root files for Turborepo or plain workspaces. pnpm declares packages in pnpm-workspace.yaml, others in package.json. */
-export function workspaceRootFiles(name: string, pm: NodePackageManager, tool: 'turborepo' | 'workspaces', pmVersion?: string): TemplateFile[] {
+/** Root files for Turborepo, moonrepo or plain workspaces. pnpm declares packages in pnpm-workspace.yaml, others in package.json. */
+export function workspaceRootFiles(
+  name: string,
+  pm: NodePackageManager,
+  tool: 'turborepo' | 'workspaces' | 'moonrepo',
+  pmVersion?: string,
+): TemplateFile[] {
   const patterns = ['apps/*', 'packages/*'];
-  const run = (task: string) => (tool === 'turborepo' ? `turbo run ${task}` : WORKSPACE_RUN[pm](task));
+  const run = (task: string) =>
+    tool === 'turborepo'
+      ? `turbo run ${task}`
+      : tool === 'moonrepo'
+        ? task === 'lint'
+          ? 'moon check'
+          : `moon run :${task}`
+        : WORKSPACE_RUN[pm](task);
   const pkg: Record<string, unknown> = {
     name,
     private: true,
@@ -266,6 +278,12 @@ export function workspaceRootFiles(name: string, pm: NodePackageManager, tool: '
           test: { dependsOn: ['^build'] },
         },
       }),
+    });
+  }
+  if (tool === 'moonrepo') {
+    files.push({
+      path: '.moon/workspace.yml',
+      content: `projects:\n  - 'apps/*'\n  - 'packages/*'\n`,
     });
   }
   return files;
