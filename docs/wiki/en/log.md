@@ -9,6 +9,11 @@ Newest entries first. Format:
 - Files: ...
 ```
 
+## 2026-10-02 — feat(TASK-7104): choose GitLab or GitHub CI and keep existing CI
+- What: `init --ci github|gitlab|none` chooses the pipeline. Without it, a repository that already has CI (GitHub workflows, `.gitlab-ci.yml`, Jenkins, CircleCI, Azure, Bitbucket, Travis) gets no CI file and a note to check its order; otherwise a git remote mentioning gitlab gets `.gitlab-ci.yml` (one job per package, official images, merge requests and the default branch), anything else GitHub Actions. `CiJob` moved to `src/types.ts` so both renderers share it.
+- Why: GitLab projects got a GitHub workflow they cannot run, and repositories with their own CI got a second pipeline running the same checks twice.
+- Files: src/render/gitlab-ci.ts, src/detect/ci.ts, src/generate.ts, src/cli.ts, src/types.ts, src/render/github-ci.ts, presets/base/rules/ci-quality-gates.md, test/*
+
 ## 2026-10-02 — feat(TASK-7103): generate a GitHub Actions CI workflow per package
 - What: `init` writes `.github/workflows/ci.yml` (never overwriting one): one job per package that sets up its language, installs from the lockfile and runs lint → typecheck → test → build → audit with the AGENTS.md commands, with read-only permissions. pnpm/yarn come from corepack; `init` asks to pin `packageManager` when it is missing. Audits fail on high/critical only (`--audit-level high`); Go audits with `go run …govulncheck@latest` (`GOTOOLCHAIN=auto` on CI). Detection reads the `packageManager` field. This repository has the same workflow and pins pnpm 10.19.0 in package.json.
 - Why: The quality-gates rule described the CI pipeline, but nothing created it, so merges were not protected by the checks.

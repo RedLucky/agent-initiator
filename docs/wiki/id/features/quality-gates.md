@@ -41,8 +41,23 @@ Hook ada di `.git/` dan tidak ikut di-commit, jadi setiap clone menjalankan `lef
 
 Urutan penting bersama graphify: jalankan `graphify hook install` dulu, lalu `lefthook install`. lefthook memindahkan hook post-commit graphify (ke `post-commit.old`) dan menjalankan graphify dari `lefthook.yml`. Kalau urutannya terbalik, graphify menambahkan dirinya ke hook lefthook dan graph dibangun dua kali per commit. Karena itu `doctor` mengecek hook post-checkout graphify, yang tidak disentuh lefthook.
 
-## CI di GitHub Actions
-`init` juga menulis `.github/workflows/ci.yml`. Workflow ini berjalan di setiap push ke `main`/`master` dan setiap pull request, dengan satu job per package:
+## CI di GitHub Actions atau GitLab CI
+`init` juga menulis pipeline CI, kecuali repository sudah punya. Mana yang ditulis:
+
+```mermaid
+flowchart TD
+    A[init] --> B{--ci diberikan?}
+    B -- ya --> C[Pakai itu: github, gitlab atau none]
+    B -- tidak --> D{Repo sudah punya CI?}
+    D -- ya --> E[Tidak menulis file CI<br/>dan tampilkan yang ditemukan]
+    D -- tidak --> F{git remote origin<br/>menyebut gitlab?}
+    F -- ya --> G[.gitlab-ci.yml]
+    F -- tidak --> H[.github/workflows/ci.yml]
+```
+
+Dengan kata-kata: `--ci github|gitlab|none` selalu menentukan. Tanpa itu, init mencari CI yang sudah ada (`.github/workflows/*.yml`, `.gitlab-ci.yml`, `.circleci/config.yml`, `Jenkinsfile`, `azure-pipelines.yml`, `bitbucket-pipelines.yml`, `.travis.yml`). Kalau ada, init tidak menulis file CI, supaya cek yang sama tidak berjalan dua kali, dan meminta Anda memastikan CI Anda menjalankan lint → typecheck → test → build → audit dengan command AGENTS.md. Kalau tidak ada, remote `origin` yang menentukan: URL yang mengandung "gitlab" (gitlab.com atau server gitlab sendiri) mendapat GitLab CI, selain itu (atau belum ada remote) mendapat GitHub Actions. File yang sudah ada tidak pernah ditimpa, bahkan dengan `--ci`.
+
+GitHub Actions berjalan di setiap push ke `main`/`master` dan setiap pull request; GitLab CI berjalan di setiap merge request dan setiap push ke branch default. Keduanya punya satu job per package:
 
 ```mermaid
 flowchart LR
@@ -60,11 +75,12 @@ flowchart LR
 Dengan kata-kata: setiap job menyiapkan bahasanya (Node.js LTS, Bun, uv, Python 3 atau versi Go di `go.mod`), meng-install persis seperti yang tertulis di lockfile (`npm ci`, `pnpm install --frozen-lockfile`, `uv sync --locked`, …), lalu menjalankan cek sesuai urutan di rule quality-gates. Package tanpa command untuk sebuah langkah melewati langkah itu. Command-nya sama dengan yang tercantum di AGENTS.md, jadi hasil hijau di mesin Anda memperkirakan hasil hijau di CI.
 
 Detail yang perlu diketahui:
-- **Izin:** workflow hanya bisa membaca kode (`permissions: contents: read`).
+- **Izin (GitHub):** workflow hanya bisa membaca kode (`permissions: contents: read`).
 - **Monorepo:** setiap package berjalan di folder-nya sendiri; package workspace JavaScript meng-install dari root repo, tempat lockfile bersama berada.
 - **pnpm dan yarn** dipasang dengan corepack, yang membaca `packageManager` di `package.json`. Tanpa field itu CI memakai versi terbaru, yang bisa menolak lockfile Anda, jadi `init` meminta Anda mem-pin-nya: `npm pkg set packageManager=pnpm@$(pnpm -v)`.
 - **Audit** hanya gagal untuk advisory high dan critical (`--audit-level high` untuk npm, pnpm dan bun; `yarn audit` biasa untuk yarn). Go memakai `go run …govulncheck@latest`, jadi tidak ada yang perlu di-install; di CI perintah ini berjalan dengan `GOTOOLCHAIN=auto` karena govulncheck terbaru bisa membutuhkan Go yang lebih baru daripada modulnya.
-- **Workflow yang sudah ada:** `ci.yml` yang sudah ada dipertahankan. File workflow lain tidak diperiksa, jadi hapus duplikatnya sendiri.
+- **Image GitLab:** `node:lts`, `oven/bun:1`, `python:3` (uv atau poetry dipasang dengan pip) dan `golang:1`.
+- **Izin:** di GitLab, izin job berasal dari pengaturan project; file yang dibuat tidak menambah apa pun.
 
 ## Letaknya di kode
 | Apa | File |
@@ -76,8 +92,10 @@ Detail yang perlu diketahui:
 | Langkah setup `lefthook install` dan aturan lewatinya | `src/setup.ts` |
 | Entri tool (instal, cara pakai) | `src/tooling.ts` |
 | Renderer workflow CI (action dan versinya) | `src/render/github-ci.ts` |
+| Renderer GitLab CI (image) | `src/render/gitlab-ci.ts` |
+| CI mana yang ditulis: --ci, CI yang sudah ada, git remote | `src/detect/ci.ts` |
 | Job CI per package, command install lockfile, catatan pin | `ciJobs` di `src/generate.ts` |
 | Teks rule | `presets/base/rules/ci-quality-gates.md` |
 
 ## Cara mengetesnya
-`rtk test pnpm vitest run test/lefthook.test.ts test/setup.test.ts test/github-ci.test.ts`. Untuk mengecek sintaks workflow hasil generate: `go run github.com/rhysd/actionlint/cmd/actionlint@latest .github/workflows/ci.yml`. Test pesan menjalankan script aslinya dengan `sh`, jadi mencakup regex yang sama persis dengan yang dipakai git.
+`rtk test pnpm vitest run test/lefthook.test.ts test/setup.test.ts test/github-ci.test.ts test/gitlab-ci.test.ts`. Untuk mengecek sintaks workflow hasil generate: `go run github.com/rhysd/actionlint/cmd/actionlint@latest .github/workflows/ci.yml`; untuk GitLab, validasi `.gitlab-ci.yml` dengan JSON schema GitLab (`app/assets/javascripts/editor/schema/ci.json` di repo gitlab) atau pakai halaman CI Lint project. Test pesan menjalankan script aslinya dengan `sh`, jadi mencakup regex yang sama persis dengan yang dipakai git.

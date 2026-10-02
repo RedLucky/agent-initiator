@@ -41,8 +41,23 @@ Hooks live in `.git/` and are not committed, so each clone runs `lefthook instal
 
 Order matters with graphify: run `graphify hook install` first, then `lefthook install`. lefthook moves graphify's post-commit hook aside (to `post-commit.old`) and runs graphify from `lefthook.yml` instead. The other way round, graphify appends to lefthook's hook and the graph is rebuilt twice per commit. Because of this, `doctor` checks graphify's post-checkout hook, which lefthook leaves alone.
 
-## CI on GitHub Actions
-`init` also writes `.github/workflows/ci.yml`. It runs on every push to `main`/`master` and on every pull request, with one job per package:
+## CI on GitHub Actions or GitLab CI
+`init` also writes a CI pipeline, unless the repository already has one. Which one it writes:
+
+```mermaid
+flowchart TD
+    A[init] --> B{--ci given?}
+    B -- yes --> C[Use that: github, gitlab or none]
+    B -- no --> D{Repo already has CI?}
+    D -- yes --> E[Write no CI file<br/>and show what was found]
+    D -- no --> F{git remote origin<br/>mentions gitlab?}
+    F -- yes --> G[.gitlab-ci.yml]
+    F -- no --> H[.github/workflows/ci.yml]
+```
+
+In words: `--ci github|gitlab|none` always decides. Without it, init looks for existing CI (`.github/workflows/*.yml`, `.gitlab-ci.yml`, `.circleci/config.yml`, `Jenkinsfile`, `azure-pipelines.yml`, `bitbucket-pipelines.yml`, `.travis.yml`). If it finds any, it writes no CI file, so the same checks do not run twice, and asks you to check that your CI runs lint → typecheck → test → build → audit with the AGENTS.md commands. Otherwise the `origin` remote decides: a URL containing "gitlab" (gitlab.com or a self-hosted gitlab server) gets GitLab CI, anything else (or no remote yet) gets GitHub Actions. Existing files are never overwritten, even with `--ci`.
+
+GitHub Actions runs on every push to `main`/`master` and every pull request; GitLab CI runs on every merge request and every push to the default branch. Both have one job per package:
 
 ```mermaid
 flowchart LR
@@ -60,11 +75,12 @@ flowchart LR
 In words: each job prepares the language (Node.js LTS, Bun, uv, Python 3 or the Go version in `go.mod`), installs exactly what the lockfile says (`npm ci`, `pnpm install --frozen-lockfile`, `uv sync --locked`, …), and then runs the checks in the order from the quality-gates rule. A package without a command for a step skips that step. The commands are the same ones AGENTS.md lists, so a green run on your machine predicts a green run on CI.
 
 Details worth knowing:
-- **Permissions:** the workflow can only read the code (`permissions: contents: read`).
+- **Permissions (GitHub):** the workflow can only read the code (`permissions: contents: read`).
 - **Monorepos:** each package runs in its own folder; JavaScript workspace packages install from the repo root, where the shared lockfile is.
 - **pnpm and yarn** are installed with corepack, which reads `packageManager` in `package.json`. Without that field CI gets the newest version, which can reject your lockfile, so `init` asks you to pin it: `npm pkg set packageManager=pnpm@$(pnpm -v)`.
 - **Audit** fails on high and critical advisories only (`--audit-level high` for npm, pnpm and bun; plain `yarn audit` for yarn). Go uses `go run …govulncheck@latest`, so nothing has to be installed; on CI it runs with `GOTOOLCHAIN=auto` because the latest govulncheck can need a newer Go than the module.
-- **Existing workflow:** an existing `ci.yml` is kept. Other workflow files are not looked at, so remove duplicates by hand.
+- **GitLab images:** `node:lts`, `oven/bun:1`, `python:3` (uv or poetry installed with pip) and `golang:1`.
+- **Permissions:** on GitLab, job permissions come from the project settings; the generated file adds none.
 
 ## Where it lives in the code
 | What | File |
@@ -76,8 +92,10 @@ Details worth knowing:
 | `lefthook install` setup step and its skip rule | `src/setup.ts` |
 | Tool entry (install, usage) | `src/tooling.ts` |
 | CI workflow renderer (actions and their versions) | `src/render/github-ci.ts` |
+| GitLab CI renderer (images) | `src/render/gitlab-ci.ts` |
+| Which CI to write: --ci, existing CI, git remote | `src/detect/ci.ts` |
 | CI jobs per package, lockfile install commands, pin notes | `ciJobs` in `src/generate.ts` |
 | Rule text | `presets/base/rules/ci-quality-gates.md` |
 
 ## How to test it
-`rtk test pnpm vitest run test/lefthook.test.ts test/setup.test.ts test/github-ci.test.ts`. To check a generated workflow's syntax: `go run github.com/rhysd/actionlint/cmd/actionlint@latest .github/workflows/ci.yml`. The message tests run the real script with `sh`, so they cover the exact regex git uses.
+`rtk test pnpm vitest run test/lefthook.test.ts test/setup.test.ts test/github-ci.test.ts test/gitlab-ci.test.ts`. To check a generated workflow's syntax: `go run github.com/rhysd/actionlint/cmd/actionlint@latest .github/workflows/ci.yml`; for GitLab, validate `.gitlab-ci.yml` against GitLab's JSON schema (`app/assets/javascripts/editor/schema/ci.json` in the gitlab repo) or use the project's CI Lint page. The message tests run the real script with `sh`, so they cover the exact regex git uses.

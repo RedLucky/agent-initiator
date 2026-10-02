@@ -1,18 +1,4 @@
-import type { Language, PackageManager } from '../types.js';
-
-/** One CI job: the checks of one package, run in that package's folder. */
-export interface CiJob {
-  /** Package folder relative to the repo root ("." for a single-package repo). */
-  path: string;
-  language: Language;
-  packageManager: PackageManager;
-  /** Install command that refuses to change the lockfile, e.g. `pnpm install --frozen-lockfile`. */
-  install: string;
-  /** Run the install from the repo root: packages of a JavaScript workspace share one lockfile there. */
-  installAtRoot: boolean;
-  /** The checks in the order they run (lint, typecheck, test, build, audit); missing ones are left out. */
-  steps: Array<{ name: string; run: string }>;
-}
+import type { CiJob } from '../types.js';
 
 // Action versions checked against each action's latest release (2026-10). Update them together.
 const ACTIONS = {

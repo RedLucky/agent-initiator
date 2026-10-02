@@ -3,7 +3,8 @@
  * the check steps in order, and package folders in multi-package repos.
  */
 import { describe, expect, it } from 'vitest';
-import { renderGithubCi, type CiJob } from '../src/render/github-ci.js';
+import { renderGithubCi } from '../src/render/github-ci.js';
+import type { CiJob } from '../src/types.js';
 
 /** A single-package pnpm job; tests override what they need. */
 const job = (overrides: Partial<CiJob>): CiJob => ({

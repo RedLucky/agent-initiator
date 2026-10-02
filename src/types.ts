@@ -131,3 +131,20 @@ export type FileStatus = 'create' | 'skip';
 export interface FilePlanEntry extends PlannedFile {
   status: FileStatus;
 }
+
+/** Where the generated CI pipeline runs; `none` writes no CI file. */
+export type CiProvider = 'github' | 'gitlab' | 'none';
+
+/** One CI job: the checks of one package, run in that package's folder. */
+export interface CiJob {
+  /** Package folder relative to the repo root ("." for a single-package repo). */
+  path: string;
+  language: Language;
+  packageManager: PackageManager;
+  /** Install command that refuses to change the lockfile, e.g. `pnpm install --frozen-lockfile`. */
+  install: string;
+  /** Run the install from the repo root: packages of a JavaScript workspace share one lockfile there. */
+  installAtRoot: boolean;
+  /** The checks in the order they run (lint, typecheck, test, build, audit); missing ones are left out. */
+  steps: Array<{ name: string; run: string }>;
+}

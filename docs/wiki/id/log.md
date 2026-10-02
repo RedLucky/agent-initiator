@@ -9,6 +9,11 @@ Entri terbaru di atas. Format:
 - File: ...
 ```
 
+## 2026-10-02 — feat(TASK-7104): choose GitLab or GitHub CI and keep existing CI
+- Apa: `init --ci github|gitlab|none` memilih pipeline. Tanpa itu, repository yang sudah punya CI (workflow GitHub, `.gitlab-ci.yml`, Jenkins, CircleCI, Azure, Bitbucket, Travis) tidak mendapat file CI dan mendapat catatan untuk mengecek urutannya; kalau tidak, git remote yang menyebut gitlab mendapat `.gitlab-ci.yml` (satu job per package, image resmi, merge request dan branch default), selain itu GitHub Actions. `CiJob` dipindah ke `src/types.ts` supaya dipakai kedua renderer.
+- Kenapa: Project GitLab mendapat workflow GitHub yang tidak bisa dijalankan, dan repository dengan CI sendiri mendapat pipeline kedua yang menjalankan cek yang sama dua kali.
+- File: src/render/gitlab-ci.ts, src/detect/ci.ts, src/generate.ts, src/cli.ts, src/types.ts, src/render/github-ci.ts, presets/base/rules/ci-quality-gates.md, test/*
+
 ## 2026-10-02 — feat(TASK-7103): generate a GitHub Actions CI workflow per package
 - Apa: `init` menulis `.github/workflows/ci.yml` (tidak pernah menimpa yang sudah ada): satu job per package yang menyiapkan bahasanya, meng-install dari lockfile dan menjalankan lint → typecheck → test → build → audit dengan command AGENTS.md, dengan izin baca saja. pnpm/yarn dipasang lewat corepack; `init` meminta pin `packageManager` kalau belum ada. Audit hanya gagal untuk high/critical (`--audit-level high`); Go meng-audit dengan `go run …govulncheck@latest` (`GOTOOLCHAIN=auto` di CI). Deteksi membaca field `packageManager`. Repository ini memakai workflow yang sama dan mem-pin pnpm 10.19.0 di package.json.
 - Kenapa: Rule quality-gates menjelaskan pipeline CI, tetapi belum ada yang membuatnya, sehingga merge tidak dilindungi oleh cek.

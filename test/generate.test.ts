@@ -257,5 +257,18 @@ describe('Project knowledge section', () => {
   it('audits Go modules without installing govulncheck, even when it needs a newer Go than the module', async () => {
     expect((await generate('go')).file('.github/workflows/ci.yml')).toContain('run: "GOTOOLCHAIN=auto go run golang.org/x/vuln/cmd/govulncheck@latest ./..."');
   });
+
+  it('writes GitLab CI instead of GitHub Actions when asked, and no CI at all for none', async () => {
+    const project = await detectProject(fixture('nextjs'));
+    const gitlab = generateFiles(project, registry, { ...options, ci: 'gitlab' });
+    const paths = gitlab.files.map((f) => f.path);
+    expect(paths).toContain('.gitlab-ci.yml');
+    expect(paths).not.toContain('.github/workflows/ci.yml');
+    expect(gitlab.notes).toHaveLength(1);
+
+    const none = generateFiles(project, registry, { ...options, ci: 'none' });
+    expect(none.files.map((f) => f.path).filter((p) => p.includes('ci.yml'))).toEqual([]);
+    expect(none.notes).toEqual([]);
+  });
 });
 

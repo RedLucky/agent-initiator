@@ -1,7 +1,8 @@
 import path from 'node:path';
 import * as p from '@clack/prompts';
-import { Command } from 'commander';
+import { Command, Option } from 'commander';
 import pc from 'picocolors';
+import { chooseCiProvider, findExistingCi, readOriginUrl } from './detect/ci.js';
 import { detectProject, overridePresets } from './detect/index.js';
 import { detectExistingSkills } from './detect/skills.js';
 import { checkTools, graphifyHookState, type ToolStatus } from './doctor.js';
@@ -12,7 +13,7 @@ import { choosePresets, defaultPackageManager, promptNewProject } from './prompt
 import { specFromFlags, type ScaffoldFlags } from './scaffold/flags.js';
 import { inspectDir, isInsideGitRepo, LAYOUTS, postScaffoldNotes, scaffoldProject, type NodePackageManager, type ScaffoldSpec } from './scaffold/index.js';
 import { planToolSetup, runToolSetup, selectDefaultActions, splitByTiming, type SetupAction, type SetupResult } from './setup.js';
-import type { DetectedProject } from './types.js';
+import type { CiProvider, DetectedProject } from './types.js';
 import { applyPlan, manualSteps, planFiles } from './write/index.js';
 
 interface InitOptions extends ScaffoldFlags {
@@ -20,6 +21,7 @@ interface InitOptions extends ScaffoldFlags {
   yes?: boolean;
   dryRun?: boolean;
   setupTools?: boolean;
+  ci?: CiProvider;
 }
 
 function describeProject(registry: Registry, project: DetectedProject): string {
@@ -148,7 +150,9 @@ async function runInit(dir: string, options: InitOptions): Promise<void> {
     project = { ...project, existingSkills: await detectExistingSkills(root) };
   }
 
-  const { kind, files, notes } = generateFiles(project, registry, { date: new Date().toISOString().slice(0, 10) });
+  const ci = chooseCiProvider({ flag: options.ci, existingCi: await findExistingCi(root), remoteUrl: readOriginUrl(root) });
+  p.log.info(`CI pipeline: ${ci.provider} (${ci.reason})`);
+  const { kind, files, notes } = generateFiles(project, registry, { date: new Date().toISOString().slice(0, 10), ci: ci.provider });
   const plan = await planFiles(root, files);
   const created = plan.filter((f) => f.status === 'create');
   const skipped = plan.filter((f) => f.status === 'skip');
@@ -161,7 +165,8 @@ async function runInit(dir: string, options: InitOptions): Promise<void> {
   const written = await applyPlan(root, plan);
   if (setup.after.length > 0) await runToolSetup(root, setup.after, logSetupResult);
   for (const step of await manualSteps(root, plan)) p.log.warn(step);
-  if (written.includes('.github/workflows/ci.yml')) for (const note of notes) p.log.warn(note);
+  const wroteCi = written.includes('.github/workflows/ci.yml') || written.includes('.gitlab-ci.yml');
+  if (wroteCi) for (const note of notes) p.log.warn(note);
 
   console.log(pc.bold('\nRequired tooling on this machine:'));
   printToolStatus(await checkTools(tooling));
@@ -196,6 +201,7 @@ program
   .option('--lang <ts|js>', 'language for Node apps when scaffolding (default: ts)')
   .option('--pm <pm>', 'package manager for scaffolding: pnpm | npm | yarn | bun')
   .option('--skip-install', 'do not install dependencies after scaffolding (where the scaffolder allows it)')
+  .addOption(new Option('--ci <provider>', 'CI pipeline to generate (default: none if the repo has CI, gitlab for a GitLab remote, else github)').choices(['github', 'gitlab', 'none']))
   .option('--setup-tools', 'run per-repo tool setup without asking (graphify graph + git hooks, UI UX Pro Max skills)')
   .action(runInit);
 

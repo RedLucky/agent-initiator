@@ -12,6 +12,7 @@ CLAUDE.md                         "@AGENTS.md" supaya Claude Code membaca instru
 .graphifyignore                   mengeluarkan wiki bahasa Indonesia dan log perubahan dari graph graphify
 lefthook.yml, .lefthook/          git hook untuk semua bahasa: lint + cek pesan saat commit, typecheck + test saat push
 .github/workflows/ci.yml          GitHub Actions: lint → typecheck → test → build → audit per package
+.gitlab-ci.yml                    sebagai gantinya, untuk remote GitLab (atau --ci gitlab); tanpa file CI kalau repo sudah punya CI
 .agents/rules/*.md                rule yang rinci
 .agents/skills/<nama>/SKILL.md    skill (panduan langkah demi langkah)
 .claude/skills/<nama>/SKILL.md    salinan skill untuk Claude Code

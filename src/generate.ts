@@ -2,13 +2,16 @@ import type { Registry } from './presets/registry.js';
 import { expandChain, resolvePresets } from './presets/resolve.js';
 import { fillTemplate, filterCommand, packageCommands, packageTaskCommands, scriptCommands, templateVars, toCommandList, type Command } from './render/commands.js';
 import { renderPackageAgentsMd, renderRootAgentsMd, type PackageSummary } from './render/agents-md.js';
-import { renderGithubCi, type CiJob } from './render/github-ci.js';
+import { renderGithubCi } from './render/github-ci.js';
+import { renderGitlabCi } from './render/gitlab-ci.js';
 import { renderLefthookConfig, type HookCheck } from './render/lefthook.js';
-import type { DetectedProject, PackageInfo, PackageManager, PlannedFile, ProjectKind, ResolvedConfig, RuleFile } from './types.js';
+import type { CiJob, CiProvider, DetectedProject, PackageInfo, PackageManager, PlannedFile, ProjectKind, ResolvedConfig, RuleFile } from './types.js';
 
 export interface GenerateOptions {
   /** ISO date (YYYY-MM-DD) stamped into the wiki log; injected so output is deterministic in tests. */
   date: string;
+  /** Which CI pipeline to write (default: GitHub Actions). */
+  ci?: CiProvider;
 }
 
 export interface GenerateResult {
@@ -113,6 +116,7 @@ const CI_INSTALL: Partial<Record<PackageManager, string>> = {
  * @returns The command to put in the workflow.
  */
 function ciCommand(pkg: PackageInfo, task: string, command: string): string {
+  // Harmless on GitLab, whose golang image already allows toolchain downloads.
   return pkg.language === 'go' && task === 'audit' ? `GOTOOLCHAIN=auto ${command}` : command;
 }
 
@@ -254,8 +258,11 @@ export function generateFiles(project: DetectedProject, registry: Registry, opti
     files.push({ path: 'lefthook.yml', content: renderLefthookConfig({ graphify: root.tooling.includes('graphify'), checks: hookChecks(configs, project.monorepo) }) });
   }
 
-  const ci = ciJobs(configs, project);
-  if (ci.jobs.length > 0) files.push({ path: '.github/workflows/ci.yml', content: renderGithubCi(ci.jobs) });
+  const provider = options.ci ?? 'github';
+  const ci = provider === 'none' ? { jobs: [], notes: [] } : ciJobs(configs, project);
+  if (ci.jobs.length > 0) {
+    files.push(provider === 'gitlab' ? { path: '.gitlab-ci.yml', content: renderGitlabCi(ci.jobs) } : { path: '.github/workflows/ci.yml', content: renderGithubCi(ci.jobs) });
+  }
 
   return { kind, files, notes: ci.notes };
 }
