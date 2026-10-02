@@ -5,13 +5,14 @@ import { describe, expect, it } from 'vitest';
 import { planToolSetup, runToolSetup, type SetupAction } from '../src/setup.js';
 
 describe('planToolSetup', () => {
-  it('plans UI UX Pro Max skills and the graphify graph + hooks', () => {
-    const plan = planToolSetup(['ponytail', 'caveman', 'rtk', 'graphify', 'ui-ux-pro-max']);
+  it('plans UI UX Pro Max skills, the graphify graph + hooks, then the lefthook hooks', () => {
+    const plan = planToolSetup(['ponytail', 'caveman', 'rtk', 'graphify', 'lefthook', 'ui-ux-pro-max']);
     expect(plan.map((a) => `${a.command} ${a.args.join(' ')}`)).toEqual([
       'uipro init --ai universal',
       'uipro init --ai claude',
       'graphify update .',
       'graphify hook install',
+      'lefthook install',
     ]);
   });
 
@@ -50,5 +51,19 @@ describe('selectDefaultActions (--yes without --setup-tools)', () => {
     const existing = await selectDefaultActions(dir, plan);
     expect(existing.run).toEqual([]);
     expect(existing.skipped[0]?.reason).toContain('.gitattributes already exists');
+  });
+
+  it('runs lefthook install by default unless another hook manager is already in use', async () => {
+    const { selectDefaultActions } = await import('../src/setup.js');
+    const { mkdir } = await import('node:fs/promises');
+    const plan = planToolSetup(['lefthook']);
+    const dir = await mkdtemp(path.join(tmpdir(), 'agent-initiator-default-'));
+
+    expect((await selectDefaultActions(dir, plan)).run.map((a) => a.command)).toEqual(['lefthook']);
+
+    await mkdir(path.join(dir, '.husky'));
+    const withHusky = await selectDefaultActions(dir, plan);
+    expect(withHusky.run).toEqual([]);
+    expect(withHusky.skipped[0]?.reason).toContain('.husky already exists');
   });
 });

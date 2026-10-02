@@ -7,7 +7,8 @@
     "ponytail",
     "caveman",
     "rtk",
-    "graphify"
+    "graphify",
+    "lefthook"
   ],
   "conventions": [
     "Existing repository conventions win; these rules only fill the gaps.",
@@ -39,6 +40,7 @@
     "Add speculative abstractions, options or features that were not requested.",
     "Swallow errors silently (empty catch blocks, ignored error returns).",
     "Disable or skip tests, lint rules or type checks to make a task pass.",
+    "Bypass git hooks with `--no-verify`; fix what the hook reports instead.",
     "Run destructive commands (force push, `rm -rf`, dropping data, shared-DB migrations) without confirmation.",
     "Log, trace or expose personal data (PII) without masking, or use real personal data in tests and seeds.",
     "Add a dependency without checking maintenance, licence and known vulnerabilities."

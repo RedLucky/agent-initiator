@@ -26,12 +26,12 @@ function withPath<T>(bin: string, fn: () => T): T {
 
 describe.skipIf(process.platform === 'win32')('graphifyHookState', () => {
   it('reports installed hooks', async () => {
-    const bin = await fakeGraphify('post-commit: installed');
+    const bin = await fakeGraphify('post-commit: not installed\npost-checkout: installed');
     expect(withPath(bin, () => graphifyHookState(bin))).toBe('installed');
   });
 
   it('reports missing hooks', async () => {
-    const bin = await fakeGraphify('post-commit: not installed');
+    const bin = await fakeGraphify('post-checkout: not installed');
     expect(withPath(bin, () => graphifyHookState(bin))).toBe('missing');
   });
 

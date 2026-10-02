@@ -2,6 +2,7 @@ import type { Registry } from './presets/registry.js';
 import { expandChain, resolvePresets } from './presets/resolve.js';
 import { fillTemplate, filterCommand, packageCommands, scriptCommands, templateVars, toCommandList, type Command } from './render/commands.js';
 import { renderPackageAgentsMd, renderRootAgentsMd, type PackageSummary } from './render/agents-md.js';
+import { renderLefthookConfig } from './render/lefthook.js';
 import type { DetectedProject, PackageInfo, PlannedFile, ProjectKind, ResolvedConfig, RuleFile } from './types.js';
 
 export interface GenerateOptions {
@@ -159,6 +160,11 @@ export function generateFiles(project: DetectedProject, registry: Registry, opti
 
   const vars = { projectName: project.name, date: options.date };
   for (const file of root.files) files.push({ path: file.path, content: fillTemplate(file.content, vars) });
+
+  // lefthook.yml depends on the required tools (graphify adds a post-commit refresh), so it is rendered, not copied.
+  if (root.tooling.includes('lefthook')) {
+    files.push({ path: 'lefthook.yml', content: renderLefthookConfig({ graphify: root.tooling.includes('graphify') }) });
+  }
 
   return { kind, files };
 }

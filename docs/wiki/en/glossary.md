@@ -18,6 +18,9 @@ Words used in this project, explained in plain language. If a page uses a term t
 | Package manager | The tool that installs a project's dependencies: npm, pnpm, yarn, bun for JavaScript; uv, poetry, pip for Python. |
 | rtk | Rust Token Killer: runs shell commands and shortens their output so AI assistants use fewer tokens. Every command is prefixed with `rtk`. |
 | graphify | Builds a searchable map (knowledge graph) of the code so assistants can find things quickly. |
+| Git hook | A small script git runs at a fixed moment, for example just before a commit is saved. Hooks live in `.git/hooks/` and are not shared through the repository. |
+| lefthook | Runs the git hooks listed in `lefthook.yml`, for any programming language. See [quality gates](features/quality-gates.md). |
+| Quality gate | An automatic check that stops a change when it breaks an agreed rule, such as the commit message format. |
 | caveman | A mode that makes AI assistants answer briefly. |
 | ponytail | A mode that makes AI assistants write the smallest solution that works. |
 | UI UX Pro Max | A design skill for user-interface work, added for frontend projects. |

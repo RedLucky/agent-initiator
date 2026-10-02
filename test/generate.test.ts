@@ -35,11 +35,14 @@ describe('generateFiles', () => {
         'docs/wiki/en/log.md',
         'docs/wiki/id/index.md',
         'docs/wiki/id/log.md',
+        'lefthook.yml',
+        '.lefthook/commit-msg/check-message.sh',
         ...['overview', 'getting-started', 'architecture', 'glossary', 'faq'].flatMap((page) => [`docs/wiki/en/${page}.md`, `docs/wiki/id/${page}.md`]),
       ]),
     );
     expect(file('docs/wiki/en/overview.md')).toContain('# Overview of shop-web');
     expect(file('CLAUDE.md')).toBe('@AGENTS.md\n');
+    expect(file('lefthook.yml')).toContain('run: graphify update .');
     expect(file('docs/wiki/en/index.md')).toContain('# shop-web Wiki');
     expect(file('docs/wiki/en/log.md')).toContain('## 2026-09-30');
     expect(file('AGENTS.md')).toMatchSnapshot();
@@ -202,5 +205,11 @@ describe('Project knowledge section', () => {
     expect(withoutGraphify).toContain('## Project knowledge');
     expect(withoutGraphify).toContain('AI agents read the English pages only');
     expect(withoutGraphify).not.toContain('graphify affected');
+  });
+
+  it('tells agents to run lefthook install only when lefthook is a required tool', async () => {
+    const { renderRootAgentsMd } = await import('../src/render/agents-md.js');
+    expect(renderRootAgentsMd(input(['lefthook']))).toContain('run `lefthook install` once per clone');
+    expect(renderRootAgentsMd(input([]))).not.toContain('lefthook install');
   });
 });

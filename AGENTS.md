@@ -58,6 +58,7 @@ Before exploring the code, read the wiki: `docs/wiki/en/index.md` lists every pa
 - Skip `docs/wiki/*/log.md` unless you are investigating history.
 - For structure and impact questions, ask graphify with a symbol name: `graphify affected "<symbol>"`, `graphify path "<A>" "<B>"`, `graphify explain "<symbol>"` (add `--budget <tokens>` to cap the answer).
 - If `graphify hook status` shows missing hooks (e.g. in a fresh clone), run `graphify hook install` once so the graph is rebuilt after every commit.
+- Git hooks come from `lefthook.yml`: run `lefthook install` once per clone (after `graphify hook install`, when graphify is used).
 - Use grep only for what the wiki and graphify do not answer.
 
 ## Required tooling
@@ -105,6 +106,16 @@ uv tool install graphifyy   # package name has two "y"
 graphify install   # or: graphify <codex|cursor|gemini|copilot> install
 ```
 
+### [lefthook](https://github.com/evilmartians/lefthook)
+Runs the git hooks in lefthook.yml for every language (commit message check, graph refresh).
+
+**Use:** The hooks run on every commit. Never bypass them with `--no-verify`; fix what they report. After cloning, run `lefthook install` once.
+
+```bash
+npm i -g lefthook   # or: uv tool install lefthook | go install github.com/evilmartians/lefthook/v2@latest | brew install lefthook
+lefthook install    # once per clone: activates the hooks in lefthook.yml
+```
+
 ## Constraints
 
 ### MUST
@@ -133,6 +144,7 @@ graphify install   # or: graphify <codex|cursor|gemini|copilot> install
 - Add speculative abstractions, options or features that were not requested.
 - Swallow errors silently (empty catch blocks, ignored error returns).
 - Disable or skip tests, lint rules or type checks to make a task pass.
+- Bypass git hooks with `--no-verify`; fix what the hook reports instead.
 - Run destructive commands (force push, `rm -rf`, dropping data, shared-DB migrations) without confirmation.
 - Log, trace or expose personal data (PII) without masking, or use real personal data in tests and seeds.
 - Add a dependency without checking maintenance, licence and known vulnerabilities.

@@ -38,6 +38,18 @@ export const TOOLS: Tool[] = [
     check: { bins: ['graphify'] },
   },
   {
+    id: 'lefthook',
+    name: 'lefthook',
+    url: 'https://github.com/evilmartians/lefthook',
+    purpose: 'Runs the git hooks in lefthook.yml for every language (commit message check, graph refresh).',
+    install: [
+      'npm i -g lefthook   # or: uv tool install lefthook | go install github.com/evilmartians/lefthook/v2@latest | brew install lefthook',
+      'lefthook install    # once per clone: activates the hooks in lefthook.yml',
+    ],
+    usage: 'The hooks run on every commit. Never bypass them with `--no-verify`; fix what they report. After cloning, run `lefthook install` once.',
+    check: { bins: ['lefthook'] },
+  },
+  {
     id: 'caveman',
     name: 'caveman',
     url: 'https://github.com/JuliusBrussee/caveman',

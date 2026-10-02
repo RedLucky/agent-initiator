@@ -109,7 +109,7 @@ function constraintsSection(must: string[], never: string[]): string[] {
 /**
  * Tells AI agents where to learn about the project before reading code, in the cheapest order:
  * the English wiki (index → one page), then graphify for structure questions (when it is a required tool), then grep.
- * @param toolIds - Required tool ids; the graphify line is shown only when graphify is one of them.
+ * @param toolIds - Required tool ids; the graphify and lefthook lines are shown only when those tools are required.
  * @returns Markdown lines for the "Project knowledge" section.
  */
 function projectKnowledgeSection(toolIds: string[]): string[] {
@@ -125,6 +125,11 @@ function projectKnowledgeSection(toolIds: string[]): string[] {
           '- For structure and impact questions, ask graphify with a symbol name: `graphify affected "<symbol>"`, `graphify path "<A>" "<B>"`, `graphify explain "<symbol>"` (add `--budget <tokens>` to cap the answer).',
           '- If `graphify hook status` shows missing hooks (e.g. in a fresh clone), run `graphify hook install` once so the graph is rebuilt after every commit.',
         ]
+      : []),
+    // Order matters: `graphify hook install` appends to an existing post-commit hook, so running it after lefthook
+    // would rebuild the graph twice per commit. lefthook moves graphify's post-commit hook aside and runs graphify itself.
+    ...(toolIds.includes('lefthook')
+      ? ['- Git hooks come from `lefthook.yml`: run `lefthook install` once per clone (after `graphify hook install`, when graphify is used).']
       : []),
     '- Use grep only for what the wiki and graphify do not answer.',
     '',

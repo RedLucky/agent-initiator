@@ -42,12 +42,14 @@ export async function checkTools(toolIds: string[] = TOOLS.map((t) => t.id), hom
 export type HookState = 'installed' | 'missing' | 'unknown';
 
 /**
- * Asks graphify whether its post-commit hook is installed in `dir`.
+ * Asks graphify whether its hooks are installed in `dir`.
+ * `graphify hook install` adds post-commit and post-checkout together, so post-checkout is the signal:
+ * in repos that use lefthook, lefthook owns post-commit (and runs graphify from lefthook.yml).
  * @param dir - A folder inside a git repository.
  * @returns `installed`, `missing`, or `unknown` when graphify cannot answer (not installed, not a repo, error).
  */
 export function graphifyHookState(dir: string): HookState {
   const result = spawnSync('graphify', ['hook', 'status'], { cwd: dir, encoding: 'utf8' });
   if (result.status !== 0 || !result.stdout) return 'unknown';
-  return /post-commit:\s*installed/.test(result.stdout) ? 'installed' : 'missing';
+  return /post-checkout:\s*installed/.test(result.stdout) ? 'installed' : 'missing';
 }

@@ -13,10 +13,10 @@ export interface SetupAction {
   /** Git hooks can only be installed inside a git repository. */
   requiresGit?: boolean;
   /**
-   * Runs even in `--yes` mode (without --setup-tools), unless this file already exists in the repo.
-   * The command writes that file, and existing user files must never be changed without asking.
+   * Runs even in `--yes` mode (without --setup-tools), unless one of these paths already exists in the repo:
+   * either the command would change that existing file, or the repo already uses another tool for the same job.
    */
-  runsByDefaultUnlessExists?: string;
+  runsByDefaultUnlessExists?: string[];
 }
 
 /** A setup action left out of the default run, with the reason shown to the user. */
@@ -44,7 +44,19 @@ const TOOL_SETUP: Record<string, SetupAction[]> = {
   graphify: [
     { tool: 'graphify', label: 'build the code knowledge graph (graphify-out/)', command: 'graphify', args: ['update', '.'] },
     // `hook install` also adds a merge-driver line to .gitattributes (appending if the file exists).
-    { tool: 'graphify', label: 'rebuild the graph on every commit (git hooks + .gitattributes)', command: 'graphify', args: ['hook', 'install'], requiresGit: true, runsByDefaultUnlessExists: '.gitattributes' },
+    { tool: 'graphify', label: 'rebuild the graph on every commit (git hooks + .gitattributes)', command: 'graphify', args: ['hook', 'install'], requiresGit: true, runsByDefaultUnlessExists: ['.gitattributes'] },
+  ],
+  // Runs after graphify: lefthook moves existing hooks aside, and lefthook.yml takes over graphify's post-commit refresh.
+  // Skipped by default when another hook manager (husky, pre-commit) is already in use.
+  lefthook: [
+    {
+      tool: 'lefthook',
+      label: 'activate the git hooks in lefthook.yml (commit message check)',
+      command: 'lefthook',
+      args: ['install'],
+      requiresGit: true,
+      runsByDefaultUnlessExists: ['.husky', '.pre-commit-config.yaml'],
+    },
   ],
 };
 
@@ -57,7 +69,7 @@ export function planToolSetup(toolIds: string[]): SetupAction[] {
 
 /**
  * Picks the actions that run without asking (`--yes` mode without --setup-tools).
- * Only actions marked `runsByDefaultUnlessExists` qualify, and only while the file they would write does not exist yet.
+ * Only actions marked `runsByDefaultUnlessExists` qualify, and only while none of the listed paths exists yet.
  * @param root - Repository root.
  * @param actions - All planned setup actions.
  * @returns The actions to run, and the default actions skipped because they would change an existing file.
@@ -66,10 +78,12 @@ export async function selectDefaultActions(root: string, actions: SetupAction[])
   const run: SetupAction[] = [];
   const skipped: SkippedDefault[] = [];
   for (const action of actions) {
-    const file = action.runsByDefaultUnlessExists;
-    if (!file) continue;
-    if (await exists(path.join(root, file))) {
-      skipped.push({ action, reason: `${file} already exists and would be changed; run \`${action.command} ${action.args.join(' ')}\` yourself if you want it` });
+    const blockers = action.runsByDefaultUnlessExists;
+    if (!blockers) continue;
+    const found: string[] = [];
+    for (const file of blockers) if (await exists(path.join(root, file))) found.push(file);
+    if (found.length > 0) {
+      skipped.push({ action, reason: `${found.join(', ')} already exists; run \`${action.command} ${action.args.join(' ')}\` yourself if you want it` });
     } else {
       run.push(action);
     }

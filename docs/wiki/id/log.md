@@ -3,6 +3,11 @@
 Entri terbaru di atas. Format:
 
 ```
+## 2026-10-02 — feat(TASK-7101): enforce the commit message format with lefthook
+- Apa: `init` membuat `lefthook.yml` dan script commit-msg `sh` POSIX yang menolak header yang tidak sesuai `type(#n|TASK-n): subject` (subject ≤ 72 karakter) dan trailer atribusi; dengan graphify, `lefthook.yml` juga memperbarui graph setelah setiap commit. lefthook menjadi tool wajib; `init --yes` menjalankan `lefthook install` setelah `graphify hook install` kecuali ada `.husky/` atau `.pre-commit-config.yaml`. AGENTS.md melarang `--no-verify`. `doctor` sekarang mengecek hook post-checkout graphify. Repository ini memakai hook yang sama. Halaman baru features/quality-gates.md.
+- Kenapa: Format commit sebelumnya hanya tertulis di rule, jadi agent dan orang masih bisa melanggarnya; hook menegakkannya dengan cara yang sama untuk semua bahasa.
+- File: src/render/lefthook.ts, presets/base/files/.lefthook/, src/generate.ts, src/setup.ts, src/tooling.ts, src/doctor.ts, presets/base/rules/ci-quality-gates.md, lefthook.yml
+
 ## 2026-10-02 — feat(TASK-6209): install graphify hooks in initialised repos by default
 - Apa: `init --yes` memasang git hook graphify tanpa --setup-tools kalau `.gitattributes` belum ada (kalau sudah ada, perintahnya dicetak, sehingga tidak ada file yang diubah); langkah setup lain tetap butuh --setup-tools. `doctor` menampilkan status hook di dalam repo git (hanya peringatan). Halaman getting-started hasil generate dan AGENTS.md → Project knowledge meminta kontributor menjalankan `graphify hook install` setelah clone.
 - Kenapa: Repository yang disiapkan dengan --yes, clone baru dan repo tanpa git saat init tidak pernah mendapat hook, sehingga graph yang ditanyai agent menjadi usang.

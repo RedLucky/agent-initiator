@@ -10,6 +10,7 @@ AGENTS.md                         entry point: overview, commands, framework doc
                                   MUST/NEVER constraints, Definition of Done, conventions, rule and skill index
 CLAUDE.md                         "@AGENTS.md" so Claude Code reads the same instructions
 .graphifyignore                   keeps the Indonesian wiki and change logs out of the graphify graph
+lefthook.yml, .lefthook/          git hooks for every language: commit message check, graph refresh
 .agents/rules/*.md                detailed rules
 .agents/skills/<name>/SKILL.md    skills (step-by-step guides)
 .claude/skills/<name>/SKILL.md    copy of the skills for Claude Code

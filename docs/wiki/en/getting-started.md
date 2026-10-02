@@ -6,7 +6,7 @@ How to install agent-initiator from this repository, run it on a project, and ma
 ## Requirements
 - Node.js 20 or newer and pnpm.
 - Git.
-- The required helper tools listed in `AGENTS.md` (rtk, graphify, caveman, ponytail; UI UX Pro Max for frontend work). `agent-initiator doctor` checks them.
+- The required helper tools listed in `AGENTS.md` (rtk, graphify, caveman, ponytail, lefthook; UI UX Pro Max for frontend work). `agent-initiator doctor` checks them.
 - For scaffolding Python or Go apps: `uv` or `go`.
 
 ## Install the command
@@ -23,11 +23,11 @@ rtk pnpm link --global
 
 After `source ~/.bashrc` (or a new terminal) the `agent-initiator` command works in any folder. The link points at your clone, so after a code change `rtk pnpm run build` is enough.
 
-Then install the graphify git hooks once in your clone, so the code graph that AI agents query is rebuilt after every commit:
+Then install the git hooks once in your clone (hooks live in `.git/` and are not committed). The order matters, see [quality gates](features/quality-gates.md):
 
 ```bash
-graphify hook install    # adds post-commit and post-checkout hooks; hooks live in .git/ and are not committed
-graphify hook status     # should show both hooks as installed
+graphify hook install    # keeps the code graph that AI agents query up to date
+lefthook install         # commit message check + graph refresh after every commit (from lefthook.yml)
 ```
 
 ## Use it

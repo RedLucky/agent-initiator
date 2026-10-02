@@ -18,6 +18,9 @@ Kata-kata yang dipakai di project ini, dijelaskan dengan bahasa sederhana. Kalau
 | Package manager | Tool yang menginstal dependency project: npm, pnpm, yarn, bun untuk JavaScript; uv, poetry, pip untuk Python. |
 | rtk | Rust Token Killer: menjalankan command shell dan memperpendek outputnya supaya AI assistant memakai lebih sedikit token. Setiap command diawali `rtk`. |
 | graphify | Membuat peta kode yang bisa dicari (knowledge graph) supaya assistant cepat menemukan sesuatu. |
+| Git hook | Script kecil yang dijalankan git pada saat tertentu, misalnya tepat sebelum commit disimpan. Hook ada di `.git/hooks/` dan tidak ikut dibagikan lewat repository. |
+| lefthook | Menjalankan git hook yang terdaftar di `lefthook.yml`, untuk bahasa pemrograman apa pun. Lihat [quality gate](features/quality-gates.md). |
+| Quality gate | Pengecekan otomatis yang menghentikan perubahan kalau melanggar aturan yang disepakati, misalnya format pesan commit. |
 | caveman | Mode yang membuat AI assistant menjawab dengan singkat. |
 | ponytail | Mode yang membuat AI assistant menulis solusi paling kecil yang tetap berfungsi. |
 | UI UX Pro Max | Skill desain untuk pekerjaan antarmuka pengguna, ditambahkan untuk project frontend. |

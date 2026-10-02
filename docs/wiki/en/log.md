@@ -3,6 +3,11 @@
 Newest entries first. Format:
 
 ```
+## 2026-10-02 — feat(TASK-7101): enforce the commit message format with lefthook
+- What: `init` generates `lefthook.yml` and a POSIX `sh` commit-msg script that rejects headers not matching `type(#n|TASK-n): subject` (subject ≤ 72 characters) and attribution trailers; with graphify, `lefthook.yml` also refreshes the graph after each commit. lefthook is a required tool; `init --yes` runs `lefthook install` after `graphify hook install` unless `.husky/` or `.pre-commit-config.yaml` exists. AGENTS.md forbids `--no-verify`. `doctor` now checks graphify's post-checkout hook. This repository uses the same hooks. New page features/quality-gates.md.
+- Why: The commit format was only written in a rule, so agents and people could still break it; a hook enforces it the same way for every language.
+- Files: src/render/lefthook.ts, presets/base/files/.lefthook/, src/generate.ts, src/setup.ts, src/tooling.ts, src/doctor.ts, presets/base/rules/ci-quality-gates.md, lefthook.yml
+
 ## 2026-10-02 — feat(TASK-6209): install graphify hooks in initialised repos by default
 - What: `init --yes` installs the graphify git hooks without --setup-tools when `.gitattributes` does not exist yet (otherwise it prints the command, so no existing file is changed); other setup steps still need --setup-tools. `doctor` reports the hook status inside a git repo (warning only). Generated getting-started pages and AGENTS.md → Project knowledge tell contributors to run `graphify hook install` after cloning.
 - Why: Repositories set up with --yes, fresh clones and repos without git at init time never got the hooks, so the graph agents query went stale.

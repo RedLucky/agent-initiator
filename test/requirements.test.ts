@@ -60,7 +60,10 @@ const BASE_REQUIREMENTS: Array<[string, string, string[]]> = [
   ['graphify usage: code graph by default, symbol queries with a budget', 'AGENTS.md', ['`graphify update .`', 'only occasionally', '--budget <tokens>']],
   ['documentation rule: written for AI agents too', '.agents/rules/documentation.md', ['## Written for AI agents too', 'AI agents read the English pages only', 'For AI agents: task → page', 'Where it lives in the code', 'Link instead of repeating']],
   ['agents install missing graphify hooks', 'AGENTS.md', ['graphify hook status', 'run `graphify hook install` once']],
-  ['wiki skeleton: getting started explains graph hooks', 'docs/wiki/en/getting-started.md', ['## Graph hooks', 'graphify hook install']],
+  ['wiki skeleton: getting started explains git hooks', 'docs/wiki/en/getting-started.md', ['## Git hooks', 'graphify hook install', 'lefthook install', '--no-verify']],
+  ['git hooks for every language: lefthook commit-msg check', 'lefthook.yml', ['commit-msg:', '"check-message.sh":', 'lefthook install']],
+  ['commit-msg script enforces the format and rejects attribution trailers', '.lefthook/commit-msg/check-message.sh', ['TASK-[0-9]+', 'co-authored-by']],
+  ['never bypass git hooks', 'AGENTS.md', ['Bypass git hooks with `--no-verify`']],
   ['wiki skeleton: task table for AI agents', 'docs/wiki/en/index.md', ['## For AI agents: task → page', 'AI agents read the English pages only']],
   ['DoD rejects log-only wiki updates', '.agents/skills/definition-of-done/SKILL.md', ['A log entry alone does not pass']],
   // --- Karpathy (minus Simplicity First, replaced by ponytail)
@@ -72,7 +75,7 @@ const BASE_REQUIREMENTS: Array<[string, string, string[]]> = [
   ['DoD skill: tests, build, wiki, log', '.agents/skills/definition-of-done/SKILL.md', ['Unit tests & coverage', '**Build**', '`docs/wiki/en/`', '`docs/wiki/id/`', '`log.md`']],
   ['DoD in AGENTS.md', 'AGENTS.md', ['## Definition of Done', 'Unit tests pass', 'Build succeeds', 'Dependencies audited', 'Wiki updated in both', 'a log entry alone is not enough']],
   // --- mandatory tooling
-  ['tooling: ponytail, caveman, rtk, graphify', 'AGENTS.md', ['## Required tooling', 'ponytail', 'caveman', 'rtk (Rust Token Killer)', 'graphify']],
+  ['tooling: ponytail, caveman, rtk, graphify, lefthook', 'AGENTS.md', ['## Required tooling', 'ponytail', 'caveman', 'rtk (Rust Token Killer)', 'graphify', '[lefthook]']],
   ['rtk prefix on every command', 'AGENTS.md', ['Prefix every shell command with `rtk`, including git, file and script commands', 'runs any other command unchanged, keeping its exit code', '`rtk test ']],
   // --- skills & industry additions (items 1-10, 13, 14)
   ['commit skill asks for approval', '.agents/skills/commit/SKILL.md', ['**Ask for approval**', 'stop and wait', 'Push** requires its own separate approval']],
@@ -80,7 +83,7 @@ const BASE_REQUIREMENTS: Array<[string, string, string[]]> = [
   ['self-review', '.agents/skills/self-review/SKILL.md', ['Scope', 'Simplicity', 'Security']],
   ['dependencies + audit', '.agents/rules/dependencies.md', ['Justify every new dependency', 'licence', 'audit']],
   ['ADR', '.agents/skills/write-adr/SKILL.md', ['docs/wiki/en/adr/', 'docs/wiki/id/adr/', '## Options considered']],
-  ['CI quality gates', '.agents/rules/ci-quality-gates.md', ['lint → typecheck → test (with coverage) → build → dependency audit', 'pre-commit hooks', 'commitlint']],
+  ['CI quality gates', '.agents/rules/ci-quality-gates.md', ['lint → typecheck → test (with coverage) → build → dependency audit', 'pre-commit hooks', 'lefthook', 'check-message.sh', '--no-verify']],
   ['coverage threshold', '.agents/rules/testing.md', ['≥ 80% line and branch coverage', '**Integration tests**']],
   ['observability', '.agents/rules/observability.md', ['Correlation', 'OpenTelemetry', 'golden signals']],
   ['data privacy (UU PDP / GDPR)', '.agents/rules/data-privacy.md', ['UU PDP', 'GDPR', '**Mask**']],
