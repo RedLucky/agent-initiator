@@ -3,13 +3,41 @@ import { exists, listSubdirs, readJson, readText } from '../fs-utils.js';
 
 export interface WorkspaceInfo {
   /** Monorepo preset id. */
-  tool: 'turborepo' | 'nx' | 'workspaces';
+  tool: 'turborepo' | 'nx' | 'moonrepo' | 'workspaces';
   /** Package directories relative to the root, sorted. */
   packageDirs: string[];
 }
 
-// Used when a turbo/nx repo declares no explicit workspace globs.
+// Used when a turbo/nx/moon repo declares no explicit workspace globs.
 const DEFAULT_PATTERNS = ['apps/*', 'packages/*', 'libs/*'];
+
+/** Extracts project directories or globs from .moon/workspace.yml without pulling in a YAML parser. */
+export function parseMoonWorkspace(yaml: string): string[] {
+  const patterns: string[] = [];
+  let inProjects = false;
+  for (const line of yaml.split('\n')) {
+    if (/^projects:\s*$/.test(line)) {
+      inProjects = true;
+      continue;
+    }
+    if (inProjects && /^\S/.test(line)) break; // next top-level key ends the projects section
+    if (!inProjects) continue;
+
+    // List syntax: - "apps/*" or - apps/*
+    const listItem = line.match(/^\s*-\s*["']?([^"'#\s]+)["']?/);
+    if (listItem?.[1]) {
+      patterns.push(listItem[1]);
+      continue;
+    }
+
+    // Map/record syntax: web: "apps/web" or web: apps/web
+    const mapItem = line.match(/^\s*[\w.-]+:\s*["']?([^"'#\s]+)["']?/);
+    if (mapItem?.[1]) {
+      patterns.push(mapItem[1]);
+    }
+  }
+  return patterns;
+}
 
 /** Extracts the `packages:` list from pnpm-workspace.yaml without pulling in a YAML parser. */
 export function parsePnpmWorkspace(yaml: string): string[] {
@@ -28,6 +56,14 @@ export function parsePnpmWorkspace(yaml: string): string[] {
 }
 
 async function readPatterns(root: string): Promise<string[]> {
+  const moonYaml =
+    (await readText(path.join(root, '.moon', 'workspace.yml'))) ??
+    (await readText(path.join(root, '.moon', 'workspace.yaml')));
+  if (moonYaml !== null) {
+    const moonPatterns = parseMoonWorkspace(moonYaml);
+    if (moonPatterns.length > 0) return moonPatterns;
+  }
+
   const pnpmYaml = await readText(path.join(root, 'pnpm-workspace.yaml'));
   if (pnpmYaml !== null) return parsePnpmWorkspace(pnpmYaml);
 
@@ -58,7 +94,15 @@ export async function detectWorkspace(root: string): Promise<WorkspaceInfo | nul
   let tool: WorkspaceInfo['tool'] | null = null;
   if (await exists(path.join(root, 'turbo.json'))) tool = 'turborepo';
   else if (await exists(path.join(root, 'nx.json'))) tool = 'nx';
-  else if (patterns.length > 0) tool = 'workspaces';
+  else if (
+    (await exists(path.join(root, '.moon', 'workspace.yml'))) ||
+    (await exists(path.join(root, '.moon', 'workspace.yaml'))) ||
+    (await exists(path.join(root, '.moon')))
+  ) {
+    tool = 'moonrepo';
+  } else if (patterns.length > 0) {
+    tool = 'workspaces';
+  }
   if (!tool) return null;
 
   const packageDirs = await expandPatterns(root, patterns.length > 0 ? patterns : DEFAULT_PATTERNS);

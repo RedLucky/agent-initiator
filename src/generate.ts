@@ -121,7 +121,10 @@ export function generateFiles(project: DetectedProject, registry: Registry, opti
         pkg: summary,
         language: pkg.language,
         commands: packageCommands(pkg, resolved.commands, project.monorepo),
-        rootCommand: rootTest && ['typescript', 'javascript'].includes(pkg.language) ? `rtk test ${rootTest}` : undefined,
+        rootCommand:
+          rootTest && (project.monorepo === 'moonrepo' || ['typescript', 'javascript'].includes(pkg.language))
+            ? `rtk test ${rootTest}`
+            : undefined,
         docs: listFrom(registry, specificIds, 'docs'),
         agentsMdBlocks: specificIds.flatMap((id) => (registry.get(id)?.agentsMd ? [registry.get(id)?.agentsMd ?? ''] : [])),
         conventions: listFrom(registry, specificIds, 'conventions'),

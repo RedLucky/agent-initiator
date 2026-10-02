@@ -9,6 +9,11 @@ Entri terbaru di atas. Format:
 - File: ...
 ```
 
+## 2026-10-02 — feat(TASK-6182): support moonrepo multi-language workspaces
+- Apa: Menambahkan deteksi workspace moonrepo (`.moon/workspace.yml`), parser pola proyek (glob dan map), preset `moonrepo`, runner target root, dan dukungan multi-bahasa (Go, Python, TypeScript).
+- Kenapa: Memungkinkan monorepo berbasis moonrepo (seperti template zero-one-group monorepo) secara otomatis menghasilkan root dan nested AGENTS.md lintas bahasa pemrograman.
+- File: presets/moonrepo/preset.json, src/detect/workspace.ts, src/types.ts, src/render/commands.ts, src/generate.ts, test/fixtures/moonrepo/, test/detect.test.ts, test/generate.test.ts
+
 ## 2026-09-30 — feat(TASK-2): optional per-repo tool setup during init
 - Apa: `init` bisa menjalankan setup tool per repo (graph + git hook graphify, skill UI UX Pro Max) sebelum generate file; flag baru `--setup-tools`.
 - Kenapa: rtk, caveman, dan ponytail aktif secara global, tetapi graphify dan UI UX Pro Max butuh satu langkah di setiap repo.

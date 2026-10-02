@@ -31,7 +31,7 @@ export interface PackageInfo {
 export interface DetectedProject {
   root: string;
   name: string;
-  /** Monorepo preset id (turborepo | nx | workspaces) when a workspace tool is found. */
+  /** Monorepo preset id (turborepo | nx | moonrepo | workspaces) when a workspace tool is found. */
   monorepo?: string;
   /** Root package.json scripts and package manager (monorepos only), used for workspace-wide commands. */
   rootScripts?: string[];

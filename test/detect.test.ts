@@ -3,6 +3,7 @@ import { mkdtemp } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { detectProject } from '../src/detect/index.js';
+import { parseMoonWorkspace } from '../src/detect/workspace.js';
 
 const fixture = (name: string) => path.join(import.meta.dirname, 'fixtures', name);
 
@@ -49,6 +50,17 @@ describe('detectProject', () => {
     expect(project.packages.map((p) => [p.path, p.presets])).toEqual([['apps/admin', ['typescript', 'vue-vite']]]);
   });
 
+  it('detects a moonrepo with multi-language packages', async () => {
+    const project = await detectProject(fixture('moonrepo'));
+    expect(project.name).toBe('zoog-moon');
+    expect(project.monorepo).toBe('moonrepo');
+    expect(project.packages.map((p) => [p.path, p.name, p.language])).toEqual([
+      ['apps/api', 'api', 'python'],
+      ['apps/service', 'service', 'go'],
+      ['apps/web', 'web', 'typescript'],
+    ]);
+  });
+
   it('detects a multi-folder fullstack repo without workspace tooling', async () => {
     const project = await detectProject(fixture('fullstack'));
     expect(project.monorepo).toBeUndefined();
@@ -83,5 +95,23 @@ describe('detectProject options', () => {
   it('uses the given package manager when no lockfile exists yet', async () => {
     const project = await detectProject(fixture('express'), { nodePackageManager: 'pnpm' });
     expect(project.packages[0]?.packageManager).toBe('pnpm');
+  });
+});
+
+describe('parseMoonWorkspace', () => {
+  it('parses list syntax', () => {
+    const yaml = `projects:
+  - 'apps/*'
+  - 'packages/*'
+`;
+    expect(parseMoonWorkspace(yaml)).toEqual(['apps/*', 'packages/*']);
+  });
+
+  it('parses map syntax', () => {
+    const yaml = `projects:
+  web: 'apps/web'
+  api: apps/api
+`;
+    expect(parseMoonWorkspace(yaml)).toEqual(['apps/web', 'apps/api']);
   });
 });

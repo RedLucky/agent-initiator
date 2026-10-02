@@ -1,0 +1,19 @@
+{
+  "id": "moonrepo",
+  "name": "moonrepo",
+  "category": "monorepo",
+  "description": "moonrepo multi-language workspace: task runner, project graph, and cached builds.",
+  "extends": [
+    "monorepo"
+  ],
+  "commands": {
+    "install": "{{pm}} install",
+    "build": "moon run :build",
+    "test": "moon run :test",
+    "lint": "moon check"
+  },
+  "docs": [
+    "https://moonrepo.dev/docs — official moon documentation. Read it before changing .moon/ configs or tasks.",
+    "`moon <command> --help` — check CLI syntax and flags before executing."
+  ]
+}

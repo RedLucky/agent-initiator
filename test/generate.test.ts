@@ -100,7 +100,34 @@ describe('generateFiles', () => {
     expect(paths).toContain('.agents/skills/definition-of-done/SKILL.md');
   });
 
-  it.each(['nextjs', 'turborepo', 'fullstack', 'django'])('keeps %s AGENTS.md under the 32 KiB agent limit', async (name) => {
+  it('generates root + nested AGENTS.md for a multi-language moonrepo', async () => {
+    const { kind, paths, file } = await generate('moonrepo');
+    expect(kind).toBe('monorepo');
+    expect(paths).toEqual(
+      expect.arrayContaining(['apps/web/AGENTS.md', 'apps/api/AGENTS.md', 'apps/service/AGENTS.md']),
+    );
+
+    const root = file('AGENTS.md') ?? '';
+    expect(root).toContain('moon run :test');
+    expect(root).toContain('moon run :build');
+    expect(root).toContain('[`apps/web`](apps/web/AGENTS.md)');
+    expect(root).toContain('[`apps/api`](apps/api/AGENTS.md)');
+    expect(root).toContain('[`apps/service`](apps/service/AGENTS.md)');
+
+    const web = file('apps/web/AGENTS.md') ?? '';
+    expect(web).toContain('From the repo root: `rtk test moon run web:test`');
+    expect(web).toContain('Language:** typescript');
+
+    const api = file('apps/api/AGENTS.md') ?? '';
+    expect(api).toContain('From the repo root: `rtk test moon run api:test`');
+    expect(api).toContain('Language:** python');
+
+    const service = file('apps/service/AGENTS.md') ?? '';
+    expect(service).toContain('From the repo root: `rtk test moon run service:test`');
+    expect(service).toContain('Language:** go');
+  });
+
+  it.each(['nextjs', 'turborepo', 'fullstack', 'django', 'moonrepo'])('keeps %s AGENTS.md under the 32 KiB agent limit', async (name) => {
     const agents = (await generate(name)).file('AGENTS.md') ?? '';
     expect(Buffer.byteLength(agents)).toBeLessThan(AGENTS_MD_MAX_BYTES);
   });

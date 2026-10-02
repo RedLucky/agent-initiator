@@ -95,6 +95,7 @@ function nxTargets(projectName: string): CommandMap {
 export function filterCommand(tool: string, pm: PackageManager, pkgName: string, task: string): string | null {
   if (tool === 'turborepo') return `${PMX[pm] ?? pm} turbo run ${task} --filter=${pkgName}`;
   if (tool === 'nx') return `${PMX[pm] ?? pm} nx run ${pkgName}:${task}`;
+  if (tool === 'moonrepo') return `moon run ${pkgName}:${task}`;
   if (pm === 'pnpm') return `pnpm --filter ${pkgName} run ${task}`;
   if (pm === 'yarn') return `yarn workspace ${pkgName} run ${task}`;
   if (pm === 'bun') return `bun run --filter ${pkgName} ${task}`;
