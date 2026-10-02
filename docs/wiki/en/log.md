@@ -9,6 +9,11 @@ Newest entries first. Format:
 - Files: ...
 ```
 
+## 2026-10-02 — docs(TASK-7107): record a cross-model evaluation of agent instructions
+- What: New page features/evaluation.md (en/id): Claude Haiku 4.5, Sonnet 5.5 and Opus 5.5 each did the same slugify task in a repository set up by `init --yes`. All kept the hard limits (no commit, tests, doc comments, rtk commands); Sonnet and Opus followed the whole workflow, while Haiku skipped the wiki, the commit format and plan approval. Four gaps were found: no coverage command for the DoD, no rtk prefix on file/script commands, graphify queried before the graph exists, and MUST items skipped by the smallest model.
+- Why: Claims of consistency across models needed evidence; this is a first, small sample (Claude models only, one run each).
+- Files: docs/wiki/{en,id}/features/evaluation.md, docs/wiki/{en,id}/index.md
+
 ## 2026-10-02 — perf(TASK-7113): read topic rules on demand instead of on every task
 - What: The documentation, architecture, data-privacy and observability rules are now on demand (`alwaysApply: false`) with descriptions that say when to read them; the seven core rules, including git-workflow, stay always. Rule texts and AGENTS.md MUST/NEVER are unchanged. The Rules intro mentions on-demand rules and the update-wiki skill points to the documentation rule. Per session, a generated Next.js repo now loads about 6,200 tokens instead of 8,600 (always rules 5,850 → 3,370).
 - Why: Agents read every always rule before each task, so topic rules cost tokens on tasks that never touch their topic; their non-negotiable lines are already in AGENTS.md.

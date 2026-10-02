@@ -9,6 +9,11 @@ Entri terbaru di atas. Format:
 - File: ...
 ```
 
+## 2026-10-02 — docs(TASK-7107): record a cross-model evaluation of agent instructions
+- Apa: Halaman baru features/evaluation.md (en/id): Claude Haiku 4.5, Sonnet 5.5 dan Opus 5.5 masing-masing mengerjakan tugas slugify yang sama di repository yang disiapkan dengan `init --yes`. Semuanya menjaga batasan keras (tidak commit, test, doc comment, command rtk); Sonnet dan Opus mengikuti seluruh alur kerja, sedangkan Haiku melewati wiki, format commit dan persetujuan rencana. Ditemukan empat celah: tidak ada command coverage untuk DoD, tanpa awalan rtk di perintah file/script, graphify ditanya sebelum graph ada, dan butir MUST dilewati oleh model terkecil.
+- Kenapa: Klaim konsistensi lintas model butuh bukti; ini sampel pertama yang kecil (hanya model Claude, satu kali jalan per model).
+- File: docs/wiki/{en,id}/features/evaluation.md, docs/wiki/{en,id}/index.md
+
 ## 2026-10-02 — perf(TASK-7113): read topic rules on demand instead of on every task
 - Apa: Rule documentation, architecture, data-privacy dan observability sekarang on demand (`alwaysApply: false`) dengan deskripsi yang menyebut kapan dibaca; tujuh rule inti, termasuk git-workflow, tetap always. Isi rule dan MUST/NEVER di AGENTS.md tidak berubah. Pengantar bagian Rules menyebut rule on demand dan skill update-wiki menunjuk ke rule documentation. Per sesi, repo Next.js hasil generate kini memuat sekitar 6.200 token, bukan 8.600 (rule always 5.850 → 3.370).
 - Kenapa: Agent membaca setiap rule always sebelum setiap tugas, jadi rule topik memakan token di tugas yang tidak menyentuh topiknya; baris yang tidak boleh dilanggar dari rule itu sudah ada di AGENTS.md.
