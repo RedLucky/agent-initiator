@@ -46,6 +46,7 @@ Run from the repo root. Keep the `rtk` prefix.
 | install | `rtk proxy pnpm install` |
 | build | `rtk err pnpm run build` |
 | test | `rtk test pnpm run test` |
+| coverage | `rtk test pnpm run test:coverage` |
 | typecheck | `rtk err pnpm run typecheck` |
 | audit | `rtk proxy pnpm audit` |
 
@@ -130,7 +131,7 @@ graphify install   # or: graphify <codex|cursor|gemini|copilot> install
 A task is done only when every step passes (use the `definition-of-done` skill):
 
 1. Code follows the conventions, constraints and rules in this file, and the `self-review` skill found nothing left to fix.
-2. Unit tests pass with coverage ≥ 80% on changed code: `rtk test pnpm run test`
+2. Unit tests pass with coverage ≥ 80% on changed code: `rtk test pnpm run test:coverage`
 3. Build succeeds: `rtk err pnpm run build`
 4. Dependencies audited when they changed: `rtk proxy pnpm audit`
 5. Docs updated in both `docs/wiki/en/` and `docs/wiki/id/` (`index.md` + a new `log.md` entry; ADR for architecture decisions).

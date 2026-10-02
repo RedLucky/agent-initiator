@@ -254,3 +254,83 @@ describe('postScaffoldNotes', () => {
     expect(postScaffoldNotes({ layout: 'single' })).toEqual([]);
   });
 });
+
+describe('scaffoldProject guards (offline, with fake tools on PATH)', () => {
+  const isWindows = process.platform === 'win32';
+
+  /** Creates a temp bin folder with tiny shell scripts standing in for real tools, and returns it. */
+  async function fakeBin(tools: Record<string, number>): Promise<string> {
+    const { chmod } = await import('node:fs/promises');
+    const bin = await mkdtemp(path.join(tmpdir(), 'agent-initiator-bin-'));
+    for (const [name, exitCode] of Object.entries(tools)) {
+      const file = path.join(bin, name);
+      await writeFile(file, `#!/bin/sh\nexit ${exitCode}\n`);
+      await chmod(file, 0o755);
+    }
+    return bin;
+  }
+
+  /** Runs `fn` with PATH limited to `bin`, restoring the real PATH afterwards. */
+  async function withPath<T>(bin: string, fn: () => Promise<T>): Promise<T> {
+    const original = process.env.PATH;
+    process.env.PATH = bin;
+    try {
+      return await fn();
+    } finally {
+      process.env.PATH = original;
+    }
+  }
+
+  it.skipIf(isWindows)('refuses a folder that already has files', async () => {
+    const { scaffoldProject } = await import('../src/scaffold/index.js');
+    const dir = await mkdtemp(path.join(tmpdir(), 'agent-initiator-busy-'));
+    await writeFile(path.join(dir, 'README.md'), 'mine');
+    await expect(scaffoldProject(spec({ root: dir }))).rejects.toThrow(/is not empty/);
+  });
+
+  it.skipIf(isWindows)('lists every missing tool with an install hint before touching the disk', async () => {
+    const { missingBinaries, scaffoldProject } = await import('../src/scaffold/index.js');
+    const bin = await fakeBin({});
+    const root = path.join(await mkdtemp(path.join(tmpdir(), 'agent-initiator-new-')), 'app');
+    const goSpec = spec({ root, apps: [{ framework: 'go-http', name: 'api' }] });
+    await withPath(bin, async () => {
+      expect(await missingBinaries(goSpec)).toEqual(['git', 'go']);
+      await expect(scaffoldProject(goSpec)).rejects.toThrow(/Missing required tools:\n {2}- git: .*\n {2}- go: https:\/\/go.dev/);
+    });
+    expect(await inspectDir(root)).toBe('missing');
+  });
+
+  it.skipIf(isWindows)('asks for a completely empty folder for Nx (never deletes .git)', async () => {
+    const { mkdir } = await import('node:fs/promises');
+    const { scaffoldProject } = await import('../src/scaffold/index.js');
+    const bin = await fakeBin({ git: 0, npx: 0, pnpm: 0 });
+    const dir = await mkdtemp(path.join(tmpdir(), 'agent-initiator-nx-'));
+    await mkdir(path.join(dir, '.git'));
+    await withPath(bin, async () => {
+      await expect(scaffoldProject(spec({ root: dir, layout: 'nx' }))).rejects.toThrow(/Nx needs a new or completely empty folder; .* contains \.git/);
+    });
+  });
+
+  it.skipIf(isWindows)('keeps partial files and says so when a step fails', async () => {
+    const { scaffoldProject } = await import('../src/scaffold/index.js');
+    const bin = await fakeBin({ git: 0, npx: 0, npm: 1 });
+    const root = path.join(await mkdtemp(path.join(tmpdir(), 'agent-initiator-fail-')), 'api');
+    const expressSpec = spec({ root, packageManager: 'npm', apps: [{ framework: 'express', name: 'api' }] });
+    await withPath(bin, async () => {
+      await expect(scaffoldProject(expressSpec)).rejects.toThrow(/partial files remain in .*api\. Remove that folder and retry\./);
+    });
+    expect(await inspectDir(root)).toBe('project');
+  });
+
+  it.skipIf(isWindows)('treats a folder as a git repo only when git says so', async () => {
+    const { isInsideGitRepo } = await import('../src/scaffold/index.js');
+    const dir = await tempDirFor('git');
+    await withPath(await fakeBin({ git: 0 }), async () => expect(isInsideGitRepo(dir)).toBe(true));
+    await withPath(await fakeBin({ git: 1 }), async () => expect(isInsideGitRepo(dir)).toBe(false));
+  });
+
+  /** A fresh temp folder; the tag makes failing test output easy to trace. */
+  function tempDirFor(tag: string): Promise<string> {
+    return mkdtemp(path.join(tmpdir(), `agent-initiator-${tag}-`));
+  }
+});

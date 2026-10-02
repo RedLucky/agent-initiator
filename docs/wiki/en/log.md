@@ -3,6 +3,11 @@
 Newest entries first. Format:
 
 ```
+## 2026-10-02 — test(TASK-7344): measure coverage and cover scaffold runner and guards
+- What: Coverage is measured with `pnpm run test:coverage` (`@vitest/coverage-v8` 5.0.3, MIT, official vitest package). New tests cover every step type of the scaffold runner, the scaffold guards (offline, with fake tools on PATH) and `overridePresets`. AGENTS.md lists the coverage command in Commands and the Definition of Done.
+- Why: The Definition of Done asks for at least 80% coverage on changed code, but coverage was never measured.
+- Files: package.json, pnpm-lock.yaml, vitest.config.ts, AGENTS.md, test/run.test.ts, test/scaffold.test.ts, test/detect.test.ts
+
 ## 2026-10-02 — refactor(TASK-7343): move post-scaffold notes into a testable function
 - What: The moonrepo reminder (first commit, `moon setup`) moved from `cli.ts` into `postScaffoldNotes()` in `src/scaffold/index.ts`, with unit tests.
 - Why: Code inside `cli.ts` is only reached by end-to-end tests, and every function must have a unit test.

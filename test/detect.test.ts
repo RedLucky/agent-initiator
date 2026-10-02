@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { mkdtemp } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { detectProject } from '../src/detect/index.js';
+import { detectProject, overridePresets } from '../src/detect/index.js';
 import { parseMoonProjectIds, parseMoonWorkspace } from '../src/detect/workspace.js';
 
 const fixture = (name: string) => path.join(import.meta.dirname, 'fixtures', name);
@@ -135,5 +135,25 @@ describe('parseMoonWorkspace', () => {
   it('uses the folder name as moon project ID, not the package.json name', async () => {
     const project = await detectProject(fixture('moonrepo'));
     expect(project.packages.find((p) => p.path === 'apps/web')?.taskRunnerId).toBe('web');
+  });
+});
+
+describe('overridePresets', () => {
+  it('replaces detected stacks on the root package and keeps what was detected about it', async () => {
+    const project = overridePresets(await detectProject(fixture('nestjs')), ['typescript', 'hono']);
+    expect(project.packages).toHaveLength(1);
+    expect(project.packages[0]).toMatchObject({ path: '.', presets: ['typescript', 'hono'], language: 'typescript', packageManager: 'yarn' });
+    expect(project.packages[0]?.scripts).toContain('test');
+  });
+
+  it('creates a root package with a sensible language and package manager when nothing was detected', async () => {
+    const empty = await detectProject(await mkdtemp(path.join(tmpdir(), 'agent-initiator-empty-')));
+    expect(overridePresets(empty, ['python', 'fastapi']).packages[0]).toMatchObject({ language: 'python', packageManager: 'pip' });
+    expect(overridePresets(empty, ['go-http']).packages[0]).toMatchObject({ language: 'go', packageManager: 'go' });
+    expect(overridePresets(empty, ['express']).packages[0]).toMatchObject({ language: 'javascript', packageManager: 'npm' });
+  });
+
+  it('drops monorepo information because the override describes a single package', async () => {
+    expect(overridePresets(await detectProject(fixture('turborepo')), ['typescript']).monorepo).toBeUndefined();
   });
 });
