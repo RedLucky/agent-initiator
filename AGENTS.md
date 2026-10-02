@@ -78,7 +78,7 @@ curl -fsSL https://raw.githubusercontent.com/JuliusBrussee/caveman/main/install.
 ### [rtk (Rust Token Killer)](https://github.com/rtk-ai/rtk)
 Filters shell command output so agents spend fewer tokens.
 
-**Use:** Prefix every shell command with `rtk` (commands in this file already are). Use `rtk proxy <cmd>` only when raw output is required.
+**Use:** Prefix every shell command with `rtk`, including git, file and script commands (commands in this file already are). rtk filters the tools it knows (`rtk --help`) and runs any other command unchanged, keeping its exit code, so the prefix is always safe. Use `rtk proxy <cmd>` only when you need the raw, unfiltered output of a filtered tool.
 
 ```bash
 brew install rtk   # or: cargo install --git https://github.com/rtk-ai/rtk  (NOT `cargo install rtk`, a different crate)
@@ -111,7 +111,7 @@ graphify install   # or: graphify <codex|cursor|gemini|copilot> install
 - Ask for explicit confirmation, showing the proposed message, before every `git commit` and `git push`.
 - Use commit format `type(#<issue>): subject`, or `type(TASK-<n>): subject` with the plan's task number when there is no issue.
 - Commit each task separately (one task = one commit, with its own reference) before starting the next task; never batch several tasks into one commit.
-- Prefix shell commands with `rtk`.
+- Prefix every shell command with `rtk`, including git, file and script commands; rtk runs tools it has no filter for unchanged.
 - Record hard-to-reverse architecture decisions as ADRs (`write-adr` skill).
 - Keep `strict` TypeScript; fix type errors instead of silencing them.
 

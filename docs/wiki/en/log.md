@@ -3,6 +3,11 @@
 Newest entries first. Format:
 
 ```
+## 2026-10-02 — docs(TASK-4417): clarify that every shell command goes through rtk
+- What: The rtk tooling text and the MUST constraint say the prefix covers git, file and script commands too, because rtk runs tools it has no filter for unchanged and keeps their exit code; `rtk proxy` is only for raw output of a filtered tool. A requirement guard protects the wording.
+- Why: Agents skipped the prefix for git and script commands, partly from the wrong belief that rtk fails on tools it does not filter (tested: `rtk python3`, `rtk cp`, `rtk node` work and keep exit codes).
+- Files: src/tooling.ts, presets/base/preset.json, AGENTS.md, test/requirements.test.ts, test/__snapshots__
+
 ## 2026-10-02 — docs(TASK-2638): forbid attribution trailers and changed commit messages
 - What: The git-workflow rule, the commit skill and the NEVER constraints forbid `Co-Authored-By:` and other AI/tool attribution trailers, and require committing exactly the approved message. Requirement guards protect it.
 - Why: Agent defaults added a `Co-Authored-By: Claude` trailer that was not in the approved messages and is not part of the repo's commit format; the product owner decided not to use it.

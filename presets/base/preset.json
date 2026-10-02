@@ -28,7 +28,7 @@
     "Ask for explicit confirmation, showing the proposed message, before every `git commit` and `git push`.",
     "Use commit format `type(#<issue>): subject`, or `type(TASK-<n>): subject` with the plan's task number when there is no issue.",
     "Commit each task separately (one task = one commit, with its own reference) before starting the next task; never batch several tasks into one commit.",
-    "Prefix shell commands with `rtk`.",
+    "Prefix every shell command with `rtk`, including git, file and script commands; rtk runs tools it has no filter for unchanged.",
     "Record hard-to-reverse architecture decisions as ADRs (`write-adr` skill)."
   ],
   "never": [

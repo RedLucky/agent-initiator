@@ -3,6 +3,11 @@
 Entri terbaru di atas. Format:
 
 ```
+## 2026-10-02 — docs(TASK-4417): clarify that every shell command goes through rtk
+- Apa: Teks tooling rtk dan constraint MUST menyatakan prefix juga berlaku untuk command git, file dan script, karena rtk menjalankan tool tanpa filter apa adanya dan meneruskan exit code-nya; `rtk proxy` hanya untuk output mentah dari tool yang punya filter. Guard requirement menjaga kalimat ini.
+- Kenapa: Agent melewatkan prefix untuk command git dan script, sebagian karena keliru mengira rtk gagal untuk tool tanpa filter (sudah diuji: `rtk python3`, `rtk cp`, `rtk node` jalan dan meneruskan exit code).
+- File: src/tooling.ts, presets/base/preset.json, AGENTS.md, test/requirements.test.ts, test/__snapshots__
+
 ## 2026-10-02 — docs(TASK-2638): forbid attribution trailers and changed commit messages
 - Apa: Rule git-workflow, skill commit dan constraint NEVER melarang `Co-Authored-By:` dan trailer atribusi AI/tool lain, serta mewajibkan commit dengan pesan yang persis disetujui. Guard requirement menjaga aturan ini.
 - Kenapa: Default agent menambahkan trailer `Co-Authored-By: Claude` yang tidak ada di pesan yang disetujui dan bukan bagian format commit repo; product owner memutuskan tidak memakainya.

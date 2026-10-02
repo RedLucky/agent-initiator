@@ -60,7 +60,7 @@ const BASE_REQUIREMENTS: Array<[string, string, string[]]> = [
   ['DoD in AGENTS.md', 'AGENTS.md', ['## Definition of Done', 'Unit tests pass', 'Build succeeds', 'Dependencies audited', 'Docs updated in both']],
   // --- mandatory tooling
   ['tooling: ponytail, caveman, rtk, graphify', 'AGENTS.md', ['## Required tooling', 'ponytail', 'caveman', 'rtk (Rust Token Killer)', 'graphify']],
-  ['rtk prefix on commands', 'AGENTS.md', ['Prefix shell commands with `rtk`', '`rtk test ']],
+  ['rtk prefix on every command', 'AGENTS.md', ['Prefix every shell command with `rtk`, including git, file and script commands', 'runs any other command unchanged, keeping its exit code', '`rtk test ']],
   // --- skills & industry additions (items 1-10, 13, 14)
   ['commit skill asks for approval', '.agents/skills/commit/SKILL.md', ['**Ask for approval**', 'stop and wait', 'Push** requires its own separate approval']],
   ['plan-task with random task number', '.agents/skills/plan-task/SKILL.md', ['random 4-digit id', 'TASK-4821']],
