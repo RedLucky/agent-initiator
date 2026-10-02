@@ -34,3 +34,21 @@ describe('runToolSetup', () => {
     expect(results[1]?.reason).toContain('git');
   });
 });
+
+describe('selectDefaultActions (--yes without --setup-tools)', () => {
+  it('runs only the graphify hooks, and only while .gitattributes does not exist', async () => {
+    const { selectDefaultActions } = await import('../src/setup.js');
+    const { writeFile } = await import('node:fs/promises');
+    const plan = planToolSetup(['graphify', 'ui-ux-pro-max']);
+    const dir = await mkdtemp(path.join(tmpdir(), 'agent-initiator-default-'));
+
+    const fresh = await selectDefaultActions(dir, plan);
+    expect(fresh.run.map((a) => `${a.command} ${a.args.join(' ')}`)).toEqual(['graphify hook install']);
+    expect(fresh.skipped).toEqual([]);
+
+    await writeFile(path.join(dir, '.gitattributes'), '*.png binary\n');
+    const existing = await selectDefaultActions(dir, plan);
+    expect(existing.run).toEqual([]);
+    expect(existing.skipped[0]?.reason).toContain('.gitattributes already exists');
+  });
+});

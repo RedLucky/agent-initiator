@@ -3,6 +3,11 @@
 Newest entries first. Format:
 
 ```
+## 2026-10-02 — feat(TASK-6209): install graphify hooks in initialised repos by default
+- What: `init --yes` installs the graphify git hooks without --setup-tools when `.gitattributes` does not exist yet (otherwise it prints the command, so no existing file is changed); other setup steps still need --setup-tools. `doctor` reports the hook status inside a git repo (warning only). Generated getting-started pages and AGENTS.md → Project knowledge tell contributors to run `graphify hook install` after cloning.
+- Why: Repositories set up with --yes, fresh clones and repos without git at init time never got the hooks, so the graph agents query went stale.
+- Files: src/setup.ts, src/cli.ts, src/doctor.ts, src/render/agents-md.ts, presets/base/files/docs/wiki/*/getting-started.md, AGENTS.md, docs/wiki/*/features/tool-setup.md, test/*
+
 ## 2026-10-02 — chore(TASK-6208): install graphify git hooks in this repository
 - What: graphify post-commit and post-checkout hooks are installed in this repository and the getting-started page tells each contributor to run `graphify hook install` once after cloning. The `.gitattributes` merge driver line written by graphify is committed so it does not show up as an untracked file.
 - Why: The hooks were not installed, so the code graph only stayed current through manual `graphify update .` runs; hooks are local to each clone and are never committed.

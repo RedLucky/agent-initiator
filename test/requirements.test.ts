@@ -59,6 +59,8 @@ const BASE_REQUIREMENTS: Array<[string, string, string[]]> = [
   ['.graphifyignore keeps the Indonesian wiki and logs out of the graph', '.graphifyignore', ['docs/wiki/id/', 'docs/wiki/*/log.md']],
   ['graphify usage: code graph by default, symbol queries with a budget', 'AGENTS.md', ['`graphify update .`', 'only occasionally', '--budget <tokens>']],
   ['documentation rule: written for AI agents too', '.agents/rules/documentation.md', ['## Written for AI agents too', 'AI agents read the English pages only', 'For AI agents: task → page', 'Where it lives in the code', 'Link instead of repeating']],
+  ['agents install missing graphify hooks', 'AGENTS.md', ['graphify hook status', 'run `graphify hook install` once']],
+  ['wiki skeleton: getting started explains graph hooks', 'docs/wiki/en/getting-started.md', ['## Graph hooks', 'graphify hook install']],
   ['wiki skeleton: task table for AI agents', 'docs/wiki/en/index.md', ['## For AI agents: task → page', 'AI agents read the English pages only']],
   ['DoD rejects log-only wiki updates', '.agents/skills/definition-of-done/SKILL.md', ['A log entry alone does not pass']],
   // --- Karpathy (minus Simplicity First, replaced by ponytail)

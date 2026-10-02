@@ -1,4 +1,6 @@
+import path from 'node:path';
 import { onPath } from './doctor.js';
+import { exists } from './fs-utils.js';
 import { isInsideGitRepo } from './scaffold/index.js';
 import { runCommand } from './scaffold/run.js';
 
@@ -10,6 +12,17 @@ export interface SetupAction {
   args: string[];
   /** Git hooks can only be installed inside a git repository. */
   requiresGit?: boolean;
+  /**
+   * Runs even in `--yes` mode (without --setup-tools), unless this file already exists in the repo.
+   * The command writes that file, and existing user files must never be changed without asking.
+   */
+  runsByDefaultUnlessExists?: string;
+}
+
+/** A setup action left out of the default run, with the reason shown to the user. */
+export interface SkippedDefault {
+  action: SetupAction;
+  reason: string;
 }
 
 export type SetupOutcome = 'done' | 'skipped' | 'failed';
@@ -30,7 +43,8 @@ const TOOL_SETUP: Record<string, SetupAction[]> = {
   ],
   graphify: [
     { tool: 'graphify', label: 'build the code knowledge graph (graphify-out/)', command: 'graphify', args: ['update', '.'] },
-    { tool: 'graphify', label: 'rebuild the graph on every commit (git hooks + .gitattributes)', command: 'graphify', args: ['hook', 'install'], requiresGit: true },
+    // `hook install` also adds a merge-driver line to .gitattributes (appending if the file exists).
+    { tool: 'graphify', label: 'rebuild the graph on every commit (git hooks + .gitattributes)', command: 'graphify', args: ['hook', 'install'], requiresGit: true, runsByDefaultUnlessExists: '.gitattributes' },
   ],
 };
 
@@ -39,6 +53,28 @@ export function planToolSetup(toolIds: string[]): SetupAction[] {
   return Object.keys(TOOL_SETUP)
     .filter((tool) => toolIds.includes(tool))
     .flatMap((tool) => TOOL_SETUP[tool] ?? []);
+}
+
+/**
+ * Picks the actions that run without asking (`--yes` mode without --setup-tools).
+ * Only actions marked `runsByDefaultUnlessExists` qualify, and only while the file they would write does not exist yet.
+ * @param root - Repository root.
+ * @param actions - All planned setup actions.
+ * @returns The actions to run, and the default actions skipped because they would change an existing file.
+ */
+export async function selectDefaultActions(root: string, actions: SetupAction[]): Promise<{ run: SetupAction[]; skipped: SkippedDefault[] }> {
+  const run: SetupAction[] = [];
+  const skipped: SkippedDefault[] = [];
+  for (const action of actions) {
+    const file = action.runsByDefaultUnlessExists;
+    if (!file) continue;
+    if (await exists(path.join(root, file))) {
+      skipped.push({ action, reason: `${file} already exists and would be changed; run \`${action.command} ${action.args.join(' ')}\` yourself if you want it` });
+    } else {
+      run.push(action);
+    }
+  }
+  return { run, skipped };
 }
 
 /**

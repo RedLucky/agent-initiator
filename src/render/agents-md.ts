@@ -121,7 +121,10 @@ function projectKnowledgeSection(toolIds: string[]): string[] {
     '- AI agents read the English pages only; `docs/wiki/id/` is the same content in Indonesian.',
     '- Skip `docs/wiki/*/log.md` unless you are investigating history.',
     ...(toolIds.includes('graphify')
-      ? ['- For structure and impact questions, ask graphify with a symbol name: `graphify affected "<symbol>"`, `graphify path "<A>" "<B>"`, `graphify explain "<symbol>"` (add `--budget <tokens>` to cap the answer).']
+      ? [
+          '- For structure and impact questions, ask graphify with a symbol name: `graphify affected "<symbol>"`, `graphify path "<A>" "<B>"`, `graphify explain "<symbol>"` (add `--budget <tokens>` to cap the answer).',
+          '- If `graphify hook status` shows missing hooks (e.g. in a fresh clone), run `graphify hook install` once so the graph is rebuilt after every commit.',
+        ]
       : []),
     '- Use grep only for what the wiki and graphify do not answer.',
     '',

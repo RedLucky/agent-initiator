@@ -4,14 +4,14 @@ import { Command } from 'commander';
 import pc from 'picocolors';
 import { detectProject, overridePresets } from './detect/index.js';
 import { detectExistingSkills } from './detect/skills.js';
-import { checkTools, type ToolStatus } from './doctor.js';
+import { checkTools, graphifyHookState, type ToolStatus } from './doctor.js';
 import { generateFiles } from './generate.js';
 import { defaultPresetsDir, loadRegistry, type Registry } from './presets/registry.js';
 import { resolvePresets } from './presets/resolve.js';
 import { choosePresets, defaultPackageManager, promptNewProject } from './prompts.js';
 import { specFromFlags, type ScaffoldFlags } from './scaffold/flags.js';
-import { inspectDir, LAYOUTS, postScaffoldNotes, scaffoldProject, type NodePackageManager, type ScaffoldSpec } from './scaffold/index.js';
-import { planToolSetup, runToolSetup, type SetupAction, type SetupResult } from './setup.js';
+import { inspectDir, isInsideGitRepo, LAYOUTS, postScaffoldNotes, scaffoldProject, type NodePackageManager, type ScaffoldSpec } from './scaffold/index.js';
+import { planToolSetup, runToolSetup, selectDefaultActions, type SetupAction, type SetupResult } from './setup.js';
 import type { DetectedProject } from './types.js';
 import { applyPlan, manualSteps, planFiles } from './write/index.js';
 
@@ -89,21 +89,28 @@ function logSetupResult({ action, outcome, reason }: SetupResult): void {
 }
 
 /**
- * Decides whether to run per-repo tool setup: --setup-tools forces it, --yes/non-interactive skips it
- * (explicit opt-in for CI), otherwise the user is asked. --dry-run only lists the actions.
+ * Chooses which per-repo setup actions to run.
+ * --setup-tools runs all of them. In --yes / non-interactive mode only safe defaults run (graphify git hooks,
+ * unless that would change an existing file); everything else needs --setup-tools. Otherwise the user is asked.
+ * --dry-run only lists the actions.
+ * @returns The actions to run now (possibly none).
  */
-async function shouldSetupTools(options: InitOptions, actions: SetupAction[]): Promise<boolean> {
-  if (actions.length === 0) return false;
+async function chooseSetupActions(root: string, options: InitOptions, actions: SetupAction[]): Promise<SetupAction[]> {
+  if (actions.length === 0) return [];
   const listing = actions.map((a) => `${pc.cyan(`${a.command} ${a.args.join(' ')}`)}  ${pc.dim(a.label)}`).join('\n');
   if (options.dryRun) {
-    p.note(listing, `Tool setup ${options.setupTools ? 'that would run' : 'available (--setup-tools)'}`);
-    return false;
+    p.note(listing, `Tool setup ${options.setupTools ? 'that would run' : 'available (--setup-tools; graphify hooks run by default)'}`);
+    return [];
   }
-  if (options.setupTools) return true;
-  if (options.yes || !process.stdin.isTTY) return false;
+  if (options.setupTools) return actions;
+  if (options.yes || !process.stdin.isTTY) {
+    const { run, skipped } = await selectDefaultActions(root, actions);
+    for (const { action, reason } of skipped) p.log.warn(`${action.label}: skipped — ${reason}`);
+    return run;
+  }
   p.note(listing, 'Per-repo tool setup');
   const ok = await p.confirm({ message: 'Run these setup commands now?', initialValue: true });
-  return ok === true;
+  return ok === true ? actions : [];
 }
 
 async function runInit(dir: string, options: InitOptions): Promise<void> {
@@ -134,8 +141,9 @@ async function runInit(dir: string, options: InitOptions): Promise<void> {
   const tooling = resolvePresets(registry, rootIds).tooling;
 
   // Runs before generation so skills installed by tools (UI UX Pro Max) get indexed in AGENTS.md.
-  if (await shouldSetupTools(options, planToolSetup(tooling))) {
-    await runToolSetup(root, planToolSetup(tooling), logSetupResult);
+  const setupActions = await chooseSetupActions(root, options, planToolSetup(tooling));
+  if (setupActions.length > 0) {
+    await runToolSetup(root, setupActions, logSetupResult);
     project = { ...project, existingSkills: await detectExistingSkills(root) };
   }
 
@@ -195,6 +203,10 @@ program
   .description('check that the required tooling is installed')
   .action(async () => {
     process.exitCode = printToolStatus(await checkTools()) ? 0 : 1;
+    // Hooks are per clone: report them for the current repo, but do not fail (CI clones never have them).
+    const hooks = isInsideGitRepo(process.cwd()) ? graphifyHookState(process.cwd()) : 'unknown';
+    if (hooks === 'installed') console.log(`${pc.green('✓')} graphify git hooks in this repo`);
+    if (hooks === 'missing') console.log(`${pc.yellow('!')} graphify git hooks missing in this repo ${pc.dim('→ graphify hook install')}`);
   });
 
 program.parseAsync().catch((error: unknown) => {

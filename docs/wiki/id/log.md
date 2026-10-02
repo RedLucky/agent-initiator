@@ -3,6 +3,11 @@
 Entri terbaru di atas. Format:
 
 ```
+## 2026-10-02 — feat(TASK-6209): install graphify hooks in initialised repos by default
+- Apa: `init --yes` memasang git hook graphify tanpa --setup-tools kalau `.gitattributes` belum ada (kalau sudah ada, perintahnya dicetak, sehingga tidak ada file yang diubah); langkah setup lain tetap butuh --setup-tools. `doctor` menampilkan status hook di dalam repo git (hanya peringatan). Halaman getting-started hasil generate dan AGENTS.md → Project knowledge meminta kontributor menjalankan `graphify hook install` setelah clone.
+- Kenapa: Repository yang disiapkan dengan --yes, clone baru dan repo tanpa git saat init tidak pernah mendapat hook, sehingga graph yang ditanyai agent menjadi usang.
+- File: src/setup.ts, src/cli.ts, src/doctor.ts, src/render/agents-md.ts, presets/base/files/docs/wiki/*/getting-started.md, AGENTS.md, docs/wiki/*/features/tool-setup.md, test/*
+
 ## 2026-10-02 — chore(TASK-6208): install graphify git hooks in this repository
 - Apa: Hook graphify post-commit dan post-checkout terpasang di repository ini, dan halaman getting-started meminta setiap kontributor menjalankan `graphify hook install` sekali setelah clone. Baris merge driver di `.gitattributes` yang ditulis graphify ikut di-commit supaya tidak muncul sebagai file untracked.
 - Kenapa: Hook belum terpasang, sehingga graph kode hanya mutakhir lewat `graphify update .` manual; hook bersifat lokal per clone dan tidak pernah ikut di-commit.

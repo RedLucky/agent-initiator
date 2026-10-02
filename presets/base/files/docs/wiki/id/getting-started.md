@@ -14,5 +14,8 @@ Command yang tepat, berurutan, dari clone baru sampai project berjalan.
 ## Test
 Cara menjalankan test dan seperti apa hasil yang "lolos".
 
+## Hook graph
+Jalankan `graphify hook install` sekali setelah clone: git hook ada di `.git/` dan tidak ikut di-commit, dan hook ini menjaga graph kode yang ditanyai AI agent tetap mutakhir setiap kali commit. `graphify hook status` menunjukkan apakah hook sudah terpasang.
+
 ## Perubahan pertama Anda
 Alur kerjanya: rencanakan task, buat perubahan dengan test dan doc comment, perbarui halaman wiki topiknya, lolos Definition of Done, lalu minta persetujuan commit.
