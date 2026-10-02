@@ -14,6 +14,6 @@ Run `rtk git diff` (and `rtk git diff --staged`) and check every changed line:
 5. **Tests** — new behaviour and bug fixes covered; tests assert behaviour, not implementation.
 6. **Readability** — names follow conventions; comments explain *why*; a beginner could follow it.
 7. **Performance/scalability** — no N+1 queries, unbounded loops/lists or blocking I/O in hot paths.
-8. **Docs** — wiki/ADR/API contract updated where behaviour or decisions changed.
+8. **Docs** — the wiki page of the topic you worked on is updated or created (not only `log.md`), plus glossary/FAQ/ADR/API contract where behaviour or decisions changed.
 
 Fix what you find, then report a short list of what you checked and changed. Continue with `definition-of-done`.

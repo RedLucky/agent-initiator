@@ -3,6 +3,11 @@
 Entri terbaru di atas. Format:
 
 ```
+## 2026-10-02 — docs(TASK-6203): make the wiki a knowledge base updated per topic
+- Apa: Rule documentation, skill update-wiki, definition-of-done dan self-review, constraint MUST, serta Definition of Done hasil generate mewajibkan memperbarui (atau membuat) halaman topik yang dikerjakan, dengan bagian Singkatnya untuk non-developer dan struktur halaman yang tetap. Halaman baru: features/wiki-knowledge-base.md. Halaman yang menjelaskan alur, proses, atau arsitektur diberi diagram Mermaid atau ASCII.
+- Kenapa: Selama ini hanya log.md yang diperbarui, sehingga wiki tertinggal dari kode dan tidak berguna bagi developer baru maupun non-developer.
+- File: presets/base/*, src/render/agents-md.ts, .agents/*, .claude/skills/*, AGENTS.md, docs/wiki/*, test/*
+
 ## 2026-10-02 — docs(TASK-4417): clarify that every shell command goes through rtk
 - Apa: Teks tooling rtk dan constraint MUST menyatakan prefix juga berlaku untuk command git, file dan script, karena rtk menjalankan tool tanpa filter apa adanya dan meneruskan exit code-nya; `rtk proxy` hanya untuk output mentah dari tool yang punya filter. Guard requirement menjaga kalimat ini.
 - Kenapa: Agent melewatkan prefix untuk command git dan script, sebagian karena keliru mengira rtk gagal untuk tool tanpa filter (sudah diuji: `rtk python3`, `rtk cp`, `rtk node` jalan dan meneruskan exit code).

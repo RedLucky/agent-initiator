@@ -139,7 +139,7 @@ function dodSection(commands: Command[], hasPackages: boolean): string[] {
     `2. Unit tests pass with coverage ≥ 80% on changed code: ${step('test')}`,
     `3. Build succeeds: ${step('build')}`,
     `4. Dependencies audited when they changed: ${step('audit')}`,
-    '5. Docs updated in both `docs/wiki/en/` and `docs/wiki/id/` (`index.md` + a new `log.md` entry; ADR for architecture decisions).',
+    '5. Wiki updated in both `docs/wiki/en/` and `docs/wiki/id/`: the page of the topic you worked on (create it if missing), related pages, `index.md` and a new `log.md` entry — a log entry alone is not enough; ADR for architecture decisions.',
     '',
   ];
 }

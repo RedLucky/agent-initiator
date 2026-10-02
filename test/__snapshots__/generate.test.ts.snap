@@ -190,7 +190,7 @@ uipro init --ai <claude|codex|cursor|gemini|...>   # run inside this repo
 - Handle errors explicitly and log them with enough context to debug (see the error-handling-logging rule).
 - Validate all external input at the boundary (HTTP, CLI, files, env, third-party responses).
 - Run the \`self-review\` skill on your diff before the Definition of Done.
-- Update the LLM wiki in both \`docs/wiki/en/\` and \`docs/wiki/id/\` (\`index.md\` and \`log.md\`) for every change.
+- Update the wiki page of the topic you worked on in both \`docs/wiki/en/\` and \`docs/wiki/id/\` (create it if missing), plus \`index.md\` and a \`log.md\` entry, written so new developers, experienced developers and non-developers understand it; a log entry alone is never enough.
 - Ask for explicit confirmation, showing the proposed message, before every \`git commit\` and \`git push\`.
 - Use commit format \`type(#<issue>): subject\`, or \`type(TASK-<n>): subject\` with the plan's task number when there is no issue.
 - Commit each task separately (one task = one commit, with its own reference) before starting the next task; never batch several tasks into one commit.
@@ -220,7 +220,7 @@ A task is done only when every step passes (use the \`definition-of-done\` skill
 2. Unit tests pass with coverage ≥ 80% on changed code: \`rtk test pnpm run test\`
 3. Build succeeds: \`rtk err pnpm run build\`
 4. Dependencies audited when they changed: \`rtk proxy pnpm audit\`
-5. Docs updated in both \`docs/wiki/en/\` and \`docs/wiki/id/\` (\`index.md\` + a new \`log.md\` entry; ADR for architecture decisions).
+5. Wiki updated in both \`docs/wiki/en/\` and \`docs/wiki/id/\`: the page of the topic you worked on (create it if missing), related pages, \`index.md\` and a new \`log.md\` entry — a log entry alone is not enough; ADR for architecture decisions.
 
 ## Conventions
 
@@ -240,7 +240,7 @@ Read the matching rule before working in its area. \`always\` rules apply to eve
 | [code-quality](.agents/rules/code-quality.md) | always | Code quality baseline — clean, SOLID, DRY, KISS, readable, no AI slop or over-engineering |
 | [data-privacy](.agents/rules/data-privacy.md) | always | Data privacy — PII classification, minimisation, masking, retention (UU PDP No. 27/2022, GDPR) |
 | [dependencies](.agents/rules/dependencies.md) | \`package.json\`, \`pyproject.toml\`, \`requirements*.txt\`, \`go.mod\` | Dependency management — minimal, pinned, audited, licence-checked third-party packages |
-| [documentation](.agents/rules/documentation.md) | always | Documentation — keep the bilingual LLM wiki (docs/wiki/en and docs/wiki/id) and its log current |
+| [documentation](.agents/rules/documentation.md) | always | Documentation — the bilingual wiki (docs/wiki/en and docs/wiki/id) is a knowledge base for new and experienced developers and non-developers; every change updates the pages of its topic |
 | [error-handling-logging](.agents/rules/error-handling-logging.md) | always | Error handling and structured logging standards |
 | [git-workflow](.agents/rules/git-workflow.md) | always | Git workflow — no auto commit/push, confirmation first, commit message format with issue/task prefix |
 | [llm-discipline](.agents/rules/llm-discipline.md) | always | LLM engineering discipline (Karpathy-inspired) — think first, surgical changes, goal-driven execution |
@@ -263,7 +263,7 @@ Skills live in \`.agents/skills/\` (mirrored to \`.claude/skills/\` for Claude C
 - [definition-of-done](.agents/skills/definition-of-done/SKILL.md) — Mandatory completion checklist. Use before claiming any coding task is done, fixed or ready — verifies self-review, unit tests and coverage, build, dependency audit and bilingual wiki/log updates.
 - [plan-task](.agents/skills/plan-task/SKILL.md) — Break a feature or change into a numbered plan of small, verifiable tasks (TASK-<n>) with acceptance criteria. Use before any multi-step work, and whenever a commit needs a task number because there is no issue.
 - [self-review](.agents/skills/self-review/SKILL.md) — Review your own diff like a strict senior reviewer before declaring work done. Use after implementing a change and before running the definition-of-done checklist or proposing a commit.
-- [update-wiki](.agents/skills/update-wiki/SKILL.md) — Update the bilingual LLM wiki (docs/wiki/en and docs/wiki/id) and its change log. Use after any change to behaviour, architecture, setup, APIs or conventions, as part of the definition of done.
+- [update-wiki](.agents/skills/update-wiki/SKILL.md) — Update the bilingual wiki knowledge base (docs/wiki/en and docs/wiki/id) — the page of the topic you worked on (create it if missing), related pages, index and change log. Use after any change to behaviour, architecture, setup, APIs or conventions, as part of the definition of done.
 - [write-adr](.agents/skills/write-adr/SKILL.md) — Record an Architecture Decision Record (ADR) in the bilingual wiki. Use when choosing or changing a framework, database, architecture pattern, integration, or any decision that is costly to reverse.
 - [write-unit-test](.agents/skills/write-unit-test/SKILL.md) — Workflow for writing focused, deterministic unit tests. Use when adding a feature, fixing a bug (reproduce first), or when code lacks tests.
 - [nextjs-add-route](.agents/skills/nextjs-add-route/SKILL.md) — Add a Next.js App Router page or API route handler with loading/error states, validation and tests. Use when the user asks for a new page, screen or API endpoint in a Next.js app.

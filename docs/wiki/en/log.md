@@ -3,6 +3,11 @@
 Newest entries first. Format:
 
 ```
+## 2026-10-02 — docs(TASK-6203): make the wiki a knowledge base updated per topic
+- What: The documentation rule, the update-wiki, definition-of-done and self-review skills, the MUST constraint and the generated Definition of Done require updating (or creating) the page of the topic you worked on, with an In short section for non-developers and a fixed page structure. New page: features/wiki-knowledge-base.md. Pages describing a flow, process or architecture get a Mermaid or ASCII diagram.
+- Why: Only log.md was being updated, so the wiki fell behind the code and was not useful for new developers or non-developers.
+- Files: presets/base/*, src/render/agents-md.ts, .agents/*, .claude/skills/*, AGENTS.md, docs/wiki/*, test/*
+
 ## 2026-10-02 — docs(TASK-4417): clarify that every shell command goes through rtk
 - What: The rtk tooling text and the MUST constraint say the prefix covers git, file and script commands too, because rtk runs tools it has no filter for unchanged and keeps their exit code; `rtk proxy` is only for raw output of a filtered tool. A requirement guard protects the wording.
 - Why: Agents skipped the prefix for git and script commands, partly from the wrong belief that rtk fails on tools it does not filter (tested: `rtk python3`, `rtk cp`, `rtk node` work and keep exit codes).

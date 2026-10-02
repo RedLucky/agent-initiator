@@ -1,23 +1,49 @@
 ---
-description: Documentation — keep the bilingual LLM wiki (docs/wiki/en and docs/wiki/id) and its log current
+description: Documentation — the bilingual wiki (docs/wiki/en and docs/wiki/id) is a knowledge base for new and experienced developers and non-developers; every change updates the pages of its topic
 globs: []
 alwaysApply: true
 ---
 
-# Documentation (LLM Wiki)
+# Documentation (Wiki as a Knowledge Base)
 
-The project wiki lives in `docs/wiki/` in two languages that must stay in sync:
+The wiki in `docs/wiki/` is the project's knowledge base. A new developer, an experienced developer and a non-developer (product manager, QA, stakeholder) should all be able to learn how the project works from it without asking anyone.
+
+## Audience and writing style
+- Every page starts with an **In short** section: 2–4 sentences in everyday language that a non-developer understands — what it is and why it matters.
+- After that come the details for developers: how it works, key files, configuration, examples and how to test it.
+- Plain language: short sentences and everyday words. Explain a technical term the first time you use it, or link it to `glossary.md`.
+- Describe how the system works **now**. History belongs in `log.md`.
+- English and Indonesian pages exist with the same file names and the same content. Keep code, paths and identifiers untranslated.
+
+## Diagrams
+A picture often explains a flow faster than paragraphs, for people and for AI agents. Add a diagram whenever you can.
+- **Whenever a page describes a flow, process, sequence, architecture or relationship, add a diagram.**
+- Prefer **Mermaid** (` ```mermaid ` blocks): GitHub and GitLab render it, and agents read it as text. Use **ASCII** for simple flows or where Mermaid is not rendered (terminal output, plain-text files).
+- The diagram supports the text; it does not replace it. Explain the same flow in words next to it.
+- Label boxes and arrows in plain words (`Check if file exists`, not `chkF()`); use code names only when the reader needs them to find the code.
+- Keep each diagram small (about 15 boxes at most). Split a bigger flow into several diagrams.
+- When the flow changes, update the diagram in the same change, in both languages.
+
+## Structure
 
 ```
-docs/wiki/en/index.md   docs/wiki/en/log.md   docs/wiki/en/<topic>.md
-docs/wiki/id/index.md   docs/wiki/id/log.md   docs/wiki/id/<topic>.md
+docs/wiki/en/ and docs/wiki/id/
+  index.md            map of all pages, plus reading paths for non-developers, new developers and experienced developers
+  overview.md         what the project is, who it is for and why it exists (non-technical)
+  getting-started.md  how to install, run and test the project, and how to make a first change
+  architecture.md     how the main parts fit together
+  features/<topic>.md one page per feature or topic: what it does for users, how it works, where the code is, how to test it
+  glossary.md         terms and abbreviations explained in plain words
+  faq.md              common questions and problems, with answers
+  adr/NNNN-<title>.md architecture decisions (write-adr skill)
+  log.md              change log, newest first
 ```
 
-- Every change that affects behaviour, architecture, setup, APIs or conventions updates the wiki in **both** `en` and `id`.
-- `index.md` lists every wiki page with a one-line summary; add new pages there.
+## Keeping the wiki current
+- **Every change updates the wiki page of the topic you worked on. A log entry alone is never enough.**
+- If no page covers the topic yet, create one (`features/<topic>.md`, kebab-case) and add it to `index.md`.
+- Also update the pages the change affects: new terms in `glossary.md`, new common problems in `faq.md`, changed setup in `getting-started.md`, changed structure in `architecture.md`, changed purpose or audience in `overview.md`.
 - `log.md` gets a new entry (newest first) for every change: date, commit/task reference, what changed and why.
-- Topic pages describe *how the system works now*, not history (history belongs in `log.md`).
-- Keep pages short and linkable; prefer one topic per page.
 - Significant, hard-to-reverse decisions (framework, database, architecture pattern, integration) are recorded as ADRs in `docs/wiki/{en,id}/adr/` via the `write-adr` skill.
 - Public APIs also get doc comments in code (and an OpenAPI spec for HTTP APIs); README covers setup and usage.
 - Use the `update-wiki` skill for the workflow.

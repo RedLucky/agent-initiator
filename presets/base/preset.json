@@ -24,7 +24,7 @@
     "Handle errors explicitly and log them with enough context to debug (see the error-handling-logging rule).",
     "Validate all external input at the boundary (HTTP, CLI, files, env, third-party responses).",
     "Run the `self-review` skill on your diff before the Definition of Done.",
-    "Update the LLM wiki in both `docs/wiki/en/` and `docs/wiki/id/` (`index.md` and `log.md`) for every change.",
+    "Update the wiki page of the topic you worked on in both `docs/wiki/en/` and `docs/wiki/id/` (create it if missing), plus `index.md` and a `log.md` entry, written so new developers, experienced developers and non-developers understand it; a log entry alone is never enough.",
     "Ask for explicit confirmation, showing the proposed message, before every `git commit` and `git push`.",
     "Use commit format `type(#<issue>): subject`, or `type(TASK-<n>): subject` with the plan's task number when there is no issue.",
     "Commit each task separately (one task = one commit, with its own reference) before starting the next task; never batch several tasks into one commit.",

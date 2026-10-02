@@ -50,6 +50,12 @@ const BASE_REQUIREMENTS: Array<[string, string, string[]]> = [
   ['plan-task commits each task before the next', '.agents/skills/plan-task/SKILL.md', ['each task = exactly one commit', 'before starting the next task']],
   ['commit format with issue or plan task number', '.agents/rules/git-workflow.md', ['<type>(#<issue>): <subject>', '<type>(TASK-<n>): <subject>']],
   ['docs: bilingual wiki + log', '.agents/rules/documentation.md', ['docs/wiki/en/', 'docs/wiki/id/', '`log.md` gets a new entry']],
+  ['wiki is a knowledge base for every reader', '.agents/rules/documentation.md', ['knowledge base', 'non-developer', '**In short**', 'glossary.md', 'faq.md', 'features/<topic>.md']],
+  ['every change updates its topic page, created if missing', '.agents/rules/documentation.md', ['updates the wiki page of the topic you worked on. A log entry alone is never enough.', 'If no page covers the topic yet, create one']],
+  ['update-wiki skill finds or creates the topic page', '.agents/skills/update-wiki/SKILL.md', ['**Find the topic**', 'create `features/<topic>.md`', 'A log entry alone is never enough']],
+  ['wiki pages use diagrams (Mermaid or ASCII) for flows', '.agents/rules/documentation.md', ['## Diagrams', 'add a diagram', '**Mermaid**', '**ASCII**', 'update the diagram in the same change']],
+  ['update-wiki skill adds or updates diagrams', '.agents/skills/update-wiki/SKILL.md', ['**Add or update a diagram**', 'Mermaid', 'ASCII']],
+  ['DoD rejects log-only wiki updates', '.agents/skills/definition-of-done/SKILL.md', ['A log entry alone does not pass']],
   // --- Karpathy (minus Simplicity First, replaced by ponytail)
   ['Karpathy: think before coding', '.agents/rules/llm-discipline.md', ['## 1. Think Before Coding', 'State assumptions explicitly', 'present them — do not pick silently', 'push back when warranted']],
   ['Karpathy: surgical changes', '.agents/rules/llm-discipline.md', ['## 2. Surgical Changes', 'Match existing repository conventions', 'trace back to the user']],
@@ -57,7 +63,7 @@ const BASE_REQUIREMENTS: Array<[string, string, string[]]> = [
   ['Karpathy simplicity handled by ponytail', '.agents/rules/llm-discipline.md', ['covered by **ponytail**']],
   // --- DoD
   ['DoD skill: tests, build, wiki, log', '.agents/skills/definition-of-done/SKILL.md', ['Unit tests & coverage', '**Build**', '`docs/wiki/en/`', '`docs/wiki/id/`', '`log.md`']],
-  ['DoD in AGENTS.md', 'AGENTS.md', ['## Definition of Done', 'Unit tests pass', 'Build succeeds', 'Dependencies audited', 'Docs updated in both']],
+  ['DoD in AGENTS.md', 'AGENTS.md', ['## Definition of Done', 'Unit tests pass', 'Build succeeds', 'Dependencies audited', 'Wiki updated in both', 'a log entry alone is not enough']],
   // --- mandatory tooling
   ['tooling: ponytail, caveman, rtk, graphify', 'AGENTS.md', ['## Required tooling', 'ponytail', 'caveman', 'rtk (Rust Token Killer)', 'graphify']],
   ['rtk prefix on every command', 'AGENTS.md', ['Prefix every shell command with `rtk`, including git, file and script commands', 'runs any other command unchanged, keeping its exit code', '`rtk test ']],
