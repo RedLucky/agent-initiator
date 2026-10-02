@@ -17,7 +17,7 @@ How to run the tests and what "passing" looks like.
 ## Git hooks
 Git hooks live in `.git/` and are not committed, so run these once after cloning:
 1. `graphify hook install` — keeps the code graph that AI agents query up to date. `graphify hook status` shows whether it is installed.
-2. `lefthook install` — activates the hooks in `lefthook.yml`: the commit message check, and the graph refresh after every commit.
+2. `lefthook install` — activates the hooks in `lefthook.yml`: lint and the commit message check before each commit, typecheck and tests before each push, and the graph refresh after every commit.
 
 Never skip the hooks with `--no-verify`; fix what they report.
 

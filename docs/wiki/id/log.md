@@ -9,6 +9,11 @@ Entri terbaru di atas. Format:
 - File: ...
 ```
 
+## 2026-10-02 — feat(TASK-7102): lint before commit, typecheck and tests before push
+- Apa: `lefthook.yml` mendapat cek lint di `pre-commit` dan cek typecheck serta test di `pre-push`, dibuat dari command terdeteksi yang sama dengan AGENTS.md tetapi tanpa awalan rtk. Repo multi-package mendapat satu cek per package, dijalankan di dalamnya (`root`); sebelum commit hanya kalau ada file staged di package itu (`glob`). `format` tidak dimasukkan karena script format sering menulis ulang file. Repository ini menjalankan typecheck dan test sebelum push.
+- Kenapa: Rule quality-gates meminta cek lokal sebelum commit dan push, tetapi belum ada yang menjalankannya, untuk bahasa apa pun.
+- File: src/render/lefthook.ts, src/render/commands.ts, src/generate.ts, src/tooling.ts, presets/base/rules/ci-quality-gates.md, lefthook.yml, test/*
+
 ## 2026-10-02 — fix(TASK-7109): install lefthook hooks after init writes lefthook.yml
 - Apa: `lefthook install` sekarang berjalan setelah file ditulis; sebelumnya ia berjalan duluan dan menulis `lefthook.yml` bawaan lefthook, sehingga milik kita tidak ditulis dan cek commit-msg tidak pernah berjalan. `lefthook.yml` yang dipertahankan mendapat langkah manual berisi blok `commit-msg`. File `.sh` ditulis executable, sehingga chmod dari lefthook tidak lagi meninggalkan perubahan mode setelah commit pertama.
 - Kenapa: Smoke run nyata dengan lefthook terinstal menunjukkan `init --yes` menerima pesan commit apa pun, dan script hook muncul sebagai berubah setelah commit pertama.

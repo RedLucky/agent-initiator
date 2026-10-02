@@ -41,7 +41,7 @@ export const TOOLS: Tool[] = [
     id: 'lefthook',
     name: 'lefthook',
     url: 'https://github.com/evilmartians/lefthook',
-    purpose: 'Runs the git hooks in lefthook.yml for every language (commit message check, graph refresh).',
+    purpose: 'Runs the git hooks in lefthook.yml for every language (commit message check, lint before commit, typecheck and tests before push, graph refresh).',
     install: [
       'npm i -g lefthook   # or: uv tool install lefthook | go install github.com/evilmartians/lefthook/v2@latest | brew install lefthook',
       'lefthook install    # once per clone: activates the hooks in lefthook.yml',

@@ -7,6 +7,13 @@ commit-msg:
     "check-message.sh":
       runner: sh
 
+pre-push:
+  commands:
+    "typecheck":
+      run: "pnpm run typecheck"
+    "test":
+      run: "pnpm run test"
+
 post-commit:
   commands:
     graphify:

@@ -158,7 +158,7 @@ In `--yes` mode, an empty folder without `--framework`, `--apps` or `--preset` s
 ```
 AGENTS.md                           entry point for every agent (see "What you get")
 CLAUDE.md                           "@AGENTS.md" so Claude Code reads the same instructions
-lefthook.yml, .lefthook/            git hooks for every language: commit message check, graph refresh
+lefthook.yml, .lefthook/            git hooks for every language: lint + message check on commit, typecheck + tests on push
 .agents/rules/*.md                  rules (frontmatter: description, globs, alwaysApply)
 .agents/skills/<name>/SKILL.md      skills (Agent Skills format)
 .claude/skills/<name>/SKILL.md      copy of the skills for Claude Code
@@ -256,7 +256,7 @@ Every generated `AGENTS.md` asks contributors and agents to use these tools. The
 | [graphify](https://github.com/Graphify-Labs/graphify) | Queryable knowledge graph of the codebase | `uv tool install graphifyy`, then `graphify install`; use `graphify update .` and `graphify query "…"` |
 | [caveman](https://github.com/JuliusBrussee/caveman) | Terse responses that keep technical accuracy | `curl -fsSL https://raw.githubusercontent.com/JuliusBrussee/caveman/main/install.sh \| bash` |
 | [ponytail](https://github.com/DietrichGebert/ponytail) | Minimal-code discipline | Claude Code: `claude plugin marketplace add DietrichGebert/ponytail && claude plugin install ponytail@ponytail` |
-| [lefthook](https://github.com/evilmartians/lefthook) | Git hooks for every language (commit message check, graph refresh) | `npm i -g lefthook` (or uv, go, brew), then `lefthook install` once per clone |
+| [lefthook](https://github.com/evilmartians/lefthook) | Git hooks for every language (lint and commit message check on commit, typecheck and tests on push, graph refresh) | `npm i -g lefthook` (or uv, go, brew), then `lefthook install` once per clone |
 | [UI UX Pro Max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | UI/UX design skill (frontend presets only) | `npm i -g ui-ux-pro-max-cli`, then `uipro init --ai <agent>` in the repo |
 
 ### What runs automatically and what needs per-repo setup
@@ -360,7 +360,7 @@ This repo uses its own output: see [`AGENTS.md`](AGENTS.md), [`.agents/`](.agent
 - Hono, Express and the Python/Go apps always install dependencies, because their scaffolders cannot skip it.
 
 **Planned:**
-- Generating CI config files and pre-commit/pre-push lint and test hooks (the commit message hook already ships).
+- Generating CI config files (the git hooks already ship).
 - Custom or team preset packs.
 - Performance budgets and i18n rules.
 

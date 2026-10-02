@@ -64,7 +64,7 @@ describe('write', () => {
     const { renderLefthookConfig } = await import('../src/render/lefthook.js');
     const dir = await tempDir();
     await writeFile(path.join(dir, 'lefthook.yml'), 'pre-commit:\n  commands: {}\n');
-    const plan = await planFiles(dir, [{ path: 'lefthook.yml', content: renderLefthookConfig({ graphify: true }) }]);
+    const plan = await planFiles(dir, [{ path: 'lefthook.yml', content: renderLefthookConfig({ graphify: true, checks: [] }) }]);
     const [step] = await manualSteps(dir, plan);
     expect(step).toContain('commit-msg:\n  scripts:\n    "check-message.sh":\n      runner: sh');
     expect(step).not.toContain('post-commit');

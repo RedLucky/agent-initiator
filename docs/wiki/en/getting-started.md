@@ -27,7 +27,7 @@ Then install the git hooks once in your clone (hooks live in `.git/` and are not
 
 ```bash
 graphify hook install    # keeps the code graph that AI agents query up to date
-lefthook install         # commit message check + graph refresh after every commit (from lefthook.yml)
+lefthook install         # commit message check + graph refresh on commit, typecheck + tests on push (lefthook.yml)
 ```
 
 ## Use it

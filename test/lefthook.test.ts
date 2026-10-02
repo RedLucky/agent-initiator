@@ -21,14 +21,49 @@ async function checkMessage(message: string): Promise<number | null> {
 
 describe('renderLefthookConfig', () => {
   it('always checks the commit message', () => {
-    const yaml = renderLefthookConfig({ graphify: false });
+    const yaml = renderLefthookConfig({ graphify: false, checks: [] });
     expect(yaml).toContain('commit-msg:');
     expect(yaml).toContain('"check-message.sh":');
     expect(yaml).not.toContain('post-commit:');
   });
 
+  it('runs single-package checks from the repo root: lint before commit, typecheck and test before push', () => {
+    const yaml = renderLefthookConfig({
+      graphify: false,
+      checks: [
+        { hook: 'pre-commit', name: 'lint', run: 'pnpm run lint' },
+        { hook: 'pre-push', name: 'test', run: 'pnpm run test' },
+      ],
+    });
+    expect(yaml).toContain('pre-commit:\n  commands:\n    "lint":\n      run: "pnpm run lint"\n');
+    expect(yaml).toContain('pre-push:\n  commands:\n    "test":\n      run: "pnpm run test"\n');
+    expect(yaml).not.toContain('root:');
+  });
+
+  it('runs package checks inside the package; before a commit only when that package changed', () => {
+    const yaml = renderLefthookConfig({
+      graphify: false,
+      checks: [
+        { hook: 'pre-commit', name: 'lint (apps/api)', run: 'uv run ruff check .', packagePath: 'apps/api' },
+        { hook: 'pre-push', name: 'test (apps/api)', run: 'uv run pytest', packagePath: 'apps/api' },
+      ],
+    });
+    expect(yaml).toContain('    "lint (apps/api)":\n      root: "apps/api/"\n      glob: "apps/api/**"\n      run: "uv run ruff check ."');
+    // lefthook ignores glob before a push, so it is left out there rather than suggesting a filter that does nothing.
+    expect(yaml).toContain('    "test (apps/api)":\n      root: "apps/api/"\n      run: "uv run pytest"');
+  });
+
+  it('quotes commands so special characters cannot break the YAML', () => {
+    const yaml = renderLefthookConfig({ graphify: false, checks: [{ hook: 'pre-push', name: 'test', run: 'echo "a: b"' }] });
+    expect(yaml).toContain('run: "echo \\"a: b\\""');
+  });
+
+  it('leaves out hooks that have no checks', () => {
+    expect(renderLefthookConfig({ graphify: false, checks: [] })).not.toMatch(/pre-commit|pre-push/);
+  });
+
   it('refreshes the graphify graph after each commit when graphify is used', () => {
-    const yaml = renderLefthookConfig({ graphify: true });
+    const yaml = renderLefthookConfig({ graphify: true, checks: [] });
     expect(yaml).toContain('post-commit:');
     expect(yaml).toContain('run: graphify update . > /dev/null 2>&1 || true');
   });

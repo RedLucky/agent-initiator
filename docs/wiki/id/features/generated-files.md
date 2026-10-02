@@ -10,7 +10,7 @@ AGENTS.md                         pintu masuk: gambaran, command, docs framework
                                   batasan MUST/NEVER, Definition of Done, konvensi, indeks rule dan skill
 CLAUDE.md                         "@AGENTS.md" supaya Claude Code membaca instruksi yang sama
 .graphifyignore                   mengeluarkan wiki bahasa Indonesia dan log perubahan dari graph graphify
-lefthook.yml, .lefthook/          git hook untuk semua bahasa: cek pesan commit, pembaruan graph
+lefthook.yml, .lefthook/          git hook untuk semua bahasa: lint + cek pesan saat commit, typecheck + test saat push
 .agents/rules/*.md                rule yang rinci
 .agents/skills/<nama>/SKILL.md    skill (panduan langkah demi langkah)
 .claude/skills/<nama>/SKILL.md    salinan skill untuk Claude Code

@@ -107,7 +107,7 @@ graphify install   # or: graphify <codex|cursor|gemini|copilot> install
 ```
 
 ### [lefthook](https://github.com/evilmartians/lefthook)
-Runs the git hooks in lefthook.yml for every language (commit message check, graph refresh).
+Runs the git hooks in lefthook.yml for every language (commit message check, lint before commit, typecheck and tests before push, graph refresh).
 
 **Use:** The hooks run on every commit. Never bypass them with `--no-verify`; fix what they report. After cloning, run `lefthook install` once.
 

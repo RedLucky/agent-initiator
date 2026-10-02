@@ -1,12 +1,46 @@
+/** One project check (lint, typecheck, test) run by a git hook. */
+export interface HookCheck {
+  hook: 'pre-commit' | 'pre-push';
+  /** Unique name lefthook prints, e.g. "lint" or "lint (apps/web)". */
+  name: string;
+  /** Plain command, without the rtk prefix: hooks also run for people who do not use rtk. */
+  run: string;
+  /**
+   * Package folder in a multi-package repo: the command runs there. Before a commit it runs only when staged files
+   * are in that folder; before a push it always runs (lefthook does not filter pre-push commands by glob).
+   */
+  packagePath?: string;
+}
+
 /** What the generated lefthook.yml should contain. */
 export interface LefthookOptions {
   /** Rebuild the graphify code graph after each commit (graphify is a required tool). */
   graphify: boolean;
+  /** Project checks, in the order they should run. */
+  checks: HookCheck[];
+}
+
+/**
+ * Renders the commands of one hook as YAML lines. Values are JSON strings, which are valid YAML,
+ * so quotes or colons in a command cannot break the file.
+ */
+function checkLines(hook: HookCheck['hook'], checks: HookCheck[]): string[] {
+  const own = checks.filter((check) => check.hook === hook);
+  if (own.length === 0) return [];
+  const lines = ['', `${hook}:`, '  commands:'];
+  for (const check of own) {
+    lines.push(`    ${JSON.stringify(check.name)}:`);
+    if (check.packagePath) lines.push(`      root: ${JSON.stringify(`${check.packagePath}/`)}`);
+    if (check.packagePath && hook === 'pre-commit') lines.push(`      glob: ${JSON.stringify(`${check.packagePath}/**`)}`);
+    lines.push(`      run: ${JSON.stringify(check.run)}`);
+  }
+  return lines;
 }
 
 /**
  * Renders lefthook.yml: git hooks that work for every language.
  * - commit-msg runs `.lefthook/commit-msg/check-message.sh` (format `type(#n|TASK-n): subject`, no attribution trailers).
+ * - pre-commit runs the quick checks (lint), pre-push the slower ones (typecheck, test).
  * - post-commit rebuilds the graphify graph. lefthook replaces existing git hooks, so graphify's own post-commit
  *   hook would stop running; listing it here keeps the graph current.
  * @param options - Which optional hooks to include.
@@ -22,6 +56,8 @@ export function renderLefthookConfig(options: LefthookOptions): string {
     '  scripts:',
     '    "check-message.sh":',
     '      runner: sh',
+    ...checkLines('pre-commit', options.checks),
+    ...checkLines('pre-push', options.checks),
   ];
   if (options.graphify) {
     lines.push(

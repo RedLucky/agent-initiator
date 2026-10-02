@@ -9,6 +9,11 @@ Newest entries first. Format:
 - Files: ...
 ```
 
+## 2026-10-02 — feat(TASK-7102): lint before commit, typecheck and tests before push
+- What: `lefthook.yml` gets a `pre-commit` lint check and `pre-push` typecheck and test checks, built from the same detected commands as AGENTS.md but without the rtk prefix. Multi-package repos get one check per package, run inside it (`root`); before a commit only when staged files are in that package (`glob`). `format` is left out because format scripts often rewrite files. This repository runs typecheck and tests before push.
+- Why: The quality-gates rule asked for local checks before commit and push, but nothing ran them, for any language.
+- Files: src/render/lefthook.ts, src/render/commands.ts, src/generate.ts, src/tooling.ts, presets/base/rules/ci-quality-gates.md, lefthook.yml, test/*
+
 ## 2026-10-02 — fix(TASK-7109): install lefthook hooks after init writes lefthook.yml
 - What: `lefthook install` now runs after the files are written; before, it ran first, wrote lefthook's default `lefthook.yml`, so ours was kept out and the commit-msg check never ran. A kept `lefthook.yml` gets a manual step with the `commit-msg` block. `.sh` files are written executable, so lefthook's chmod no longer leaves a mode change after the first commit.
 - Why: A real smoke run with lefthook installed showed that `init --yes` accepted any commit message, and that the hook script showed up as modified after each first commit.

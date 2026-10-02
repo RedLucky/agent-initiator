@@ -27,7 +27,7 @@ Lalu pasang git hook sekali di clone Anda (hook ada di `.git/` dan tidak ikut di
 
 ```bash
 graphify hook install    # menjaga graph kode yang ditanyai AI agent tetap mutakhir
-lefthook install         # cek pesan commit + pembaruan graph setiap commit (dari lefthook.yml)
+lefthook install         # cek pesan commit + pembaruan graph saat commit, typecheck + test saat push (lefthook.yml)
 ```
 
 ## Memakainya

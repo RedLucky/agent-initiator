@@ -212,4 +212,18 @@ describe('Project knowledge section', () => {
     expect(renderRootAgentsMd(input(['lefthook']))).toContain('run `lefthook install` once per clone');
     expect(renderRootAgentsMd(input([]))).not.toContain('lefthook install');
   });
+
+  it('adds git hook checks from the detected commands, per package in multi-package repos', async () => {
+    const single = (await generate('nextjs')).file('lefthook.yml') ?? '';
+    expect(single).toContain('pre-commit:\n  commands:\n    "lint":\n      run: "pnpm run lint"');
+    expect(single).toContain('"typecheck":\n      run: "pnpm exec tsc --noEmit"');
+    expect(single).not.toContain('rtk ');
+
+    const multi = (await generate('fullstack')).file('lefthook.yml') ?? '';
+    expect(multi).toContain('"lint (api)":\n      root: "api/"\n      glob: "api/**"\n      run: "poetry run ruff check ."');
+    expect(multi).toContain('"test (web)":\n      root: "web/"\n      run: "pnpm run test"');
+    // format scripts often rewrite files, which a hook must not do.
+    expect(multi).not.toContain('ruff format');
+  });
 });
+
