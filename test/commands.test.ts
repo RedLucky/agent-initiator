@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { fillTemplate, filterCommand, packageCommands, packageTaskCommands, scriptCommands, templateVars } from '../src/render/commands.js';
+import { fillTemplate, filterCommand, packageCommands, scriptCommands, templateVars } from '../src/render/commands.js';
 import type { PackageInfo } from '../src/types.js';
 
 const pkg = (overrides: Partial<PackageInfo>): PackageInfo => ({
@@ -54,11 +54,6 @@ describe('commands', () => {
       test: '{{pyRun}}pytest',
     });
     expect(commands).toEqual([{ task: 'test', command: 'rtk test uv run pytest' }]);
-  });
-
-  it('gives plain commands by task, without rtk, for git hooks', () => {
-    const commands = packageTaskCommands(pkg({ scripts: ['lint'] }), { typecheck: '{{pmx}} tsc --noEmit' });
-    expect(commands).toEqual({ typecheck: 'pnpm exec tsc --noEmit', lint: 'pnpm run lint' });
   });
 
   it('builds workspace filter commands', () => {

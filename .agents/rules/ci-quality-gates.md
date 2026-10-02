@@ -7,9 +7,8 @@ alwaysApply: false
 # CI Quality Gates
 
 - Every pull request runs, in order: **lint → typecheck → test (with coverage) → build → dependency audit**. Any failure blocks the merge. The audit fails on high and critical advisories.
-- The same checks run locally before pushing: pre-commit hooks run format + lint on staged files; heavier checks run pre-push or in CI. Git hooks are managed by **lefthook** (`lefthook.yml`), which works for every language: lint before each commit (per package, only when it changed), typecheck and tests before each push; a repo that already uses husky or `pre-commit` keeps it.
-- Commit messages are validated by the commit-msg hook (`.lefthook/commit-msg/check-message.sh`, or commitlint in repos that already use it) against the project format `type(#<issue>|TASK-<n>): subject`, with no attribution trailers.
-- Never bypass hooks with `--no-verify`; fix what they report.
+- The same checks run locally before pushing: pre-commit hooks (husky/lefthook for JS, `pre-commit` for Python) run format + lint on staged files; heavier checks run pre-push or in CI.
+- Commit messages are validated (commitlint or equivalent) against the project format `type(#<issue>|TASK-<n>): subject`.
 - The default branch is protected: PR + passing checks + review required; no direct pushes.
 - CI uses the lockfile (`npm ci`, `pnpm install --frozen-lockfile`, `uv sync --locked`, …) and caches dependencies.
 - Secrets come from the CI secret store, never from the repo; CI logs must not print them.

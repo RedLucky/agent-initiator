@@ -36,14 +36,12 @@ describe('generateFiles', () => {
         'docs/wiki/en/log.md',
         'docs/wiki/id/index.md',
         'docs/wiki/id/log.md',
-        'lefthook.yml',
-        '.lefthook/commit-msg/check-message.sh',
         ...['overview', 'getting-started', 'architecture', 'glossary', 'faq'].flatMap((page) => [`docs/wiki/en/${page}.md`, `docs/wiki/id/${page}.md`]),
       ]),
     );
     expect(file('docs/wiki/en/overview.md')).toContain('# Overview of shop-web');
     expect(file('CLAUDE.md')).toBe('@AGENTS.md\n');
-    expect(file('lefthook.yml')).toContain('run: graphify update .');
+    expect(paths.filter((p) => p.includes('lefthook'))).toEqual([]);
     expect(file('docs/wiki/en/index.md')).toContain('# shop-web Wiki');
     expect(file('docs/wiki/en/log.md')).toContain('## 2026-09-30');
     expect(file('AGENTS.md')).toMatchSnapshot();
@@ -213,25 +211,6 @@ describe('Project knowledge section', () => {
     expect(withoutGraphify).toContain('## Project knowledge');
     expect(withoutGraphify).toContain('AI agents read the English pages only');
     expect(withoutGraphify).not.toContain('graphify affected');
-  });
-
-  it('tells agents to run lefthook install only when lefthook is a required tool', async () => {
-    const { renderRootAgentsMd } = await import('../src/render/agents-md.js');
-    expect(renderRootAgentsMd(input(['lefthook']))).toContain('run `lefthook install` once per clone');
-    expect(renderRootAgentsMd(input([]))).not.toContain('lefthook install');
-  });
-
-  it('adds git hook checks from the detected commands, per package in multi-package repos', async () => {
-    const single = (await generate('nextjs')).file('lefthook.yml') ?? '';
-    expect(single).toContain('pre-commit:\n  commands:\n    "lint":\n      run: "pnpm run lint"');
-    expect(single).toContain('"typecheck":\n      run: "pnpm exec tsc --noEmit"');
-    expect(single).not.toContain('rtk ');
-
-    const multi = (await generate('fullstack')).file('lefthook.yml') ?? '';
-    expect(multi).toContain('"lint (api)":\n      root: "api/"\n      glob: "api/**"\n      run: "poetry run ruff check ."');
-    expect(multi).toContain('"test (web)":\n      root: "web/"\n      run: "pnpm run test"');
-    // format scripts often rewrite files, which a hook must not do.
-    expect(multi).not.toContain('ruff format');
   });
 
   it('audits Go modules without installing govulncheck first', async () => {

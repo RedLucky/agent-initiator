@@ -62,7 +62,7 @@ describe('resolvePresets', () => {
     expect(resolved.rules.map((r) => r.file)).toContain('llm-discipline.md');
     expect(resolved.rules.map((r) => r.file)).toContain('nextjs.md');
     expect(resolved.skills.map((s) => s.name)).toContain('nextjs-add-route');
-    expect(resolved.tooling).toEqual(['ponytail', 'caveman', 'rtk', 'graphify', 'lefthook', 'ui-ux-pro-max']);
+    expect(resolved.tooling).toEqual(['ponytail', 'caveman', 'rtk', 'graphify', 'ui-ux-pro-max']);
     expect(resolved.never.some((n) => n.includes('`any`'))).toBe(true);
   });
 

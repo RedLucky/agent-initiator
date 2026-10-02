@@ -160,7 +160,6 @@ In `--yes` mode, an empty folder without `--framework`, `--apps` or `--preset` s
 ```
 AGENTS.md                           entry point for every agent (see "What you get")
 CLAUDE.md                           "@AGENTS.md" so Claude Code reads the same instructions
-lefthook.yml, .lefthook/            git hooks for every language: lint + message check on commit, typecheck + tests + wiki reminder on push
 .agents/rules/*.md                  rules (frontmatter: description, globs, alwaysApply)
 .agents/skills/<name>/SKILL.md      skills (Agent Skills format)
 .claude/skills/<name>/SKILL.md      copy of the skills for Claude Code
@@ -258,7 +257,6 @@ Every generated `AGENTS.md` asks contributors and agents to use these tools. The
 | [graphify](https://github.com/Graphify-Labs/graphify) | Queryable knowledge graph of the codebase | `uv tool install graphifyy`, then `graphify install`; use `graphify update .` and `graphify query "…"` |
 | [caveman](https://github.com/JuliusBrussee/caveman) | Terse responses that keep technical accuracy | `curl -fsSL https://raw.githubusercontent.com/JuliusBrussee/caveman/main/install.sh \| bash` |
 | [ponytail](https://github.com/DietrichGebert/ponytail) | Minimal-code discipline | Claude Code: `claude plugin marketplace add DietrichGebert/ponytail && claude plugin install ponytail@ponytail` |
-| [lefthook](https://github.com/evilmartians/lefthook) | Git hooks for every language (lint and commit message check on commit, typecheck and tests on push, graph refresh) | `npm i -g lefthook` (or uv, go, brew), then `lefthook install` once per clone |
 | [UI UX Pro Max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | UI/UX design skill (frontend presets only) | `npm i -g ui-ux-pro-max-cli`, then `uipro init --ai <agent>` in the repo |
 
 ### What runs automatically and what needs per-repo setup
@@ -269,7 +267,6 @@ Every generated `AGENTS.md` asks contributors and agents to use these tools. The
 | caveman | Automatic in Claude Code (session hook); `/caveman` in Codex, Cursor or Windsurf | none |
 | ponytail | Automatic in Claude Code (session and prompt hooks) | none |
 | graphify | Skill available, but every repo needs its own graph | `graphify update .` and optionally `graphify hook install` (rebuilds on each commit; adds `.gitattributes`) |
-| lefthook | CLI available | `lefthook install` (after `graphify hook install`; skipped when `.husky/` or `.pre-commit-config.yaml` exists) |
 | UI UX Pro Max | CLI available | `uipro init --ai universal` (`.agents/skills`) and `uipro init --ai claude` (`.claude/skills`) |
 
 `init` offers to run the per-repo steps for you. It asks in interactive mode; with `--yes`, pass `--setup-tools`. Setup runs **before** the files are generated, so the UI UX Pro Max skills are indexed in `AGENTS.md`. The rules for setup:

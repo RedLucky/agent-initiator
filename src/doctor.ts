@@ -44,7 +44,7 @@ export type HookState = 'installed' | 'missing' | 'unknown';
 /**
  * Asks graphify whether its hooks are installed in `dir`.
  * `graphify hook install` adds post-commit and post-checkout together, so post-checkout is the signal:
- * in repos that use lefthook, lefthook owns post-commit (and runs graphify from lefthook.yml).
+ * another hook manager may own post-commit and run graphify from there.
  * @param dir - A folder inside a git repository.
  * @returns `installed`, `missing`, or `unknown` when graphify cannot answer (not installed, not a repo, error).
  */

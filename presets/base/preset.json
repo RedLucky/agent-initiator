@@ -7,8 +7,7 @@
     "ponytail",
     "caveman",
     "rtk",
-    "graphify",
-    "lefthook"
+    "graphify"
   ],
   "conventions": [
     "Existing repository conventions win; these rules only fill the gaps.",

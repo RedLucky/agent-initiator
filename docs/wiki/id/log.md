@@ -9,6 +9,11 @@ Entri terbaru di atas. Format:
 - File: ...
 ```
 
+## 2026-10-02 — refactor(TASK-7111): remove generated git hooks and lefthook
+- Apa: `init` tidak lagi menulis `lefthook.yml` atau `.lefthook/` (cek pesan commit, lint sebelum commit, typecheck dan test sebelum push, pengingat wiki) dan tidak lagi menjalankan `lefthook install`; lefthook bukan lagi tool wajib. Renderer, langkah setup setelah file ditulis, penulisan `.sh` executable, langkah manual lefthook, baris `Wiki: not needed` dan halaman wiki quality-gates dihapus. Rule, skill commit dan kerangka wiki kembali ke teks sebelum TASK-7101 (level audit tetap). Repository ini meng-uninstall lefthook; hook graphify-nya dipulihkan.
+- Kenapa: Kembali ke konfigurasi agent murni dengan lebih sedikit tool yang harus dipasang: satu tool lebih sedikit saat instal dari awal dan tanpa file atau hook tambahan di setiap repository.
+- File: src/{generate,cli,setup,tooling,doctor}.ts, src/render/{lefthook,agents-md,commands}.ts, src/write/index.ts, presets/base/*, lefthook.yml, .lefthook/, AGENTS.md, .agents/*, docs/wiki/*, README.md, test/*
+
 ## 2026-10-02 — refactor(TASK-7110): remove CI pipeline generation
 - Apa: `init` tidak lagi menulis file GitHub Actions atau GitLab CI: renderer CI, opsi `--ci`, deteksi remote dan CI yang sudah ada, deteksi `packageManager` beserta catatan pin, dan job wiki khusus peringatan dihapus. Repository ini membuang `.github/workflows/ci.yml` dan pin pnpm. Yang tetap: audit hanya gagal untuk advisory high dan critical, dan audit Go memakai `go run …govulncheck@latest`. Rule ci-quality-gates kembali menjadi panduan umum.
 - Kenapa: CI hasil generate butuh perawatan terus-menerus (versi action, image Docker, trik corepack dan toolchain) dan melampaui konfigurasi agent; tujuannya tool yang minimalis, termasuk saat instal dari awal.

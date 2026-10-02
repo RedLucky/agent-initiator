@@ -9,6 +9,11 @@ Newest entries first. Format:
 - Files: ...
 ```
 
+## 2026-10-02 — refactor(TASK-7111): remove generated git hooks and lefthook
+- What: `init` no longer writes `lefthook.yml` or `.lefthook/` (commit message check, lint before commit, typecheck and tests before push, wiki reminder) and no longer runs `lefthook install`; lefthook is no longer a required tool. Removed the renderer, the after-files setup step, the executable `.sh` writing, the kept-lefthook manual step, the `Wiki: not needed` line and the quality-gates wiki page. The rules, the commit skill and the wiki skeleton are back to their pre-TASK-7101 text (the audit level stays). This repository uninstalled lefthook; its graphify hooks are restored.
+- Why: Back to pure agent configuration with fewer tools to install: one tool less for a fresh install and no extra files or hooks in every repository.
+- Files: src/{generate,cli,setup,tooling,doctor}.ts, src/render/{lefthook,agents-md,commands}.ts, src/write/index.ts, presets/base/*, lefthook.yml, .lefthook/, AGENTS.md, .agents/*, docs/wiki/*, README.md, test/*
+
 ## 2026-10-02 — refactor(TASK-7110): remove CI pipeline generation
 - What: `init` no longer writes GitHub Actions or GitLab CI files: removed the CI renderers, the `--ci` option, remote and existing-CI detection, the `packageManager` detection and pin notes, and the warning-only wiki job. This repository drops its `.github/workflows/ci.yml` and the pnpm pin. Kept: audits fail on high and critical advisories only, and Go audits with `go run …govulncheck@latest`. The ci-quality-gates rule is back to general guidance.
 - Why: Generated CI needed constant upkeep (action versions, Docker images, corepack and toolchain workarounds) and went beyond agent configuration; the goal is a minimal tool, also for a fresh install.

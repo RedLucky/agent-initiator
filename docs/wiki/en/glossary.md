@@ -21,7 +21,6 @@ Words used in this project, explained in plain language. If a page uses a term t
 | CI (continuous integration) | A service that runs the project's checks on every push or pull request, on a clean machine. The `ci-quality-gates` rule says what it must run. |
 | Lockfile | The file that records the exact version of every dependency (`pnpm-lock.yaml`, `uv.lock`, `go.sum`, …), so every machine installs the same thing. |
 | Git hook | A small script git runs at a fixed moment, for example just before a commit is saved. Hooks live in `.git/hooks/` and are not shared through the repository. |
-| lefthook | Runs the git hooks listed in `lefthook.yml`, for any programming language. See [quality gates](features/quality-gates.md). |
 | Quality gate | An automatic check that stops a change when it breaks an agreed rule, such as the commit message format. |
 | caveman | A mode that makes AI assistants answer briefly. |
 | ponytail | A mode that makes AI assistants write the smallest solution that works. |

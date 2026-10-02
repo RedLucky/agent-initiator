@@ -21,7 +21,6 @@ Kata-kata yang dipakai di project ini, dijelaskan dengan bahasa sederhana. Kalau
 | CI (continuous integration) | Layanan yang menjalankan cek project di setiap push atau pull request, di mesin yang bersih. Rule `ci-quality-gates` menjelaskan apa yang harus dijalankan. |
 | Lockfile | File yang mencatat versi persis setiap dependency (`pnpm-lock.yaml`, `uv.lock`, `go.sum`, …), supaya setiap mesin meng-install hal yang sama. |
 | Git hook | Script kecil yang dijalankan git pada saat tertentu, misalnya tepat sebelum commit disimpan. Hook ada di `.git/hooks/` dan tidak ikut dibagikan lewat repository. |
-| lefthook | Menjalankan git hook yang terdaftar di `lefthook.yml`, untuk bahasa pemrograman apa pun. Lihat [quality gate](features/quality-gates.md). |
 | Quality gate | Pengecekan otomatis yang menghentikan perubahan kalau melanggar aturan yang disepakati, misalnya format pesan commit. |
 | caveman | Mode yang membuat AI assistant menjawab dengan singkat. |
 | ponytail | Mode yang membuat AI assistant menulis solusi paling kecil yang tetap berfungsi. |

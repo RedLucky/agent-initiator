@@ -51,7 +51,6 @@ docs/wiki/en/ and docs/wiki/id/
 - If no page covers the topic yet, create one (`features/<topic>.md`, kebab-case) and add it to `index.md`.
 - Also update the pages the change affects: new terms in `glossary.md`, new common problems in `faq.md`, changed setup in `getting-started.md`, changed structure in `architecture.md`, changed purpose or audience in `overview.md`.
 - `log.md` gets a new entry (newest first) for every change: date, commit/task reference, what changed and why.
-- A pre-push hook warns (without blocking) when code changes without an update in `docs/wiki/en/`. If a change truly needs no wiki update (dependency bump, CI tweak), say why in the commit message with a line `Wiki: not needed (<reason>)`.
 - Significant, hard-to-reverse decisions (framework, database, architecture pattern, integration) are recorded as ADRs in `docs/wiki/{en,id}/adr/` via the `write-adr` skill.
 - Public APIs also get doc comments in code (and an OpenAPI spec for HTTP APIs); README covers setup and usage.
 - Use the `update-wiki` skill for the workflow.

@@ -11,7 +11,7 @@ export async function planFiles(root: string, files: PlannedFile[]): Promise<Fil
 }
 
 /**
- * Writes only the files marked "create", creating parent folders as needed. `.sh` files are made executable.
+ * Writes only the files marked "create", creating parent folders as needed.
  * @returns The written paths.
  */
 export async function applyPlan(root: string, plan: FilePlanEntry[]): Promise<string[]> {
@@ -20,10 +20,7 @@ export async function applyPlan(root: string, plan: FilePlanEntry[]): Promise<st
     const target = path.join(root, file.path);
     await mkdir(path.dirname(target), { recursive: true });
     // `wx` fails if the file appeared since planning, so we still never clobber user content.
-    // Shell scripts (git hooks) are executable: lefthook sets the bit on its first run anyway, and a file
-    // committed without it would then show up as changed.
-    const mode = file.path.endsWith('.sh') ? 0o755 : 0o644;
-    await writeFile(target, file.content, { encoding: 'utf8', flag: 'wx', mode });
+    await writeFile(target, file.content, { encoding: 'utf8', flag: 'wx' });
     written.push(file.path);
   }
   return written;
@@ -33,14 +30,6 @@ export async function applyPlan(root: string, plan: FilePlanEntry[]): Promise<st
 function linksSection(agentsMd: string): string {
   const start = agentsMd.indexOf('\n## Rules');
   return start === -1 ? '' : agentsMd.slice(start + 1).trimEnd();
-}
-
-/** Returns the `commit-msg:` block of a generated lefthook.yml (up to the next blank line). */
-function commitMsgBlock(lefthookYml: string): string {
-  const start = lefthookYml.indexOf('commit-msg:');
-  if (start === -1) return '';
-  const end = lefthookYml.indexOf('\n\n', start);
-  return lefthookYml.slice(start, end === -1 ? undefined : end).trimEnd();
 }
 
 /**
@@ -65,12 +54,5 @@ export async function manualSteps(root: string, plan: FilePlanEntry[]): Promise<
     }
   }
 
-  const lefthook = skipped('lefthook.yml');
-  if (lefthook) {
-    const existing = (await readText(path.join(root, 'lefthook.yml'))) ?? '';
-    if (!existing.includes('check-message.sh')) {
-      steps.push(`lefthook.yml already exists and was kept. Add the commit message check to it:\n\n${commitMsgBlock(lefthook.content)}`);
-    }
-  }
   return steps;
 }

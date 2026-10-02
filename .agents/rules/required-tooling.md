@@ -48,13 +48,3 @@ Builds a queryable knowledge graph of the codebase. Output goes to `graphify-out
 uv tool install graphifyy   # package name has two "y"
 graphify install   # or: graphify <codex|cursor|gemini|copilot> install
 ```
-
-## [lefthook](https://github.com/evilmartians/lefthook)
-Runs the git hooks in lefthook.yml for every language (commit message check, lint before commit, typecheck and tests before push, graph refresh).
-
-**Use:** The hooks run on every commit. Never bypass them with `--no-verify`; fix what they report. After cloning, run `lefthook install` once.
-
-```bash
-npm i -g lefthook   # or: uv tool install lefthook | go install github.com/evilmartians/lefthook/v2@latest | brew install lefthook
-lefthook install    # once per clone: activates the hooks in lefthook.yml
-```

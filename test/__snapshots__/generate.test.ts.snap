@@ -120,7 +120,6 @@ Before exploring the code, read the wiki: \`docs/wiki/en/index.md\` lists every 
 - Skip \`docs/wiki/*/log.md\` unless you are investigating history.
 - For structure and impact questions, ask graphify with a symbol name: \`graphify affected "<symbol>"\`, \`graphify path "<A>" "<B>"\`, \`graphify explain "<symbol>"\` (add \`--budget <tokens>\` to cap the answer).
 - If \`graphify hook status\` shows missing hooks (e.g. in a fresh clone), run \`graphify hook install\` once so the graph is rebuilt after every commit.
-- Git hooks come from \`lefthook.yml\`: run \`lefthook install\` once per clone (after \`graphify hook install\`, when graphify is used).
 - Use grep only for what the wiki and graphify do not answer.
 
 ## Framework docs
@@ -139,7 +138,6 @@ Mandatory for every contributor and agent. Install steps: [required-tooling](.ag
 - **caveman** — Keep chat responses terse. Code, commit messages, PR descriptions and security warnings stay in normal, complete prose.
 - **rtk (Rust Token Killer)** — Prefix every shell command with \`rtk\`, including git, file and script commands. rtk filters the tools it knows and runs any other command unchanged, keeping its exit code, so the prefix is always safe. Use \`rtk proxy <cmd>\` only for the raw output of a filtered tool.
 - **graphify** — Ask it before broad grep/find, with symbol names and \`--budget <tokens>\` (see Project knowledge); broad questions return noise. Refresh with \`graphify update .\` (code only: no LLM, no tokens). Run the full \`/graphify\` extraction, which uses an LLM, only occasionally: the English wiki already explains the concepts.
-- **lefthook** — The hooks run on every commit. Never bypass them with \`--no-verify\`; fix what they report. After cloning, run \`lefthook install\` once.
 - **UI UX Pro Max** — Use the ui-ux-pro-max skill for any UI/UX work (layout, colour, typography, components, accessibility).
 
 ## Constraints

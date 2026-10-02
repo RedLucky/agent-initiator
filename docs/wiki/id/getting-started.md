@@ -6,7 +6,7 @@ Cara memasang agent-initiator dari repository ini, menjalankannya pada sebuah pr
 ## Kebutuhan
 - Node.js 20 atau lebih baru dan pnpm.
 - Git.
-- Tool pendukung wajib yang tercantum di `AGENTS.md` (rtk, graphify, caveman, ponytail, lefthook; UI UX Pro Max untuk pekerjaan frontend). `agent-initiator doctor` mengeceknya.
+- Tool pendukung wajib yang tercantum di `AGENTS.md` (rtk, graphify, caveman, ponytail; UI UX Pro Max untuk pekerjaan frontend). `agent-initiator doctor` mengeceknya.
 - Untuk scaffolding app Python atau Go: `uv` atau `go`.
 
 ## Memasang command
@@ -23,11 +23,11 @@ rtk pnpm link --global
 
 Setelah `source ~/.bashrc` (atau membuka terminal baru), command `agent-initiator` bisa dipakai di folder mana pun. Link ini menunjuk ke hasil clone Anda, jadi setelah mengubah kode cukup jalankan `rtk pnpm run build`.
 
-Lalu pasang git hook sekali di clone Anda (hook ada di `.git/` dan tidak ikut di-commit). Urutannya penting, lihat [quality gate](features/quality-gates.md):
+Lalu pasang git hook graphify sekali di clone Anda, supaya graph kode yang ditanyai AI agent dibangun ulang setiap kali commit:
 
 ```bash
-graphify hook install    # menjaga graph kode yang ditanyai AI agent tetap mutakhir
-lefthook install         # cek pesan commit + pembaruan graph saat commit, typecheck + test saat push (lefthook.yml)
+graphify hook install    # menambah hook post-commit dan post-checkout; hook ada di .git/ dan tidak ikut di-commit
+graphify hook status     # kedua hook harus berstatus installed
 ```
 
 ## Memakainya

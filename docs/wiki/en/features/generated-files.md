@@ -10,7 +10,6 @@ AGENTS.md                         entry point: overview, commands, framework doc
                                   MUST/NEVER constraints, Definition of Done, conventions, rule and skill index
 CLAUDE.md                         "@AGENTS.md" so Claude Code reads the same instructions
 .graphifyignore                   keeps the Indonesian wiki and change logs out of the graphify graph
-lefthook.yml, .lefthook/          git hooks for every language: lint + message check on commit, typecheck + tests + wiki reminder on push
 .agents/rules/*.md                detailed rules
 .agents/skills/<name>/SKILL.md    skills (step-by-step guides)
 .claude/skills/<name>/SKILL.md    copy of the skills for Claude Code
@@ -26,10 +25,10 @@ flowchart LR
     G --> W{File already exists?}
     W -- no --> C[Create it]
     W -- yes --> K[Keep it unchanged]
-    K --> M[Print what to add by hand<br/>for AGENTS.md, CLAUDE.md and lefthook.yml]
+    K --> M[Print what to add by hand<br/>for AGENTS.md and CLAUDE.md]
 ```
 
-In words: the file list is built in memory first. Each file is written only when it is missing. For an existing `AGENTS.md`, `CLAUDE.md` or `lefthook.yml`, the tool prints the sections you can add yourself. Shell scripts (`.sh`) are written as executable, so git hooks run and no mode change shows up later.
+In words: the file list is built in memory first. Each file is written only when it is missing. For an existing `AGENTS.md` or `CLAUDE.md`, the tool prints the sections you can add yourself.
 
 ## Details
 - AGENTS.md has a **Project knowledge** section that tells AI agents the cheapest way to learn the project: the English wiki first (`index.md`, then only the pages the task needs, no `log.md`), then graphify for structure questions, and grep last. Package AGENTS.md files point back to it.

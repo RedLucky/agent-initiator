@@ -78,21 +78,13 @@ export function toCommandList(commands: CommandMap, vars: Record<string, string>
 }
 
 /**
- * Plain commands for one package, by task (no rtk prefix): preset defaults overridden by the package's real scripts.
- * Node presets only define install/typecheck, so node packages get the scripts they actually have.
- * Git hooks use these directly, because hooks also run for people who do not have rtk.
+ * Commands for one package: preset defaults overridden by the package's real scripts.
+ * Node presets only define install/typecheck, so node packages show the scripts they actually have.
  */
-export function packageTaskCommands(pkg: PackageInfo, presetCommands: CommandMap, monorepo?: string): CommandMap {
+export function packageCommands(pkg: PackageInfo, presetCommands: CommandMap, monorepo?: string): Command[] {
   const isNode = pkg.language === 'typescript' || pkg.language === 'javascript';
   const scripts = isNode ? scriptCommands(pkg.scripts, pkg.packageManager) : {};
-  const merged: CommandMap = { ...presetCommands, ...(isNode && monorepo === 'nx' ? nxTargets(pkg.name) : {}), ...scripts };
-  const vars = templateVars(pkg);
-  return Object.fromEntries(Object.entries(merged).map(([task, template]) => [task, fillTemplate(template, vars).trim()]));
-}
-
-/** Commands for one package as shown in AGENTS.md: rtk-prefixed and in display order. */
-export function packageCommands(pkg: PackageInfo, presetCommands: CommandMap, monorepo?: string): Command[] {
-  return toCommandList(packageTaskCommands(pkg, presetCommands, monorepo), {});
+  return toCommandList({ ...presetCommands, ...(isNode && monorepo === 'nx' ? nxTargets(pkg.name) : {}), ...scripts }, templateVars(pkg));
 }
 
 // Nx projects usually have inferred targets instead of package.json scripts.

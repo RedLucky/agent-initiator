@@ -1,8 +1,7 @@
 import type { Registry } from './presets/registry.js';
 import { expandChain, resolvePresets } from './presets/resolve.js';
-import { fillTemplate, filterCommand, packageCommands, packageTaskCommands, scriptCommands, templateVars, toCommandList, type Command } from './render/commands.js';
+import { fillTemplate, filterCommand, packageCommands, scriptCommands, templateVars, toCommandList, type Command } from './render/commands.js';
 import { renderPackageAgentsMd, renderRootAgentsMd, type PackageSummary } from './render/agents-md.js';
-import { renderLefthookConfig, type HookCheck } from './render/lefthook.js';
 import { renderToolingRule } from './render/tooling-rule.js';
 import type { DetectedProject, PackageInfo, PlannedFile, ProjectKind, ResolvedConfig, RuleFile } from './types.js';
 
@@ -63,34 +62,6 @@ function rootCommands(project: DetectedProject, registry: Registry, configs: Pac
   const monorepoCommands = project.rootPackageManager && install ? { install, ...withoutInstall } : withoutInstall;
   const scripts = scriptCommands(project.rootScripts ?? [], pm);
   return toCommandList({ ...monorepoCommands, ...scripts }, templateVars({ packageManager: pm, manifests: [] }));
-}
-
-// Which git hook runs which task: quick, read-only checks before each commit; slower ones before each push.
-// `format` is left out on purpose: many format scripts rewrite files, which a hook must not do behind your back.
-const HOOK_TASKS: Array<{ task: string; hook: HookCheck['hook'] }> = [
-  { task: 'lint', hook: 'pre-commit' },
-  { task: 'typecheck', hook: 'pre-push' },
-  { task: 'test', hook: 'pre-push' },
-];
-
-/**
- * Git hook checks for every package, from the same commands AGENTS.md lists (without rtk).
- * A package without a command for a task simply gets no check for it.
- * @param configs - Every detected package with its resolved presets.
- * @param monorepo - The monorepo tool id, which changes some commands (e.g. Nx targets).
- * @returns The checks, grouped by task: all lint checks first, then typecheck, then test.
- */
-function hookChecks(configs: PackageConfig[], monorepo?: string): HookCheck[] {
-  const checks: HookCheck[] = [];
-  for (const { task, hook } of HOOK_TASKS) {
-    for (const { pkg, resolved } of configs) {
-      const run = packageTaskCommands(pkg, resolved.commands, monorepo)[task];
-      if (!run) continue;
-      const inPackage = pkg.path !== '.';
-      checks.push({ hook, name: inPackage ? `${task} (${pkg.path})` : task, run, ...(inPackage ? { packagePath: pkg.path } : {}) });
-    }
-  }
-  return checks;
 }
 
 /** Marks scoped rules with the packages that use them so the root table shows where they apply. */
@@ -192,11 +163,6 @@ export function generateFiles(project: DetectedProject, registry: Registry, opti
 
   const vars = { projectName: project.name, date: options.date };
   for (const file of root.files) files.push({ path: file.path, content: fillTemplate(file.content, vars) });
-
-  // lefthook.yml depends on the required tools (graphify adds a post-commit refresh), so it is rendered, not copied.
-  if (root.tooling.includes('lefthook')) {
-    files.push({ path: 'lefthook.yml', content: renderLefthookConfig({ graphify: root.tooling.includes('graphify'), checks: hookChecks(configs, project.monorepo) }) });
-  }
 
   return { kind, files };
 }
