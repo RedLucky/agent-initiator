@@ -224,7 +224,7 @@ describe('Project knowledge section', () => {
 
   it('keeps AGENTS.md compact: always rules on one line, on-demand rules with their purpose, skills by name', async () => {
     const agents = (await generate('express')).file('AGENTS.md') ?? '';
-    expect(agents).toMatch(/- \*\*Always:\*\* \[architecture\]\(\.agents\/rules\/architecture\.md\), /);
+    expect(agents).toMatch(/- \*\*Always:\*\* \[code-quality\]\(\.agents\/rules\/code-quality\.md\), /);
     expect(agents).toContain('- [api-design](.agents/rules/api-design.md) — on demand: Backend/API standards');
     expect(agents).toContain('- [required-tooling](.agents/rules/required-tooling.md) — on demand: Required tooling');
     expect(agents).toContain('[commit](.agents/skills/commit/SKILL.md), ');
@@ -284,6 +284,18 @@ describe('Project knowledge section', () => {
     const pluginsOnly = renderRootAgentsMd(input(['ponytail']));
     expect(pluginsOnly).toContain('If a tool is missing on your machine, skip its instructions instead of retrying.');
     expect(pluginsOnly).not.toContain('command -v');
+  });
+
+  it('reads the core rules on every task and topic rules (wiki, architecture, privacy, observability) on demand', async () => {
+    const agents = (await generate('express')).file('AGENTS.md') ?? '';
+    const always = agents.split('\n').find((line) => line.startsWith('- **Always:**')) ?? '';
+    for (const rule of ['code-quality', 'error-handling-logging', 'git-workflow', 'llm-discipline', 'naming-conventions', 'security', 'testing']) {
+      expect(always, rule).toContain(`[${rule}]`);
+    }
+    for (const rule of ['documentation', 'architecture', 'data-privacy', 'observability']) {
+      expect(always, rule).not.toContain(`[${rule}]`);
+      expect(agents).toContain(`- [${rule}](.agents/rules/${rule}.md) — on demand: `);
+    }
   });
 });
 

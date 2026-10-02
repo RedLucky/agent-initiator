@@ -59,7 +59,7 @@ Your training data may be outdated. Before using a framework API, read the versi
 
 ## Rules
 
-Read every \`always\` rule before you start, and a scoped rule before you change matching files.
+Read every \`always\` rule before you start, a scoped rule before you change matching files, and an on-demand rule when your task matches its description.
 
 - [javascript](../../.agents/rules/javascript.md) — \`**/*.js\`, \`**/*.mjs\`, \`**/*.cjs\`, \`**/*.jsx\`, \`**/*.ts\`, \`**/*.tsx\`
 - [typescript](../../.agents/rules/typescript.md) — \`**/*.ts\`, \`**/*.tsx\`, \`**/*.mts\`, \`**/*.cts\`
@@ -192,11 +192,15 @@ A task is done only when every step passes (use the \`definition-of-done\` skill
 
 ## Rules
 
-Read every \`always\` rule before you start, and a scoped rule before you change matching files.
+Read every \`always\` rule before you start, a scoped rule before you change matching files, and an on-demand rule when your task matches its description.
 
-- **Always:** [architecture](.agents/rules/architecture.md), [code-quality](.agents/rules/code-quality.md), [data-privacy](.agents/rules/data-privacy.md), [documentation](.agents/rules/documentation.md), [error-handling-logging](.agents/rules/error-handling-logging.md), [git-workflow](.agents/rules/git-workflow.md), [llm-discipline](.agents/rules/llm-discipline.md), [naming-conventions](.agents/rules/naming-conventions.md), [observability](.agents/rules/observability.md), [security](.agents/rules/security.md), [testing](.agents/rules/testing.md)
+- **Always:** [code-quality](.agents/rules/code-quality.md), [error-handling-logging](.agents/rules/error-handling-logging.md), [git-workflow](.agents/rules/git-workflow.md), [llm-discipline](.agents/rules/llm-discipline.md), [naming-conventions](.agents/rules/naming-conventions.md), [security](.agents/rules/security.md), [testing](.agents/rules/testing.md)
+- [architecture](.agents/rules/architecture.md) — on demand: Architecture — read when you add or restructure modules, layers or services — reusability, testability, scalability
 - [ci-quality-gates](.agents/rules/ci-quality-gates.md) — \`.github/workflows/**\`, \`.gitlab-ci.yml\`, \`.husky/**\`, \`lefthook.yml\`, \`.pre-commit-config.yaml\`, \`commitlint.config.*\`
+- [data-privacy](.agents/rules/data-privacy.md) — on demand: Data privacy — read when code stores, logs, sends or tests personal data — PII, masking, retention (UU PDP, GDPR)
 - [dependencies](.agents/rules/dependencies.md) — \`package.json\`, \`pyproject.toml\`, \`requirements*.txt\`, \`go.mod\`
+- [documentation](.agents/rules/documentation.md) — on demand: Documentation — read when you update the wiki (every change does) — knowledge-base pages, writing style, diagrams
+- [observability](.agents/rules/observability.md) — on demand: Observability — read when you change a service, logs, metrics or health checks — correlation IDs, tracing
 - [release-versioning](.agents/rules/release-versioning.md) — \`CHANGELOG.md\`, \`package.json\`, \`pyproject.toml\`
 - [javascript](.agents/rules/javascript.md) — \`**/*.js\`, \`**/*.mjs\`, \`**/*.cjs\`, \`**/*.jsx\`, \`**/*.ts\`, \`**/*.tsx\`
 - [typescript](.agents/rules/typescript.md) — \`**/*.ts\`, \`**/*.tsx\`, \`**/*.mts\`, \`**/*.cts\`

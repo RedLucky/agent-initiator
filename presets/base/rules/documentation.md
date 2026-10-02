@@ -1,7 +1,7 @@
 ---
-description: Documentation — the bilingual wiki (docs/wiki/en and docs/wiki/id) is a knowledge base for new and experienced developers and non-developers; every change updates the pages of its topic
+description: Documentation — read when you update the wiki (every change does) — knowledge-base pages, writing style, diagrams
 globs: []
-alwaysApply: true
+alwaysApply: false
 ---
 
 # Documentation (Wiki as a Knowledge Base)

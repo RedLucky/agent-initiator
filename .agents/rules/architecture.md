@@ -1,7 +1,7 @@
 ---
-description: Architecture for reusability, testability, maintainability and scalability
+description: Architecture — read when you add or restructure modules, layers or services — reusability, testability, scalability
 globs: []
-alwaysApply: true
+alwaysApply: false
 ---
 
 # Architecture: Reusability, Testability, Maintainability & Scalability

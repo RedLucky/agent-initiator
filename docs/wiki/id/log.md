@@ -9,6 +9,11 @@ Entri terbaru di atas. Format:
 - File: ...
 ```
 
+## 2026-10-02 — perf(TASK-7113): read topic rules on demand instead of on every task
+- Apa: Rule documentation, architecture, data-privacy dan observability sekarang on demand (`alwaysApply: false`) dengan deskripsi yang menyebut kapan dibaca; tujuh rule inti, termasuk git-workflow, tetap always. Isi rule dan MUST/NEVER di AGENTS.md tidak berubah. Pengantar bagian Rules menyebut rule on demand dan skill update-wiki menunjuk ke rule documentation. Per sesi, repo Next.js hasil generate kini memuat sekitar 6.200 token, bukan 8.600 (rule always 5.850 → 3.370).
+- Kenapa: Agent membaca setiap rule always sebelum setiap tugas, jadi rule topik memakan token di tugas yang tidak menyentuh topiknya; baris yang tidak boleh dilanggar dari rule itu sudah ada di AGENTS.md.
+- File: presets/base/rules/{documentation,architecture,data-privacy,observability}.md, presets/base/skills/update-wiki/SKILL.md, src/render/agents-md.ts, AGENTS.md, .agents/*, .claude/skills/update-wiki, docs/wiki/*/features/presets.md, test/*
+
 ## 2026-10-02 — feat(TASK-7112): make every helper tool optional, required once installed
 - Apa: `init` mengecek tool pendukung mana (ponytail, caveman, rtk, graphify, UI UX Pro Max) yang terpasang dan hanya menuliskan itu ke AGENTS.md, di mana tool tersebut wajib; tool yang tidak ada tidak disebut: command tanpa awalan `rtk`, tanpa baris graphify atau `.graphifyignore`, tanpa bagian Required tooling atau rule required-tooling kalau tidak ada yang terpasang. `doctor` menampilkan semua tool sebagai opsional dan exit 0. Skill dan rule (git, nx, moon, turbo) menulis perintah shell sebagai `{{rtk}}git status`, yang diisi menjadi `rtk git status` hanya kalau rtk terpasang (command AGENTS.md: `rtk test` untuk test, `rtk err` untuk build dan cek, `rtk proxy` untuk sisanya); agent di mesin tanpa tool yang tercantum mengecek sekali (`command -v`) lalu melewatinya alih-alih mencoba berulang, skill menjalankan command AGENTS.md persis seperti tertulis di sana, dan menyebut UI UX Pro Max serta ponytail hanya "kalau terpasang"; baris MUST rtk dan UI UX Pro Max yang dobel dihapus.
 - Kenapa: Setup minimalis untuk instal dari awal: tidak ada yang wajib diinstal dulu, dan setiap tool yang sudah dimiliki developer tetap dipakai.

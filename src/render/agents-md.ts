@@ -73,7 +73,7 @@ function rulesSection(rules: Array<RuleFile & { scope?: string }>, base: string)
   return [
     '## Rules',
     '',
-    'Read every `always` rule before you start, and a scoped rule before you change matching files.',
+    'Read every `always` rule before you start, a scoped rule before you change matching files, and an on-demand rule when your task matches its description.',
     '',
     ...(always.length > 0 ? [`- **Always:** ${always.map((r) => ruleLink(r, base)).join(', ')}`] : []),
     ...scoped.map((r) => `- ${ruleLink(r, base)} — ${ruleScope(r)}`),

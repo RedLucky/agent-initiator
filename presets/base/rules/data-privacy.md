@@ -1,7 +1,7 @@
 ---
-description: Data privacy — PII classification, minimisation, masking, retention (UU PDP No. 27/2022, GDPR)
+description: Data privacy — read when code stores, logs, sends or tests personal data — PII, masking, retention (UU PDP, GDPR)
 globs: []
-alwaysApply: true
+alwaysApply: false
 ---
 
 # Data Privacy

@@ -1,7 +1,7 @@
 ---
-description: Observability — structured logs, metrics, tracing, correlation IDs, health checks, error tracking
+description: Observability — read when you change a service, logs, metrics or health checks — correlation IDs, tracing
 globs: []
-alwaysApply: true
+alwaysApply: false
 ---
 
 # Observability

@@ -26,6 +26,8 @@ In words: every repository gets `base`. A language preset adds language rules, a
 ## The base preset
 Always included. It holds the standards agreed with the product owner: Karpathy-inspired LLM discipline, code quality (KISS, DRY, SOLID, no AI slop), naming, error handling and logging, security, architecture including scalability, testing (every function, coverage, mocking), git workflow (approval, one task = one commit, no attribution trailers), documentation (this wiki), dependencies, CI quality gates, observability, data privacy (UU PDP and GDPR) and release versioning. Run `agent-initiator list` to see every preset.
 
+Not every rule is read on every task, to save tokens. `alwaysApply: true` rules (LLM discipline, code quality, naming, error handling and logging, security, testing, git workflow) are read before every task. Topic rules are read on demand, when the task matches their description: documentation (when updating the wiki), architecture (new or restructured modules), data privacy (personal data) and observability (services, logs, metrics). Their non-negotiable lines stay in AGENTS.md → MUST/NEVER, which is always read. Rules with `globs` apply to matching files.
+
 ## Where it lives in the code
 `src/presets/registry.ts` loads and validates presets (skill names must match their folder); `src/presets/resolve.ts` merges a chain parent-first.
 

@@ -26,6 +26,8 @@ Dengan kata-kata: setiap repository mendapat `base`. Preset bahasa menambah atur
 ## Preset base
 Selalu ikut. Berisi standar yang disepakati dengan product owner: disiplin LLM ala Karpathy, kualitas kode (KISS, DRY, SOLID, tanpa AI slop), penamaan, error handling dan logging, keamanan, arsitektur termasuk skalabilitas, testing (setiap function, coverage, mocking), alur git (persetujuan, satu task satu commit, tanpa trailer atribusi), dokumentasi (wiki ini), dependency, quality gate CI, observability, privasi data (UU PDP dan GDPR) dan versioning rilis. Jalankan `agent-initiator list` untuk melihat semua preset.
 
+Tidak semua rule dibaca di setiap tugas, demi menghemat token. Rule `alwaysApply: true` (disiplin LLM, kualitas kode, penamaan, error handling dan logging, keamanan, testing, alur git) dibaca sebelum setiap tugas. Rule topik dibaca saat dibutuhkan, ketika tugasnya cocok dengan deskripsinya: documentation (saat mengupdate wiki), architecture (modul baru atau yang distruktur ulang), data privacy (data pribadi) dan observability (service, log, metric). Baris yang tidak boleh dilanggar dari rule-rule itu tetap ada di AGENTS.md → MUST/NEVER, yang selalu dibaca. Rule dengan `globs` berlaku untuk file yang cocok.
+
 ## Letaknya di kode
 `src/presets/registry.ts` memuat dan mengecek preset (nama skill harus sama dengan foldernya); `src/presets/resolve.ts` menggabungkan rantai preset mulai dari induk.
 

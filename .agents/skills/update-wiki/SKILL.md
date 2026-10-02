@@ -5,7 +5,7 @@ description: Update the bilingual wiki knowledge base (docs/wiki/en and docs/wik
 
 # Update Wiki
 
-The wiki is a knowledge base for new developers, experienced developers and non-developers. A log entry alone is never enough.
+The wiki is a knowledge base for new developers, experienced developers and non-developers. A log entry alone is never enough. Read the `documentation` rule (`.agents/rules/documentation.md`) for the full writing standards.
 
 1. **Find the topic** — which feature or topic did this change touch? Find its page in `docs/wiki/en/` (`features/<topic>.md`, `architecture.md`, `getting-started.md`, …). If no page covers it, create `features/<topic>.md` (kebab-case).
 2. **Update the English page** — start with **In short** (2–4 sentences a non-developer understands: what it is and why it matters), then the details for developers: how it works *now*, key files, configuration, examples, how to test it. Use short sentences; explain technical terms.

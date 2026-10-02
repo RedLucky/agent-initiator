@@ -9,6 +9,11 @@ Newest entries first. Format:
 - Files: ...
 ```
 
+## 2026-10-02 — perf(TASK-7113): read topic rules on demand instead of on every task
+- What: The documentation, architecture, data-privacy and observability rules are now on demand (`alwaysApply: false`) with descriptions that say when to read them; the seven core rules, including git-workflow, stay always. Rule texts and AGENTS.md MUST/NEVER are unchanged. The Rules intro mentions on-demand rules and the update-wiki skill points to the documentation rule. Per session, a generated Next.js repo now loads about 6,200 tokens instead of 8,600 (always rules 5,850 → 3,370).
+- Why: Agents read every always rule before each task, so topic rules cost tokens on tasks that never touch their topic; their non-negotiable lines are already in AGENTS.md.
+- Files: presets/base/rules/{documentation,architecture,data-privacy,observability}.md, presets/base/skills/update-wiki/SKILL.md, src/render/agents-md.ts, AGENTS.md, .agents/*, .claude/skills/update-wiki, docs/wiki/*/features/presets.md, test/*
+
 ## 2026-10-02 — feat(TASK-7112): make every helper tool optional, required once installed
 - What: `init` checks which helper tools (ponytail, caveman, rtk, graphify, UI UX Pro Max) are installed and writes only those into AGENTS.md, where they are required; missing tools are not mentioned: commands without the `rtk` prefix, no graphify lines or `.graphifyignore`, no Required tooling section or required-tooling rule when nothing is installed. `doctor` lists every tool as optional and exits 0. Skills and rules (git, nx, moon, turbo) write shell commands as `{{rtk}}git status`, filled in as `rtk git status` only when rtk is installed (AGENTS.md commands: `rtk test` for tests, `rtk err` for builds and checks, `rtk proxy` for the rest); agents on a machine without a listed tool check once (`command -v`) and skip it instead of retrying, skills run AGENTS.md commands exactly as written there, and mention UI UX Pro Max and ponytail only "when installed"; the duplicate rtk and UI UX Pro Max MUST lines are gone.
 - Why: A minimal setup for a fresh install: nothing has to be installed first, and every tool a developer already has is used.
