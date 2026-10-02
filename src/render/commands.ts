@@ -105,9 +105,22 @@ export function toCommandList(commands: CommandMap, vars: Record<string, string>
  * Node presets only define install/typecheck, so node packages show the scripts they actually have.
  */
 export function packageCommands(pkg: PackageInfo, presetCommands: CommandMap, monorepo?: string, rtk = true): Command[] {
+  if (pkg.pythonTestRunner) return toCommandList(plainPythonCommands(pkg.pythonTestRunner), {}, rtk);
   const isNode = pkg.language === 'typescript' || pkg.language === 'javascript';
   const scripts = isNode ? scriptCommands(pkg.scripts, pkg.packageManager) : {};
   return toCommandList({ ...presetCommands, ...(isNode && monorepo === 'nx' ? nxTargets(pkg.name) : {}), ...scripts }, templateVars(pkg), rtk);
+}
+
+/**
+ * Commands for a Python project without pyproject.toml or requirements.txt. It declares no dependencies, so only
+ * commands that need nothing beyond Python (and pytest when the tests import it) are listed: no install, lint,
+ * typecheck or audit. `python3` because many systems have no `python` command.
+ */
+function plainPythonCommands(testRunner: 'pytest' | 'unittest'): CommandMap {
+  return {
+    build: "python3 -m compileall -q -x '\\.venv' .",
+    test: testRunner === 'pytest' ? 'python3 -m pytest' : 'python3 -m unittest discover',
+  };
 }
 
 // Nx projects usually have inferred targets instead of package.json scripts.

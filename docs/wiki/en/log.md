@@ -9,6 +9,11 @@ Newest entries first. Format:
 - Files: ...
 ```
 
+## 2026-10-02 — feat(TASK-7115): detect Python projects that have no manifest
+- What: A repository root with `.py` files or `tests/test_*.py` but no `pyproject.toml` or `requirements.txt` is now detected as Python. It gets only commands that need no declared dependencies: `python3 -m compileall` (build) and `python3 -m unittest discover`, or `python3 -m pytest` when the tests import pytest. Only the root counts. Verified on a copy of c-uas: 39 tests pass with the generated test command.
+- Why: The c-uas repository (plain Python scripts with unittest tests) was detected as "no stack", so its AGENTS.md had no test command and no Python rules.
+- Files: src/detect/python.ts, src/render/commands.ts, src/types.ts, docs/wiki/*/features/stack-detection.md, test/*
+
 ## 2026-10-02 — fix(TASK-7114): close the coverage and graphify gaps from the evaluation
 - What: A `test:coverage`, `coverage` or `test:cov` script becomes a `coverage` command (shown with `rtk test`; Go presets get `go test -cover ./...`) and the Definition of Done uses it. Without one, the DoD coverage step says to use the runner's coverage option or report coverage as not measured, asking before adding a dependency. Project knowledge tells agents to run `graphify update .` when `graphify-out/` does not exist yet. The evaluation page records which gaps were fixed and why the other two were left.
 - Why: In the cross-model evaluation all three models got stuck on an unmeasurable coverage step, and Opus queried graphify before a graph existed.

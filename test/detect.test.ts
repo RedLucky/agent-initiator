@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { mkdtemp } from 'node:fs/promises';
+import { mkdir, mkdtemp, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { detectProject, overridePresets } from '../src/detect/index.js';
@@ -88,6 +88,33 @@ describe('detectProject extras', () => {
   it('records python manifests', async () => {
     const project = await detectProject(fixture('django'));
     expect(project.packages[0]?.manifests).toEqual(['requirements.txt']);
+  });
+});
+
+describe('Python without a manifest', () => {
+  /** Creates a temp repo with the given files (path → content). */
+  async function repo(files: Record<string, string>): Promise<string> {
+    const dir = await mkdtemp(path.join(tmpdir(), 'agent-initiator-plainpy-'));
+    for (const [file, content] of Object.entries(files)) {
+      await mkdir(path.dirname(path.join(dir, file)), { recursive: true });
+      await writeFile(path.join(dir, file), content);
+    }
+    return dir;
+  }
+
+  it('detects a root folder of .py files and uses unittest when the tests do not import pytest', async () => {
+    const dir = await repo({ 'run.py': 'print(1)\n', 'tests/test_run.py': 'import unittest\n' });
+    const [pkg] = (await detectProject(dir)).packages;
+    expect(pkg).toMatchObject({ path: '.', language: 'python', presets: ['python'], manifests: [], pythonTestRunner: 'unittest' });
+  });
+
+  it('uses pytest when the tests import it', async () => {
+    const dir = await repo({ 'tests/test_app.py': 'import pytest\n\ndef test_x():\n    assert True\n' });
+    expect((await detectProject(dir)).packages[0]?.pythonTestRunner).toBe('pytest');
+  });
+
+  it('ignores .py files in sub-folders when the root is not a Python project', async () => {
+    expect((await detectProject(await repo({ 'tools/convert.py': 'print(1)\n' }))).packages).toEqual([]);
   });
 });
 

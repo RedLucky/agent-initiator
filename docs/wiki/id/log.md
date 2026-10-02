@@ -9,6 +9,11 @@ Entri terbaru di atas. Format:
 - File: ...
 ```
 
+## 2026-10-02 — feat(TASK-7115): detect Python projects that have no manifest
+- Apa: Root repository dengan file `.py` atau `tests/test_*.py` tetapi tanpa `pyproject.toml` atau `requirements.txt` sekarang terdeteksi sebagai Python. Project ini hanya mendapat command yang tidak butuh dependency yang dideklarasikan: `python3 -m compileall` (build) dan `python3 -m unittest discover`, atau `python3 -m pytest` kalau test-nya mengimpor pytest. Hanya root yang dihitung. Diverifikasi di salinan c-uas: 39 test lolos dengan command test yang dibuat.
+- Kenapa: Repository c-uas (script Python biasa dengan test unittest) terdeteksi sebagai "no stack", sehingga AGENTS.md-nya tanpa command test dan tanpa rule Python.
+- File: src/detect/python.ts, src/render/commands.ts, src/types.ts, docs/wiki/*/features/stack-detection.md, test/*
+
 ## 2026-10-02 — fix(TASK-7114): close the coverage and graphify gaps from the evaluation
 - Apa: Script `test:coverage`, `coverage` atau `test:cov` menjadi command `coverage` (ditampilkan dengan `rtk test`; preset Go mendapat `go test -cover ./...`) dan Definition of Done memakainya. Kalau tidak ada, langkah coverage di DoD meminta memakai opsi coverage dari test runner atau melaporkan coverage tidak diukur, dan bertanya dulu sebelum menambah dependency. Project knowledge meminta agent menjalankan `graphify update .` kalau `graphify-out/` belum ada. Halaman evaluasi mencatat celah mana yang diperbaiki dan kenapa dua lainnya dibiarkan.
 - Kenapa: Di evaluasi lintas model ketiga model mentok di langkah coverage yang tidak bisa diukur, dan Opus menanyai graphify sebelum graph-nya ada.

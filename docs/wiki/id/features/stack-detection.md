@@ -27,6 +27,7 @@ Dengan kata-kata: pertama cari tool monorepo; kalau ada, config-nya berisi dafta
 | `@nestjs/core`, `express`, `fastify`, `hono` | preset `nestjs`, `express`, `fastify`, `hono` |
 | dependency `typescript` atau `tsconfig.json` | `typescript`, kalau tidak `node` |
 | `pyproject.toml` atau `requirements.txt` yang menyebut FastAPI atau Django | `python` ditambah `fastapi` atau `django` |
+| Tanpa manifest, tetapi ada file `.py` atau `tests/test_*.py` di root repository | `python`, hanya dengan command build (`python3 -m compileall`) dan test: `python3 -m pytest` kalau test-nya mengimpor pytest, selain itu `python3 -m unittest discover`. Tidak ada yang mendeklarasikan dependency, jadi tidak ada command install, lint, typecheck atau audit. Hanya root yang dihitung, jadi folder `scripts/` berisi file `.py` di stack lain bukan package. |
 | `go.mod` (ditambah gin, echo, chi atau fiber) | `go` (ditambah `go-http`) |
 | Lockfile (`pnpm-lock.yaml`, `yarn.lock`, `bun.lock`, `uv.lock`, `poetry.lock`, …) | package manager |
 | Script di `package.json` | command sebenarnya yang ditampilkan di AGENTS.md |

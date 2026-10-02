@@ -61,6 +61,15 @@ describe('commands', () => {
     expect(withRtk('coverage', 'pnpm run test:coverage')).toBe('rtk test pnpm run test:coverage');
   });
 
+  it('lists only build and test for Python without a manifest, with python3 and the detected runner', () => {
+    const plain = pkg({ language: 'python', packageManager: 'pip', presets: ['python'], pythonTestRunner: 'unittest' });
+    expect(packageCommands(plain, { install: 'pip install -e .', lint: 'ruff check .' }, undefined, false)).toEqual([
+      { task: 'build', command: "python3 -m compileall -q -x '\\.venv' ." },
+      { task: 'test', command: 'python3 -m unittest discover' },
+    ]);
+    expect(packageCommands({ ...plain, pythonTestRunner: 'pytest' }, {}, undefined, true).map((c) => c.command)).toContain('rtk test python3 -m pytest');
+  });
+
   it('builds workspace filter commands', () => {
     expect(filterCommand('turborepo', 'pnpm', '@acme/web', 'test')).toBe('pnpm exec turbo run test --filter=@acme/web');
     expect(filterCommand('nx', 'npm', 'admin', 'build')).toBe('npx nx run admin:build');

@@ -27,6 +27,7 @@ In words: first look for a monorepo tool; if there is one, its config lists the 
 | `@nestjs/core`, `express`, `fastify`, `hono` | presets `nestjs`, `express`, `fastify`, `hono` |
 | `typescript` dependency or `tsconfig.json` | `typescript`, otherwise `node` |
 | `pyproject.toml` or `requirements.txt` mentioning FastAPI or Django | `python` plus `fastapi` or `django` |
+| No manifest, but `.py` files or `tests/test_*.py` at the repository root | `python`, with only build (`python3 -m compileall`) and test commands: `python3 -m pytest` when the tests import pytest, otherwise `python3 -m unittest discover`. Nothing declares dependencies, so there is no install, lint, typecheck or audit command. Only the root counts, so a `scripts/` folder of `.py` files in another stack is not a package. |
 | `go.mod` (plus gin, echo, chi or fiber) | `go` (plus `go-http`) |
 | Lockfile (`pnpm-lock.yaml`, `yarn.lock`, `bun.lock`, `uv.lock`, `poetry.lock`, …) | the package manager |
 | `package.json` scripts | the real commands shown in AGENTS.md |

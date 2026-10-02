@@ -28,6 +28,8 @@ export interface PackageInfo {
   manifests: string[];
   /** ID the monorepo task runner uses for this package when it differs from `name` (moon: folder name or map key). */
   taskRunnerId?: string;
+  /** Python without pyproject.toml/requirements.txt: the test runner its tests use (no dependencies are declared). */
+  pythonTestRunner?: 'pytest' | 'unittest';
 }
 
 export interface DetectedProject {
