@@ -8,7 +8,7 @@
   ],
   "commands": {
     "install": "{{pm}} install",
-    "audit": "{{pm}} audit"
+    "audit": "{{audit}}"
   },
   "conventions": [
     "Use the package manager already locked in the repo; never mix lockfiles."

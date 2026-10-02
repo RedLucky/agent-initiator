@@ -26,6 +26,9 @@ The error names the failed command and the folder with partial files. Delete tha
 ### moon says "No tasks found" or "ambiguous argument 'HEAD'"
 moon needs at least one git commit and tasks in each project's `moon.yml`. Make the first commit and run `moon setup`; see [scaffolding](features/scaffolding.md).
 
+### CI fails at install with a lockfile or "ignored builds" error
+CI installed a different pnpm or yarn version than yours. Pin yours in package.json: `npm pkg set packageManager=pnpm@$(pnpm -v)`; see [quality gates](features/quality-gates.md).
+
 ### `doctor` shows a red cross
 That helper tool is not installed. `doctor` prints the install command; nothing is installed automatically.
 

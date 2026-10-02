@@ -26,6 +26,9 @@ Pesan error menyebut command yang gagal dan folder berisi file setengah jadi. Ha
 ### moon menampilkan "No tasks found" atau "ambiguous argument 'HEAD'"
 moon butuh minimal satu commit git dan task di `moon.yml` setiap project. Buat commit pertama lalu jalankan `moon setup`; lihat [scaffolding](features/scaffolding.md).
 
+### CI gagal saat install dengan error lockfile atau "ignored builds"
+CI memasang versi pnpm atau yarn yang berbeda dari milik Anda. Pin versi Anda di package.json: `npm pkg set packageManager=pnpm@$(pnpm -v)`; lihat [quality gate](features/quality-gates.md).
+
 ### `doctor` menampilkan tanda silang merah
 Tool pendukung itu belum terinstal. `doctor` mencetak command instalnya; tidak ada yang diinstal otomatis.
 

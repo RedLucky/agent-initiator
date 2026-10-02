@@ -9,6 +9,11 @@ Newest entries first. Format:
 - Files: ...
 ```
 
+## 2026-10-02 — feat(TASK-7103): generate a GitHub Actions CI workflow per package
+- What: `init` writes `.github/workflows/ci.yml` (never overwriting one): one job per package that sets up its language, installs from the lockfile and runs lint → typecheck → test → build → audit with the AGENTS.md commands, with read-only permissions. pnpm/yarn come from corepack; `init` asks to pin `packageManager` when it is missing. Audits fail on high/critical only (`--audit-level high`); Go audits with `go run …govulncheck@latest` (`GOTOOLCHAIN=auto` on CI). Detection reads the `packageManager` field. This repository has the same workflow and pins pnpm 10.19.0 in package.json.
+- Why: The quality-gates rule described the CI pipeline, but nothing created it, so merges were not protected by the checks.
+- Files: src/render/github-ci.ts, src/generate.ts, src/render/commands.ts, src/detect/*, src/types.ts, src/cli.ts, presets/{node,monorepo,go}/preset.json, presets/base/rules/ci-quality-gates.md, .github/workflows/ci.yml, test/*
+
 ## 2026-10-02 — feat(TASK-7102): lint before commit, typecheck and tests before push
 - What: `lefthook.yml` gets a `pre-commit` lint check and `pre-push` typecheck and test checks, built from the same detected commands as AGENTS.md but without the rtk prefix. Multi-package repos get one check per package, run inside it (`root`); before a commit only when staged files are in that package (`glob`). `format` is left out because format scripts often rewrite files. This repository runs typecheck and tests before push.
 - Why: The quality-gates rule asked for local checks before commit and push, but nothing ran them, for any language.

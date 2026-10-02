@@ -159,6 +159,7 @@ In `--yes` mode, an empty folder without `--framework`, `--apps` or `--preset` s
 AGENTS.md                           entry point for every agent (see "What you get")
 CLAUDE.md                           "@AGENTS.md" so Claude Code reads the same instructions
 lefthook.yml, .lefthook/            git hooks for every language: lint + message check on commit, typecheck + tests on push
+.github/workflows/ci.yml            GitHub Actions: lint → typecheck → test → build → audit, one job per package
 .agents/rules/*.md                  rules (frontmatter: description, globs, alwaysApply)
 .agents/skills/<name>/SKILL.md      skills (Agent Skills format)
 .claude/skills/<name>/SKILL.md      copy of the skills for Claude Code
@@ -360,7 +361,7 @@ This repo uses its own output: see [`AGENTS.md`](AGENTS.md), [`.agents/`](.agent
 - Hono, Express and the Python/Go apps always install dependencies, because their scaffolders cannot skip it.
 
 **Planned:**
-- Generating CI config files (the git hooks already ship).
+- GitLab CI (GitHub Actions and the git hooks already ship).
 - Custom or team preset packs.
 - Performance budgets and i18n rules.
 

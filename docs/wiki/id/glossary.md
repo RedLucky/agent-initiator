@@ -18,6 +18,8 @@ Kata-kata yang dipakai di project ini, dijelaskan dengan bahasa sederhana. Kalau
 | Package manager | Tool yang menginstal dependency project: npm, pnpm, yarn, bun untuk JavaScript; uv, poetry, pip untuk Python. |
 | rtk | Rust Token Killer: menjalankan command shell dan memperpendek outputnya supaya AI assistant memakai lebih sedikit token. Setiap command diawali `rtk`. |
 | graphify | Membuat peta kode yang bisa dicari (knowledge graph) supaya assistant cepat menemukan sesuatu. |
+| CI (continuous integration) | Layanan yang menjalankan cek project di setiap push atau pull request, di mesin yang bersih. agent-initiator membuatnya untuk GitHub Actions. |
+| Lockfile | File yang mencatat versi persis setiap dependency (`pnpm-lock.yaml`, `uv.lock`, `go.sum`, …), supaya setiap mesin meng-install hal yang sama. |
 | Git hook | Script kecil yang dijalankan git pada saat tertentu, misalnya tepat sebelum commit disimpan. Hook ada di `.git/hooks/` dan tidak ikut dibagikan lewat repository. |
 | lefthook | Menjalankan git hook yang terdaftar di `lefthook.yml`, untuk bahasa pemrograman apa pun. Lihat [quality gate](features/quality-gates.md). |
 | Quality gate | Pengecekan otomatis yang menghentikan perubahan kalau melanggar aturan yang disepakati, misalnya format pesan commit. |

@@ -28,6 +28,8 @@ export interface PackageInfo {
   manifests: string[];
   /** ID the monorepo task runner uses for this package when it differs from `name` (moon: folder name or map key). */
   taskRunnerId?: string;
+  /** The `packageManager` field of package.json (e.g. "pnpm@10.19.0"); CI installs exactly this version. */
+  pinnedPackageManager?: string;
 }
 
 export interface DetectedProject {
@@ -38,6 +40,8 @@ export interface DetectedProject {
   /** Root package.json scripts and package manager (monorepos only), used for workspace-wide commands. */
   rootScripts?: string[];
   rootPackageManager?: PackageManager;
+  /** The `packageManager` field of the root package.json (monorepos only). */
+  rootPinnedPackageManager?: string;
   packages: PackageInfo[];
   /** Skills already present in .agents/skills (e.g. shipped by Nx) that are not from our presets. */
   existingSkills?: Skill[];

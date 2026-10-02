@@ -2,8 +2,9 @@ import type { Registry } from './presets/registry.js';
 import { expandChain, resolvePresets } from './presets/resolve.js';
 import { fillTemplate, filterCommand, packageCommands, packageTaskCommands, scriptCommands, templateVars, toCommandList, type Command } from './render/commands.js';
 import { renderPackageAgentsMd, renderRootAgentsMd, type PackageSummary } from './render/agents-md.js';
+import { renderGithubCi, type CiJob } from './render/github-ci.js';
 import { renderLefthookConfig, type HookCheck } from './render/lefthook.js';
-import type { DetectedProject, PackageInfo, PlannedFile, ProjectKind, ResolvedConfig, RuleFile } from './types.js';
+import type { DetectedProject, PackageInfo, PackageManager, PlannedFile, ProjectKind, ResolvedConfig, RuleFile } from './types.js';
 
 export interface GenerateOptions {
   /** ISO date (YYYY-MM-DD) stamped into the wiki log; injected so output is deterministic in tests. */
@@ -13,6 +14,8 @@ export interface GenerateOptions {
 export interface GenerateResult {
   kind: ProjectKind;
   files: PlannedFile[];
+  /** Things the user should do by hand for the generated files to work (shown after init writes them). */
+  notes: string[];
 }
 
 interface PackageConfig {
@@ -90,6 +93,63 @@ function hookChecks(configs: PackageConfig[], monorepo?: string): HookCheck[] {
     }
   }
   return checks;
+}
+
+// Install commands that fail instead of changing the lockfile, so CI tests exactly what was committed.
+// pip and go have no lockfile mode; their normal install command (from the presets) is used.
+const CI_INSTALL: Partial<Record<PackageManager, string>> = {
+  npm: 'npm ci',
+  pnpm: 'pnpm install --frozen-lockfile',
+  yarn: 'yarn install --frozen-lockfile',
+  bun: 'bun install --frozen-lockfile',
+  uv: 'uv sync --locked',
+  poetry: 'poetry install',
+};
+
+/**
+ * Adjusts one command for the CI runner.
+ * actions/setup-go sets GOTOOLCHAIN=local, which stops `go run …govulncheck@latest` when the latest govulncheck needs
+ * a newer Go than the module's; `auto` lets Go fetch that newer toolchain just for the audit.
+ * @returns The command to put in the workflow.
+ */
+function ciCommand(pkg: PackageInfo, task: string, command: string): string {
+  return pkg.language === 'go' && task === 'audit' ? `GOTOOLCHAIN=auto ${command}` : command;
+}
+
+// The CI pipeline order from the ci-quality-gates rule (install runs first, separately).
+const CI_TASKS = ['lint', 'typecheck', 'test', 'build', 'audit'];
+
+/**
+ * CI jobs, one per package, from the same commands AGENTS.md lists (without rtk).
+ * Node packages in a JavaScript workspace install from the repo root, where the shared lockfile lives.
+ * @param configs - Every detected package with its resolved presets.
+ * @param project - The detected project (monorepo tool and root package manager).
+ * @returns Jobs for packages that have at least one check (a package with nothing to check gets no job), and notes
+ *   for pnpm/yarn folders whose package.json does not pin a version: CI would then install the newest one.
+ */
+function ciJobs(configs: PackageConfig[], project: DetectedProject): { jobs: CiJob[]; notes: string[] } {
+  const jobs: CiJob[] = [];
+  const notes = new Set<string>();
+  for (const { pkg, resolved } of configs) {
+    const commands = packageTaskCommands(pkg, resolved.commands, project.monorepo);
+    const steps = CI_TASKS.flatMap((task) => (commands[task] ? [{ name: task, run: ciCommand(pkg, task, commands[task]) }] : []));
+    if (steps.length === 0) continue;
+    const isNode = pkg.language === 'typescript' || pkg.language === 'javascript';
+    const installAtRoot = isNode && project.rootPackageManager !== undefined;
+    const pm = installAtRoot ? (project.rootPackageManager ?? pkg.packageManager) : pkg.packageManager;
+    const install = CI_INSTALL[pm] ?? commands.install;
+    if (!install) continue;
+    jobs.push({ path: pkg.path, language: pkg.language, packageManager: pm, install, installAtRoot, steps });
+
+    // corepack installs the version named in package.json → packageManager; without it CI gets the newest
+    // release, which may reject a lockfile written by an older version.
+    const pinned = installAtRoot ? project.rootPinnedPackageManager : pkg.pinnedPackageManager;
+    if ((pm === 'pnpm' || pm === 'yarn') && !pinned) {
+      const folder = installAtRoot || pkg.path === '.' ? 'the repo root' : pkg.path;
+      notes.add(`CI installs ${pm} with corepack, which reads "packageManager" from package.json. Pin the version you use, in ${folder}: npm pkg set packageManager=${pm}@$(${pm} -v)`);
+    }
+  }
+  return { jobs, notes: [...notes] };
 }
 
 /** Marks scoped rules with the packages that use them so the root table shows where they apply. */
@@ -194,7 +254,10 @@ export function generateFiles(project: DetectedProject, registry: Registry, opti
     files.push({ path: 'lefthook.yml', content: renderLefthookConfig({ graphify: root.tooling.includes('graphify'), checks: hookChecks(configs, project.monorepo) }) });
   }
 
-  return { kind, files };
+  const ci = ciJobs(configs, project);
+  if (ci.jobs.length > 0) files.push({ path: '.github/workflows/ci.yml', content: renderGithubCi(ci.jobs) });
+
+  return { kind, files, notes: ci.notes };
 }
 
 type ListKey = 'conventions' | 'must' | 'never' | 'docs';

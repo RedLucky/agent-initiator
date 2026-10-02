@@ -48,7 +48,7 @@ Run from the repo root. Keep the `rtk` prefix.
 | test | `rtk test pnpm run test` |
 | coverage | `rtk test pnpm run test:coverage` |
 | typecheck | `rtk err pnpm run typecheck` |
-| audit | `rtk proxy pnpm audit` |
+| audit | `rtk proxy pnpm audit --audit-level high` |
 
 ## Project knowledge
 
@@ -157,7 +157,7 @@ A task is done only when every step passes (use the `definition-of-done` skill):
 1. Code follows the conventions, constraints and rules in this file, and the `self-review` skill found nothing left to fix.
 2. Unit tests pass with coverage ≥ 80% on changed code: `rtk test pnpm run test:coverage`
 3. Build succeeds: `rtk err pnpm run build`
-4. Dependencies audited when they changed: `rtk proxy pnpm audit`
+4. Dependencies audited when they changed: `rtk proxy pnpm audit --audit-level high`
 5. Wiki updated in both `docs/wiki/en/` and `docs/wiki/id/`: the page of the topic you worked on (create it if missing), related pages, `index.md` and a new `log.md` entry — a log entry alone is not enough; ADR for architecture decisions.
 
 ## Conventions

@@ -9,6 +9,11 @@ Entri terbaru di atas. Format:
 - File: ...
 ```
 
+## 2026-10-02 — feat(TASK-7103): generate a GitHub Actions CI workflow per package
+- Apa: `init` menulis `.github/workflows/ci.yml` (tidak pernah menimpa yang sudah ada): satu job per package yang menyiapkan bahasanya, meng-install dari lockfile dan menjalankan lint → typecheck → test → build → audit dengan command AGENTS.md, dengan izin baca saja. pnpm/yarn dipasang lewat corepack; `init` meminta pin `packageManager` kalau belum ada. Audit hanya gagal untuk high/critical (`--audit-level high`); Go meng-audit dengan `go run …govulncheck@latest` (`GOTOOLCHAIN=auto` di CI). Deteksi membaca field `packageManager`. Repository ini memakai workflow yang sama dan mem-pin pnpm 10.19.0 di package.json.
+- Kenapa: Rule quality-gates menjelaskan pipeline CI, tetapi belum ada yang membuatnya, sehingga merge tidak dilindungi oleh cek.
+- File: src/render/github-ci.ts, src/generate.ts, src/render/commands.ts, src/detect/*, src/types.ts, src/cli.ts, presets/{node,monorepo,go}/preset.json, presets/base/rules/ci-quality-gates.md, .github/workflows/ci.yml, test/*
+
 ## 2026-10-02 — feat(TASK-7102): lint before commit, typecheck and tests before push
 - Apa: `lefthook.yml` mendapat cek lint di `pre-commit` dan cek typecheck serta test di `pre-push`, dibuat dari command terdeteksi yang sama dengan AGENTS.md tetapi tanpa awalan rtk. Repo multi-package mendapat satu cek per package, dijalankan di dalamnya (`root`); sebelum commit hanya kalau ada file staged di package itu (`glob`). `format` tidak dimasukkan karena script format sering menulis ulang file. Repository ini menjalankan typecheck dan test sebelum push.
 - Kenapa: Rule quality-gates meminta cek lokal sebelum commit dan push, tetapi belum ada yang menjalankannya, untuk bahasa apa pun.

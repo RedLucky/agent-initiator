@@ -41,6 +41,9 @@ export function templateVars(pkg: Pick<PackageInfo, 'packageManager' | 'manifest
     pmx: PMX[pm] ?? pm,
     pyRun: pm === 'uv' ? 'uv run ' : pm === 'poetry' ? 'poetry run ' : '',
     pyInstall: pm === 'uv' ? 'uv sync' : pm === 'poetry' ? 'poetry install' : pipInstall,
+    // Fails only on high or critical advisories, as the dependencies rule asks. yarn 1 and yarn 2+ spell the
+    // severity option differently, so yarn keeps its plain audit.
+    audit: pm === 'yarn' ? 'yarn audit' : `${pm} audit --audit-level high`,
   };
 }
 

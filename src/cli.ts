@@ -148,7 +148,7 @@ async function runInit(dir: string, options: InitOptions): Promise<void> {
     project = { ...project, existingSkills: await detectExistingSkills(root) };
   }
 
-  const { kind, files } = generateFiles(project, registry, { date: new Date().toISOString().slice(0, 10) });
+  const { kind, files, notes } = generateFiles(project, registry, { date: new Date().toISOString().slice(0, 10) });
   const plan = await planFiles(root, files);
   const created = plan.filter((f) => f.status === 'create');
   const skipped = plan.filter((f) => f.status === 'skip');
@@ -161,6 +161,7 @@ async function runInit(dir: string, options: InitOptions): Promise<void> {
   const written = await applyPlan(root, plan);
   if (setup.after.length > 0) await runToolSetup(root, setup.after, logSetupResult);
   for (const step of await manualSteps(root, plan)) p.log.warn(step);
+  if (written.includes('.github/workflows/ci.yml')) for (const note of notes) p.log.warn(note);
 
   console.log(pc.bold('\nRequired tooling on this machine:'));
   printToolStatus(await checkTools(tooling));

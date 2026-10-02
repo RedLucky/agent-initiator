@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { mkdtemp } from 'node:fs/promises';
+import { mkdir, mkdtemp, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { detectProject, overridePresets } from '../src/detect/index.js';
@@ -88,6 +88,24 @@ describe('detectProject extras', () => {
   it('records python manifests', async () => {
     const project = await detectProject(fixture('django'));
     expect(project.packages[0]?.manifests).toEqual(['requirements.txt']);
+  });
+});
+
+describe('detectProject pinned package manager', () => {
+  it('reads the packageManager field of a single package', async () => {
+    const dir = await mkdtemp(path.join(tmpdir(), 'agent-initiator-pin-'));
+    await writeFile(path.join(dir, 'package.json'), JSON.stringify({ name: 'app', packageManager: 'pnpm@10.19.0' }));
+    expect((await detectProject(dir)).packages[0]?.pinnedPackageManager).toBe('pnpm@10.19.0');
+  });
+
+  it('reads the root packageManager field of a workspace and leaves it out when missing', async () => {
+    const dir = await mkdtemp(path.join(tmpdir(), 'agent-initiator-pin-'));
+    await mkdir(path.join(dir, 'apps', 'web'), { recursive: true });
+    await writeFile(path.join(dir, 'apps', 'web', 'package.json'), JSON.stringify({ name: 'web' }));
+    await writeFile(path.join(dir, 'package.json'), JSON.stringify({ name: 'ws', workspaces: ['apps/*'], packageManager: 'yarn@4.5.0' }));
+    const project = await detectProject(dir);
+    expect(project.rootPinnedPackageManager).toBe('yarn@4.5.0');
+    expect(project.packages[0]?.pinnedPackageManager).toBeUndefined();
   });
 });
 

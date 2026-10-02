@@ -23,8 +23,8 @@ AI agent cukup membaca halaman bahasa Inggris (`docs/wiki/en/`); `docs/wiki/id/`
 | Mengubah AGENTS.md atau output lain yang di-generate | [features/generated-files.md](features/generated-files.md) | `src/generate.ts`, `src/render/` |
 | Menambah atau mengubah scaffolder atau layout | [features/scaffolding.md](features/scaffolding.md) | `src/scaffold/` |
 | Mengubah tool wajib, doctor atau setup | [features/tool-setup.md](features/tool-setup.md) | `src/tooling.ts`, `src/setup.ts`, `src/doctor.ts` |
-| Mengubah git hook atau cek pesan commit | [features/quality-gates.md](features/quality-gates.md) | `src/render/lefthook.ts`, `presets/base/files/.lefthook/` |
-| Mengubah aturan wiki | [features/quality-gates.md](features/quality-gates.md) | Git hook untuk semua bahasa: cek pesan commit dan pembaruan graph |
+| Mengubah git hook, cek pesan commit atau workflow CI | [features/quality-gates.md](features/quality-gates.md) | `src/render/lefthook.ts`, `presets/base/files/.lefthook/` |
+| Mengubah aturan wiki | [features/quality-gates.md](features/quality-gates.md) | Git hook dan CI GitHub Actions untuk semua bahasa: lint, pesan commit, typecheck, test, build, audit |
 | [features/wiki-knowledge-base.md](features/wiki-knowledge-base.md) | `presets/base/rules/documentation.md` |
 
 ## Semua halaman

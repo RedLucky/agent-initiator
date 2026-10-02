@@ -5,6 +5,7 @@ import { detectNodePackageManager } from './package-manager.js';
 
 interface PackageJson {
   name?: string;
+  packageManager?: string;
   scripts?: Record<string, string>;
   dependencies?: Record<string, string>;
   devDependencies?: Record<string, string>;
@@ -56,5 +57,6 @@ export async function detectNodePackage(root: string, relPath: string, fallbackP
     presets: [isTypeScript ? 'typescript' : 'node', ...matchFrameworks(deps)],
     scripts: Object.keys(pkg.scripts ?? {}),
     manifests: ['package.json'],
+    ...(typeof pkg.packageManager === 'string' ? { pinnedPackageManager: pkg.packageManager } : {}),
   };
 }

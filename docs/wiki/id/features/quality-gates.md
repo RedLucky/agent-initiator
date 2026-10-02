@@ -1,7 +1,7 @@
 # Quality gate (git hook)
 
 ## Singkatnya
-Quality gate adalah pengecekan otomatis yang menghentikan perubahan kalau melanggar aturan yang sudah disepakati. agent-initiator menambahkan git hook untuk bahasa pemrograman apa pun: sebelum commit kode di-lint dan pesan commit harus mengikuti format project; sebelum push type check dan test harus lolos; dan peta kode yang dipakai AI assistant diperbarui setelah setiap commit. Hook dijalankan oleh lefthook, satu tool kecil yang bekerja sama untuk JavaScript, Python, Go dan lainnya.
+Quality gate adalah pengecekan otomatis yang menghentikan perubahan kalau melanggar aturan yang sudah disepakati. agent-initiator menambahkan git hook untuk bahasa pemrograman apa pun: sebelum commit kode di-lint dan pesan commit harus mengikuti format project; sebelum push type check dan test harus lolos; dan peta kode yang dipakai AI assistant diperbarui setelah setiap commit. Hook dijalankan oleh lefthook, satu tool kecil yang bekerja sama untuk JavaScript, Python, Go dan lainnya. Cek yang sama dijalankan lagi di GitHub untuk setiap pull request, jadi apa pun yang lolos dari cek di laptop tetap tidak bisa di-merge.
 
 ## Apa yang berjalan dan kapan
 
@@ -41,6 +41,31 @@ Hook ada di `.git/` dan tidak ikut di-commit, jadi setiap clone menjalankan `lef
 
 Urutan penting bersama graphify: jalankan `graphify hook install` dulu, lalu `lefthook install`. lefthook memindahkan hook post-commit graphify (ke `post-commit.old`) dan menjalankan graphify dari `lefthook.yml`. Kalau urutannya terbalik, graphify menambahkan dirinya ke hook lefthook dan graph dibangun dua kali per commit. Karena itu `doctor` mengecek hook post-checkout graphify, yang tidak disentuh lefthook.
 
+## CI di GitHub Actions
+`init` juga menulis `.github/workflows/ci.yml`. Workflow ini berjalan di setiap push ke `main`/`master` dan setiap pull request, dengan satu job per package:
+
+```mermaid
+flowchart LR
+    A[Push atau pull request] --> B[Siapkan bahasa<br/>dan package manager]
+    B --> C[Install dari lockfile]
+    C --> D[lint]
+    D --> E[typecheck]
+    E --> F[test]
+    F --> G[build]
+    G --> H[audit]
+    H --> I[Cek lolos]
+    C & D & E & F & G & H -. sebuah langkah gagal .-> X[Cek gagal:<br/>merge diblokir]
+```
+
+Dengan kata-kata: setiap job menyiapkan bahasanya (Node.js LTS, Bun, uv, Python 3 atau versi Go di `go.mod`), meng-install persis seperti yang tertulis di lockfile (`npm ci`, `pnpm install --frozen-lockfile`, `uv sync --locked`, …), lalu menjalankan cek sesuai urutan di rule quality-gates. Package tanpa command untuk sebuah langkah melewati langkah itu. Command-nya sama dengan yang tercantum di AGENTS.md, jadi hasil hijau di mesin Anda memperkirakan hasil hijau di CI.
+
+Detail yang perlu diketahui:
+- **Izin:** workflow hanya bisa membaca kode (`permissions: contents: read`).
+- **Monorepo:** setiap package berjalan di folder-nya sendiri; package workspace JavaScript meng-install dari root repo, tempat lockfile bersama berada.
+- **pnpm dan yarn** dipasang dengan corepack, yang membaca `packageManager` di `package.json`. Tanpa field itu CI memakai versi terbaru, yang bisa menolak lockfile Anda, jadi `init` meminta Anda mem-pin-nya: `npm pkg set packageManager=pnpm@$(pnpm -v)`.
+- **Audit** hanya gagal untuk advisory high dan critical (`--audit-level high` untuk npm, pnpm dan bun; `yarn audit` biasa untuk yarn). Go memakai `go run …govulncheck@latest`, jadi tidak ada yang perlu di-install; di CI perintah ini berjalan dengan `GOTOOLCHAIN=auto` karena govulncheck terbaru bisa membutuhkan Go yang lebih baru daripada modulnya.
+- **Workflow yang sudah ada:** `ci.yml` yang sudah ada dipertahankan. File workflow lain tidak diperiksa, jadi hapus duplikatnya sendiri.
+
 ## Letaknya di kode
 | Apa | File |
 |-----|------|
@@ -50,7 +75,9 @@ Urutan penting bersama graphify: jalankan `graphify hook install` dulu, lalu `le
 | `lefthook.yml` masuk ke output | `src/generate.ts` |
 | Langkah setup `lefthook install` dan aturan lewatinya | `src/setup.ts` |
 | Entri tool (instal, cara pakai) | `src/tooling.ts` |
+| Renderer workflow CI (action dan versinya) | `src/render/github-ci.ts` |
+| Job CI per package, command install lockfile, catatan pin | `ciJobs` di `src/generate.ts` |
 | Teks rule | `presets/base/rules/ci-quality-gates.md` |
 
 ## Cara mengetesnya
-`rtk test pnpm vitest run test/lefthook.test.ts test/setup.test.ts`. Test pesan menjalankan script aslinya dengan `sh`, jadi mencakup regex yang sama persis dengan yang dipakai git.
+`rtk test pnpm vitest run test/lefthook.test.ts test/setup.test.ts test/github-ci.test.ts`. Untuk mengecek sintaks workflow hasil generate: `go run github.com/rhysd/actionlint/cmd/actionlint@latest .github/workflows/ci.yml`. Test pesan menjalankan script aslinya dengan `sh`, jadi mencakup regex yang sama persis dengan yang dipakai git.

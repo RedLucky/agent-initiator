@@ -13,6 +13,6 @@
     "Import another package's internal files; use its public entry point."
   ],
   "commands": {
-    "audit": "{{pm}} audit"
+    "audit": "{{audit}}"
   }
 }

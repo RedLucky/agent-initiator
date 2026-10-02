@@ -12,7 +12,7 @@
     "test": "go test ./...",
     "lint": "go vet ./...",
     "format": "gofmt -l .",
-    "audit": "govulncheck ./..."
+    "audit": "go run golang.org/x/vuln/cmd/govulncheck@latest ./..."
   },
   "never": [
     "Ignore returned errors with `_` unless a comment explains why it is safe."

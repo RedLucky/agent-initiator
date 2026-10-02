@@ -52,7 +52,7 @@ describe('generateFiles', () => {
     const agents = (await generate('nextjs')).file('AGENTS.md') ?? '';
     expect(agents).toContain('| test | `rtk test pnpm run test` |');
     expect(agents).toContain('changed code: `rtk test pnpm run test`');
-    expect(agents).toContain('Dependencies audited when they changed: `rtk proxy pnpm audit`');
+    expect(agents).toContain('Dependencies audited when they changed: `rtk proxy pnpm audit --audit-level high`');
     expect(agents).toContain('Build succeeds: `rtk err pnpm run build`');
     expect(agents).toContain('ui-ux-pro-max');
   });
@@ -224,6 +224,38 @@ describe('Project knowledge section', () => {
     expect(multi).toContain('"test (web)":\n      root: "web/"\n      run: "pnpm run test"');
     // format scripts often rewrite files, which a hook must not do.
     expect(multi).not.toContain('ruff format');
+  });
+
+  it('adds a GitHub Actions workflow with one job per package and the same commands', async () => {
+    const single = await generate('nextjs');
+    const ci = single.file('.github/workflows/ci.yml') ?? '';
+    expect(ci).toContain('run: "pnpm install --frozen-lockfile"');
+    expect(ci).toMatch(/name: lint[\s\S]*name: typecheck[\s\S]*name: test[\s\S]*name: build[\s\S]*name: audit/);
+    expect(ci).toContain('run: "pnpm audit --audit-level high"');
+    expect(ci).not.toContain('rtk ');
+
+    const multi = (await generate('fullstack')).file('.github/workflows/ci.yml') ?? '';
+    expect(multi).toContain('working-directory: "api"');
+    expect(multi).toContain('run: "poetry install"');
+    expect(multi).toContain('working-directory: "web"');
+  });
+
+  it('installs workspace packages from the repo root', async () => {
+    const ci = (await generate('turborepo')).file('.github/workflows/ci.yml') ?? '';
+    expect(ci).toContain('  apps-web:');
+    expect(ci).toContain('run: "pnpm install --frozen-lockfile"\n        working-directory: .');
+  });
+
+  it('asks to pin pnpm/yarn when package.json has no packageManager field, once per install folder', async () => {
+    const single = await generate('nextjs');
+    expect(single.notes).toEqual([expect.stringContaining('in the repo root: npm pkg set packageManager=pnpm@$(pnpm -v)')]);
+    expect((await generate('turborepo')).notes).toHaveLength(1);
+    expect((await generate('fullstack')).notes).toEqual([expect.stringContaining('in web:')]);
+    expect((await generate('fastapi')).notes).toEqual([]);
+  });
+
+  it('audits Go modules without installing govulncheck, even when it needs a newer Go than the module', async () => {
+    expect((await generate('go')).file('.github/workflows/ci.yml')).toContain('run: "GOTOOLCHAIN=auto go run golang.org/x/vuln/cmd/govulncheck@latest ./..."');
   });
 });
 
