@@ -47,7 +47,7 @@ async function detectLayout(root: string, options: DetectOptions): Promise<Detec
       monorepo: workspace.tool,
       rootScripts: Object.keys(rootPkg?.scripts ?? {}),
       rootPackageManager: await detectNodePackageManager([root], options.nodePackageManager),
-      packages: await detectAll(root, workspace.packageDirs, options),
+      packages: withMoonIds(await detectAll(root, workspace.packageDirs, options), workspace.moonProjectIds),
     };
   }
 
@@ -55,6 +55,15 @@ async function detectLayout(root: string, options: DetectOptions): Promise<Detec
   if (single) return { root, name: single.name, packages: [single] };
 
   return { root, name, packages: await detectAll(root, await listSubdirs(root), options) };
+}
+
+/**
+ * moon targets use project IDs (`web:test`), not package.json names (`@acme/web`).
+ * The ID is the map key from .moon/workspace.yml, or else the folder name.
+ */
+function withMoonIds(packages: PackageInfo[], moonProjectIds: Record<string, string> | undefined): PackageInfo[] {
+  if (!moonProjectIds) return packages;
+  return packages.map((pkg) => ({ ...pkg, taskRunnerId: moonProjectIds[pkg.path] ?? path.posix.basename(pkg.path) }));
 }
 
 /**

@@ -115,6 +115,8 @@ describe('generateFiles', () => {
     const root = file('AGENTS.md') ?? '';
     expect(root).toContain('moon run :test');
     expect(root).toContain('moon run :build');
+    expect(root).toContain('moon run :lint');
+    expect(root).not.toContain('moon check`');
     expect(root).toContain('[`apps/web`](apps/web/AGENTS.md)');
     expect(root).toContain('[`apps/api`](apps/api/AGENTS.md)');
     expect(root).toContain('[`apps/service`](apps/service/AGENTS.md)');

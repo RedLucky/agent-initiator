@@ -3,6 +3,11 @@
 Entri terbaru di atas. Format:
 
 ```
+## 2026-10-02 — fix(TASK-5128): use moon project IDs and moon run :lint
+- Apa: Target moon per package memakai ID project moon (key map di .moon/workspace.yml, atau nama folder), bukan nama di package.json; `lint` memakai `moon run :lint`, bukan `moon check`.
+- Kenapa: `moon check` butuh ID project di shell non-interaktif dan menjalankan build+test, dan `moon run @acme/web:test` bukan target yang valid.
+- File: src/detect/workspace.ts, src/detect/index.ts, src/types.ts, src/generate.ts, src/scaffold/templates.ts, presets/moonrepo/preset.json, test/*
+
 ## YYYY-MM-DD — <type>(#<issue>|TASK-<n>): <subject>
 - Apa: ...
 - Kenapa: ...

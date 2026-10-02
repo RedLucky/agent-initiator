@@ -6,14 +6,25 @@ export interface WorkspaceInfo {
   tool: 'turborepo' | 'nx' | 'moonrepo' | 'workspaces';
   /** Package directories relative to the root, sorted. */
   packageDirs: string[];
+  /** moon project IDs declared with map syntax (`web: apps/web`), keyed by folder. Other projects use their folder name. */
+  moonProjectIds?: Record<string, string>;
 }
 
 // Used when a turbo/nx/moon repo declares no explicit workspace globs.
 const DEFAULT_PATTERNS = ['apps/*', 'packages/*', 'libs/*'];
 
-/** Extracts project directories or globs from .moon/workspace.yml without pulling in a YAML parser. */
-export function parseMoonWorkspace(yaml: string): string[] {
-  const patterns: string[] = [];
+/** One entry of the `projects:` section in .moon/workspace.yml: a folder or glob, plus its ID when map syntax names it. */
+interface MoonProjectEntry {
+  source: string;
+  id?: string;
+}
+
+/**
+ * Reads the `projects:` section of .moon/workspace.yml without a YAML parser.
+ * Supports list syntax (`- 'apps/*'`) and map syntax (`web: 'apps/web'`), also nested under `globs:`/`sources:`.
+ */
+function moonProjectEntries(yaml: string): MoonProjectEntry[] {
+  const entries: MoonProjectEntry[] = [];
   let inProjects = false;
   for (const line of yaml.split('\n')) {
     if (/^projects:\s*$/.test(line)) {
@@ -26,17 +37,27 @@ export function parseMoonWorkspace(yaml: string): string[] {
     // List syntax: - "apps/*" or - apps/*
     const listItem = line.match(/^\s*-\s*["']?([^"'#\s]+)["']?/);
     if (listItem?.[1]) {
-      patterns.push(listItem[1]);
+      entries.push({ source: listItem[1] });
       continue;
     }
 
-    // Map/record syntax: web: "apps/web" or web: apps/web
-    const mapItem = line.match(/^\s*[\w.-]+:\s*["']?([^"'#\s]+)["']?/);
-    if (mapItem?.[1]) {
-      patterns.push(mapItem[1]);
-    }
+    // Map syntax: web: "apps/web" — the key is the project ID moon uses in targets like `web:test`.
+    const mapItem = line.match(/^\s*([\w.-]+):\s*["']?([^"'#\s]+)["']?/);
+    if (mapItem?.[1] && mapItem[2]) entries.push({ source: mapItem[2], id: mapItem[1] });
   }
-  return patterns;
+  return entries;
+}
+
+/** Extracts project directories or globs from .moon/workspace.yml. */
+export function parseMoonWorkspace(yaml: string): string[] {
+  return moonProjectEntries(yaml).map((entry) => entry.source);
+}
+
+/** Maps folder → project ID for projects declared with map syntax in .moon/workspace.yml. */
+export function parseMoonProjectIds(yaml: string): Record<string, string> {
+  const ids: Record<string, string> = {};
+  for (const entry of moonProjectEntries(yaml)) if (entry.id) ids[entry.source] = entry.id;
+  return ids;
 }
 
 /** Extracts the `packages:` list from pnpm-workspace.yaml without pulling in a YAML parser. */
@@ -55,10 +76,13 @@ export function parsePnpmWorkspace(yaml: string): string[] {
   return patterns;
 }
 
+/** Reads .moon/workspace.yml (or .yaml); null when the repo is not a moon workspace. */
+async function readMoonWorkspace(root: string): Promise<string | null> {
+  return (await readText(path.join(root, '.moon', 'workspace.yml'))) ?? (await readText(path.join(root, '.moon', 'workspace.yaml')));
+}
+
 async function readPatterns(root: string): Promise<string[]> {
-  const moonYaml =
-    (await readText(path.join(root, '.moon', 'workspace.yml'))) ??
-    (await readText(path.join(root, '.moon', 'workspace.yaml')));
+  const moonYaml = await readMoonWorkspace(root);
   if (moonYaml !== null) {
     const moonPatterns = parseMoonWorkspace(moonYaml);
     if (moonPatterns.length > 0) return moonPatterns;
@@ -94,17 +118,12 @@ export async function detectWorkspace(root: string): Promise<WorkspaceInfo | nul
   let tool: WorkspaceInfo['tool'] | null = null;
   if (await exists(path.join(root, 'turbo.json'))) tool = 'turborepo';
   else if (await exists(path.join(root, 'nx.json'))) tool = 'nx';
-  else if (
-    (await exists(path.join(root, '.moon', 'workspace.yml'))) ||
-    (await exists(path.join(root, '.moon', 'workspace.yaml'))) ||
-    (await exists(path.join(root, '.moon')))
-  ) {
-    tool = 'moonrepo';
-  } else if (patterns.length > 0) {
-    tool = 'workspaces';
-  }
+  else if (await exists(path.join(root, '.moon'))) tool = 'moonrepo';
+  else if (patterns.length > 0) tool = 'workspaces';
   if (!tool) return null;
 
   const packageDirs = await expandPatterns(root, patterns.length > 0 ? patterns : DEFAULT_PATTERNS);
-  return { tool, packageDirs };
+  if (tool !== 'moonrepo') return { tool, packageDirs };
+  const moonYaml = await readMoonWorkspace(root);
+  return { tool, packageDirs, moonProjectIds: moonYaml === null ? {} : parseMoonProjectIds(moonYaml) };
 }

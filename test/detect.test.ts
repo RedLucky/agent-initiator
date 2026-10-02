@@ -3,7 +3,7 @@ import { mkdtemp } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { detectProject } from '../src/detect/index.js';
-import { parseMoonWorkspace } from '../src/detect/workspace.js';
+import { parseMoonProjectIds, parseMoonWorkspace } from '../src/detect/workspace.js';
 
 const fixture = (name: string) => path.join(import.meta.dirname, 'fixtures', name);
 
@@ -57,7 +57,7 @@ describe('detectProject', () => {
     expect(project.packages.map((p) => [p.path, p.name, p.language])).toEqual([
       ['apps/api', 'api', 'python'],
       ['apps/service', 'service', 'go'],
-      ['apps/web', 'web', 'typescript'],
+      ['apps/web', '@zoog/web', 'typescript'],
     ]);
   });
 
@@ -113,5 +113,21 @@ describe('parseMoonWorkspace', () => {
   api: apps/api
 `;
     expect(parseMoonWorkspace(yaml)).toEqual(['apps/web', 'apps/api']);
+  });
+
+  it('reads project IDs from map syntax, including nested sources', () => {
+    const yaml = `projects:
+  globs:
+    - 'packages/*'
+  sources:
+    website: 'apps/web'
+`;
+    expect(parseMoonWorkspace(yaml)).toEqual(['packages/*', 'apps/web']);
+    expect(parseMoonProjectIds(yaml)).toEqual({ 'apps/web': 'website' });
+  });
+
+  it('uses the folder name as moon project ID, not the package.json name', async () => {
+    const project = await detectProject(fixture('moonrepo'));
+    expect(project.packages.find((p) => p.path === 'apps/web')?.taskRunnerId).toBe('web');
   });
 });

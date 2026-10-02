@@ -249,9 +249,7 @@ export function workspaceRootFiles(
     tool === 'turborepo'
       ? `turbo run ${task}`
       : tool === 'moonrepo'
-        ? task === 'lint'
-          ? 'moon check'
-          : `moon run :${task}`
+        ? `moon run :${task}`
         : WORKSPACE_RUN[pm](task);
   const pkg: Record<string, unknown> = {
     name,

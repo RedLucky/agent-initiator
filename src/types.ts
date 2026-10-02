@@ -26,6 +26,8 @@ export interface PackageInfo {
   scripts: string[];
   /** Manifest files found in the package dir (e.g. "pyproject.toml", "requirements.txt"). */
   manifests: string[];
+  /** ID the monorepo task runner uses for this package when it differs from `name` (moon: folder name or map key). */
+  taskRunnerId?: string;
 }
 
 export interface DetectedProject {

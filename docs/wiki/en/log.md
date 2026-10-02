@@ -3,6 +3,11 @@
 Newest entries first. Format:
 
 ```
+## 2026-10-02 — fix(TASK-5128): use moon project IDs and moon run :lint
+- What: Per-package moon targets use the moon project ID (map key in .moon/workspace.yml, else folder name) instead of the package.json name; `lint` runs `moon run :lint` instead of `moon check`.
+- Why: `moon check` needs a project ID in non-interactive shells and runs build+test, and `moon run @acme/web:test` is not a valid target.
+- Files: src/detect/workspace.ts, src/detect/index.ts, src/types.ts, src/generate.ts, src/scaffold/templates.ts, presets/moonrepo/preset.json, test/*
+
 ## YYYY-MM-DD — <type>(#<issue>|TASK-<n>): <subject>
 - What: ...
 - Why: ...

@@ -18,7 +18,7 @@
     "install": "{{pm}} install",
     "build": "moon run :build",
     "test": "moon run :test",
-    "lint": "moon check",
+    "lint": "moon run :lint",
     "affected": "moon ci"
   },
   "docs": [

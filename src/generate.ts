@@ -114,7 +114,7 @@ export function generateFiles(project: DetectedProject, registry: Registry, opti
     const summary = summaries.find((s) => s.path === pkg.path);
     if (!summary) continue;
     const specificIds = resolved.presetIds.filter((id) => !shared.has(id));
-    const rootTest = project.monorepo ? filterCommand(project.monorepo, pkg.packageManager, pkg.name, 'test') : null;
+    const rootTest = project.monorepo ? filterCommand(project.monorepo, pkg.packageManager, pkg.taskRunnerId ?? pkg.name, 'test') : null;
     files.push({
       path: `${pkg.path}/AGENTS.md`,
       content: renderPackageAgentsMd({
