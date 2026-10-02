@@ -45,6 +45,11 @@ function packageSpecific<T extends { presetId: string }>(items: T[], shared: Set
   return items.filter((item) => !shared.has(item.presetId));
 }
 
+/**
+ * Commands for the root AGENTS.md.
+ * Single-package repos use that package's commands; monorepos use the workspace tool's commands,
+ * overridden by real root package.json scripts. Other multi-folder repos have no root commands.
+ */
 function rootCommands(project: DetectedProject, registry: Registry, configs: PackageConfig[]): Command[] {
   const single = configs.length === 1 && configs[0]?.pkg.path === '.' ? configs[0] : undefined;
   if (single) return packageCommands(single.pkg, single.resolved.commands);

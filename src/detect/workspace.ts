@@ -1,6 +1,7 @@
 import path from 'node:path';
 import { exists, listSubdirs, readJson, readText } from '../fs-utils.js';
 
+/** What a monorepo looks like: which tool manages it and where its packages live. */
 export interface WorkspaceInfo {
   /** Monorepo preset id. */
   tool: 'turborepo' | 'nx' | 'moonrepo' | 'workspaces';
@@ -96,6 +97,11 @@ async function isMoonWorkspace(root: string): Promise<boolean> {
   return false;
 }
 
+/**
+ * Reads the package folder patterns (globs such as `apps/*`) declared by the workspace.
+ * moon config wins, then pnpm-workspace.yaml, then the `workspaces` field of package.json.
+ * @returns The patterns, or an empty list when none are declared.
+ */
 async function readPatterns(root: string): Promise<string[]> {
   const moonYaml = await readMoonWorkspace(root);
   if (moonYaml !== null) {

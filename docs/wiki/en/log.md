@@ -3,6 +3,11 @@
 Newest entries first. Format:
 
 ```
+## 2026-10-02 — docs(TASK-7346): add doc comments to changed detection and generate code
+- What: Plain-language doc comments for `detectProject`, `detectLayout`, `DetectOptions`, `WorkspaceInfo`, `readPatterns` and `rootCommands`; an orphaned comment left by an earlier refactor was moved to the function it describes. The formal self-review and Definition of Done ran for the whole audit.
+- Why: The new rule requires a doc comment on every changed function; the self-review found these missing.
+- Files: src/detect/index.ts, src/detect/workspace.ts, src/generate.ts
+
 ## 2026-10-02 — docs(TASK-7345): allow test-created temp folders as file-system fakes
 - What: The testing rule allows temporary folders and fixture files that a test creates itself (`mkdtemp`, `test/fixtures/`) as a local fake instead of mocking the file system; real user folders, home directories and shared paths stay forbidden. A requirement guard protects this.
 - Why: For tools that read files, mocking the file system would test nothing; the rule needed an explicit, safe exception (decision: option a).

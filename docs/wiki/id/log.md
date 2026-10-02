@@ -3,6 +3,11 @@
 Entri terbaru di atas. Format:
 
 ```
+## 2026-10-02 — docs(TASK-7346): add doc comments to changed detection and generate code
+- Apa: Doc comment berbahasa sederhana untuk `detectProject`, `detectLayout`, `DetectOptions`, `WorkspaceInfo`, `readPatterns` dan `rootCommands`; komentar yang tertinggal dari refactor sebelumnya dipindah ke function yang dijelaskannya. Self-review dan Definition of Done formal dijalankan untuk seluruh audit.
+- Kenapa: Rule baru mewajibkan doc comment pada setiap function yang diubah; self-review menemukan yang belum ada.
+- File: src/detect/index.ts, src/detect/workspace.ts, src/generate.ts
+
 ## 2026-10-02 — docs(TASK-7345): allow test-created temp folders as file-system fakes
 - Apa: Rule testing mengizinkan folder sementara dan fixture buatan test itu sendiri (`mkdtemp`, `test/fixtures/`) sebagai pengganti mock file system; folder milik user, home directory dan path bersama tetap dilarang. Guard requirement menjaga aturan ini.
 - Kenapa: Untuk tool yang membaca file, me-mock file system membuat test tidak menguji apa-apa; rule butuh pengecualian yang jelas dan aman (keputusan: opsi a).

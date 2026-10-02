@@ -22,19 +22,26 @@ async function detectAll(root: string, relPaths: string[], options: DetectOption
   return found.filter((pkg): pkg is PackageInfo => pkg !== null);
 }
 
-/**
- * Scans a repository and describes its packages and stacks.
- * Order of checks: workspace tooling → single root manifest → one level of sub-folders (e.g. web/ + api/).
- */
+/** Optional hints for detectProject. */
 export interface DetectOptions {
   /** Node package manager to assume when no lockfile exists yet (set after scaffolding with --skip-install). */
   nodePackageManager?: PackageManager;
 }
 
+/**
+ * Scans a repository and describes its packages, stacks and existing agent skills.
+ * @param root - Absolute path of the repository to scan.
+ * @param options - Optional hints, e.g. the package manager chosen during scaffolding.
+ * @returns The detected project; `packages` is empty when nothing is recognised.
+ */
 export async function detectProject(root: string, options: DetectOptions = {}): Promise<DetectedProject> {
   return { ...(await detectLayout(root, options)), existingSkills: await detectExistingSkills(root) };
 }
 
+/**
+ * Finds where the packages are. Checks in this order: a workspace tool (turbo, Nx, moon, workspaces),
+ * then a single manifest at the root, then one level of sub-folders (for example `web/` + `api/`).
+ */
 async function detectLayout(root: string, options: DetectOptions): Promise<DetectedProject> {
   const rootPkg = await readJson<{ name?: string; scripts?: Record<string, string> }>(path.join(root, 'package.json'));
   const name = rootPkg?.name ?? path.basename(root);
