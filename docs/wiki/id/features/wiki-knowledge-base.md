@@ -40,6 +40,7 @@ Dengan kata-kata: saat sebuah perubahan selesai, agent mencari halaman wiki tent
 | Baris Definition of Done di AGENTS.md hasil generate | `src/render/agents-md.ts` (`dodSection`) |
 | Halaman awal untuk repository baru | `presets/base/files/docs/wiki/{en,id}/` |
 | Guard yang menjaga aturan ini tidak hilang | `test/requirements.test.ts` |
+| Guard untuk wiki repository ini sendiri (pasangan bahasa, Singkatnya, index, diagram) | `test/wiki.test.ts` |
 
 ## Cara mengeceknya
 Jalankan `rtk test pnpm run test` — test requirement gagal kalau rule, skill, atau Definition of Done kehilangan syarat "halaman topik, bukan hanya log".

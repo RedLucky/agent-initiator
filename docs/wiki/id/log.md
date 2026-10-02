@@ -3,6 +3,11 @@
 Entri terbaru di atas. Format:
 
 ```
+## 2026-10-02 — docs(TASK-6205): fill this repo's wiki as a knowledge base
+- Apa: Halaman baru overview, getting-started, glossary, faq dan features/{stack-detection,presets,generated-files,scaffolding,tool-setup}, halaman architecture yang diperbarui (scaffolding, setup tool, moon, test) dan index dengan jalur baca, semuanya dalam bahasa Inggris dan Indonesia dengan bagian Singkatnya dan diagram Mermaid. test/wiki.test.ts menjaga pasangan bahasa, ringkasan, tautan index dan diagram. Index juga punya tabel task → halaman untuk AI agent, yang cukup membaca halaman bahasa Inggris.
+- Kenapa: Wiki hanya punya halaman architecture dari commit pertama dan log, sehingga tidak lagi sesuai dengan kode dan tidak membantu non-developer maupun developer baru.
+- File: docs/wiki/{en,id}/*, test/wiki.test.ts, README.md
+
 ## 2026-10-02 — feat(TASK-6204): generate a full bilingual wiki skeleton for new repos
 - Apa: `init` sekarang membuat index (dengan jalur baca untuk non-developer, developer baru dan developer berpengalaman), overview, getting-started, architecture (dengan contoh diagram Mermaid), glossary dan faq dalam bahasa Inggris dan Indonesia, selain log. Setiap halaman dibuka dengan Singkatnya dan menjelaskan apa yang perlu ditulis. Halaman topik features/wiki-knowledge-base.md dan README diperbarui.
 - Kenapa: Repository baru hanya mendapat index dan log, sehingga struktur knowledge base dari rule documentation harus dibangun manual.

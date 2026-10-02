@@ -1,0 +1,39 @@
+# Required tools, doctor and per-repo setup
+
+## In short
+The generated instructions ask AI assistants and developers to use five helper tools. Most of them are installed once per computer and then work everywhere; two need a small step in each repository. agent-initiator checks them and can run those per-repository steps, but it never installs anything by itself.
+
+## The tools
+| Tool | What it is for | After the one-time install | Per-repository step |
+|------|----------------|----------------------------|---------------------|
+| rtk | shortens command output | automatic (global hook) | none |
+| caveman | short answers from the assistant | automatic in Claude Code | none |
+| ponytail | smallest working code | automatic in Claude Code | none |
+| graphify | searchable map of the code | skill available | `graphify update .`, optional `graphify hook install` |
+| UI UX Pro Max (frontend only) | design guidance | CLI available | `uipro init --ai universal` and `--ai claude` |
+
+## How setup works
+
+```mermaid
+flowchart TD
+    A[init: presets resolved] --> B{Per-repo steps for the required tools?}
+    B -- none --> G[Generate files]
+    B -- some --> C{--setup-tools, or yes to the question?}
+    C -- no --> G
+    C -- yes --> D{Tool installed?}
+    D -- no --> E[Skip and point to doctor]
+    D -- yes --> F[Run the step<br/>hooks only inside a git repo]
+    E --> G
+    F --> G
+```
+
+In words: after the presets are known, the tool lists the per-repository steps. It runs them only with `--setup-tools` or when you agree to the question. A missing tool is skipped (never installed), git hooks are only installed inside a git repository, and a failing step prints a warning without stopping `init`. Setup runs before file generation so the UI UX Pro Max skills are listed in AGENTS.md.
+
+## Doctor
+`agent-initiator doctor` prints a check or cross per tool, with install commands for the missing ones. Its exit code is 1 when something is missing, so it can run in CI.
+
+## Where it lives in the code
+`src/tooling.ts` (the tool list and texts), `src/setup.ts` (per-repo steps), `src/doctor.ts` (machine check).
+
+## How to test it
+`rtk test pnpm vitest run test/setup.test.ts`.

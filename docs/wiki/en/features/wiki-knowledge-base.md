@@ -40,6 +40,7 @@ In words: when a change is finished, the agent looks for the wiki page about tha
 | Definition of Done line in generated AGENTS.md | `src/render/agents-md.ts` (`dodSection`) |
 | Starting pages for new repositories | `presets/base/files/docs/wiki/{en,id}/` |
 | Guards that keep these rules from disappearing | `test/requirements.test.ts` |
+| Guard for this repository's own wiki (twins, In short, index, diagrams) | `test/wiki.test.ts` |
 
 ## How to check it
 Run `rtk test pnpm run test` — the requirement tests fail if the rule, the skill or the Definition of Done lose the "topic page, not only the log" requirement.

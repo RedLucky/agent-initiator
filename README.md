@@ -327,6 +327,7 @@ node dist/cli.js init <dir> --dry-run
 | `src/scaffold/` | New-project recipes and runner |
 | `presets/<id>/` | `preset.json`, `rules/`, `skills/`, `files/`, optional `agents-md.md` |
 | `test/requirements.test.ts` | Fails if any agreed rule, skill or constraint disappears from the output |
+| `test/wiki.test.ts` | Keeps this repo's wiki complete: English/Indonesian twins, "In short", index links, diagrams |
 
 ### Adding or changing a preset
 

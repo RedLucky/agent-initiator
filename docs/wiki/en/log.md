@@ -3,6 +3,11 @@
 Newest entries first. Format:
 
 ```
+## 2026-10-02 — docs(TASK-6205): fill this repo's wiki as a knowledge base
+- What: New pages overview, getting-started, glossary, faq and features/{stack-detection,presets,generated-files,scaffolding,tool-setup}, an updated architecture page (scaffolding, tool setup, moon, tests) and an index with reading paths, all in English and Indonesian with In short sections and Mermaid diagrams. test/wiki.test.ts guards twins, summaries, index links and diagrams. The index also has a task → page table for AI agents, who read the English pages only.
+- Why: The wiki only had an architecture page from the first commit and a log, so it no longer matched the code and did not help non-developers or new developers.
+- Files: docs/wiki/{en,id}/*, test/wiki.test.ts, README.md
+
 ## 2026-10-02 — feat(TASK-6204): generate a full bilingual wiki skeleton for new repos
 - What: `init` now creates index (with reading paths for non-developers, new and experienced developers), overview, getting-started, architecture (with an example Mermaid diagram), glossary and faq in English and Indonesian, next to log. Each page starts with In short and explains what to write. Topic page features/wiki-knowledge-base.md and README updated.
 - Why: New repositories only got index and log, so the knowledge base structure from the documentation rule had to be built by hand.
