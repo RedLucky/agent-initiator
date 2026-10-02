@@ -4,6 +4,5 @@
   "category": "frontend",
   "description": "Shared frontend rules: components, state, accessibility, UI tooling.",
   "extends": ["base"],
-  "tooling": ["ui-ux-pro-max"],
-  "must": ["Use the ui-ux-pro-max skill for UI/UX design decisions (layout, colour, typography, components)."]
+  "tooling": ["ui-ux-pro-max"]
 }

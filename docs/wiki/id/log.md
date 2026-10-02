@@ -9,6 +9,11 @@ Entri terbaru di atas. Format:
 - File: ...
 ```
 
+## 2026-10-02 — feat(TASK-7112): make every helper tool optional, required once installed
+- Apa: `init` mengecek tool pendukung mana (ponytail, caveman, rtk, graphify, UI UX Pro Max) yang terpasang dan hanya menuliskan itu ke AGENTS.md, di mana tool tersebut wajib; tool yang tidak ada tidak disebut: command tanpa awalan `rtk`, tanpa baris graphify atau `.graphifyignore`, tanpa bagian Required tooling atau rule required-tooling kalau tidak ada yang terpasang. `doctor` menampilkan semua tool sebagai opsional dan exit 0. Skill dan rule (git, nx, moon, turbo) menulis perintah shell sebagai `{{rtk}}git status`, yang diisi menjadi `rtk git status` hanya kalau rtk terpasang (command AGENTS.md: `rtk test` untuk test, `rtk err` untuk build dan cek, `rtk proxy` untuk sisanya); agent di mesin tanpa tool yang tercantum mengecek sekali (`command -v`) lalu melewatinya alih-alih mencoba berulang, skill menjalankan command AGENTS.md persis seperti tertulis di sana, dan menyebut UI UX Pro Max serta ponytail hanya "kalau terpasang"; baris MUST rtk dan UI UX Pro Max yang dobel dihapus.
+- Kenapa: Setup minimalis untuk instal dari awal: tidak ada yang wajib diinstal dulu, dan setiap tool yang sudah dimiliki developer tetap dipakai.
+- File: src/{cli,generate,doctor}.ts, src/render/{agents-md,commands,tooling-rule}.ts, presets/*, AGENTS.md, .agents/*, .claude/skills/*, README.md, docs/wiki/*, test/*
+
 ## 2026-10-02 — refactor(TASK-7111): remove generated git hooks and lefthook
 - Apa: `init` tidak lagi menulis `lefthook.yml` atau `.lefthook/` (cek pesan commit, lint sebelum commit, typecheck dan test sebelum push, pengingat wiki) dan tidak lagi menjalankan `lefthook install`; lefthook bukan lagi tool wajib. Renderer, langkah setup setelah file ditulis, penulisan `.sh` executable, langkah manual lefthook, baris `Wiki: not needed` dan halaman wiki quality-gates dihapus. Rule, skill commit dan kerangka wiki kembali ke teks sebelum TASK-7101 (level audit tetap). Repository ini meng-uninstall lefthook; hook graphify-nya dipulihkan.
 - Kenapa: Kembali ke konfigurasi agent murni dengan lebih sedikit tool yang harus dipasang: satu tool lebih sedikit saat instal dari awal dan tanpa file atau hook tambahan di setiap repository.

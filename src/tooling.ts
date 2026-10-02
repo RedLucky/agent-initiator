@@ -24,7 +24,7 @@ export const TOOLS: Tool[] = [
       'brew install rtk   # or: cargo install --git https://github.com/rtk-ai/rtk  (NOT `cargo install rtk`, a different crate)',
       'rtk init -g   # Claude Code / Copilot; use --codex, --gemini or --agent <name> for other agents',
     ],
-    usage: 'Prefix every shell command with `rtk`, including git, file and script commands. rtk filters the tools it knows and runs any other command unchanged, keeping its exit code, so the prefix is always safe. Use `rtk proxy <cmd>` only for the raw output of a filtered tool.',
+    usage: 'Prefix every shell command with `rtk`, including git, file and script commands: `rtk test <cmd>` for tests, `rtk err <cmd>` for builds and checks, `rtk <tool>` for tools rtk filters (git, grep, ls, pnpm, npm, go, … see `rtk --help`), and `rtk proxy <cmd>` for anything else or when you need raw output; proxy runs it unchanged and keeps its exit code. The commands in AGENTS.md and the skills are already written this way.',
     check: { bins: ['rtk'] },
   },
   {

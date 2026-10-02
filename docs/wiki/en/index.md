@@ -22,7 +22,7 @@ Read the English pages only (`docs/wiki/en/`); `docs/wiki/id/` is the same conte
 | Add or change a preset, rule or skill | [features/presets.md](features/presets.md) | `presets/<id>/`, `src/presets/` |
 | Change AGENTS.md or other generated output | [features/generated-files.md](features/generated-files.md) | `src/generate.ts`, `src/render/` |
 | Add or change a scaffolder or layout | [features/scaffolding.md](features/scaffolding.md) | `src/scaffold/` |
-| Change required tools, doctor or setup | [features/tool-setup.md](features/tool-setup.md) | `src/tooling.ts`, `src/setup.ts`, `src/doctor.ts` |
+| Change the helper tools, doctor or setup | [features/tool-setup.md](features/tool-setup.md) | `src/tooling.ts`, `src/setup.ts`, `src/doctor.ts` |
 | [features/wiki-knowledge-base.md](features/wiki-knowledge-base.md) | `presets/base/rules/documentation.md` |
 
 ## All pages
@@ -36,7 +36,7 @@ Read the English pages only (`docs/wiki/en/`); `docs/wiki/id/` is the same conte
 | [features/presets.md](features/presets.md) | The layered rule bundles per stack |
 | [features/generated-files.md](features/generated-files.md) | What is written into a repository and why nothing is overwritten |
 | [features/scaffolding.md](features/scaffolding.md) | Creating new projects with official tools, including monorepos and moon |
-| [features/tool-setup.md](features/tool-setup.md) | Required helper tools, `doctor` and per-repository setup |
+| [features/tool-setup.md](features/tool-setup.md) | Optional helper tools, `doctor` and per-repository setup |
 | [features/wiki-knowledge-base.md](features/wiki-knowledge-base.md) | How the wiki is kept as a knowledge base for every reader |
 | [glossary.md](glossary.md) | Terms and abbreviations in plain words |
 | [faq.md](faq.md) | Common questions and problems, with answers |

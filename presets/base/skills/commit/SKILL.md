@@ -5,7 +5,7 @@ description: Prepare a git commit with the project's message format and get expl
 
 # Commit (with approval)
 
-1. **Check state** — `rtk git status` and `rtk git diff --staged` (stage only files that belong to this change). The staged changes must belong to **exactly one task**; if they cover several, split them into one commit per task first.
+1. **Check state** — `{{rtk}}git status` and `{{rtk}}git diff --staged` (stage only files that belong to this change). The staged changes must belong to **exactly one task**; if they cover several, split them into one commit per task first.
 2. **Verify** — the `definition-of-done` checklist passed. Never commit secrets, `.env`, build output.
 3. **Find the reference** — issue number from the user, branch name or task (`#123`). No issue? Use the plan's task number: `TASK-<n>`.
 4. **Draft the message**:

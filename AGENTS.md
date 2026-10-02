@@ -62,11 +62,12 @@ Before exploring the code, read the wiki: `docs/wiki/en/index.md` lists every pa
 
 ## Required tooling
 
-Mandatory for every contributor and agent. Install steps: [required-tooling](.agents/rules/required-tooling.md); `npx agent-initiator doctor` checks them.
+These tools were installed when this file was generated, so use them on every task. Install steps: [required-tooling](.agents/rules/required-tooling.md); `npx agent-initiator doctor` shows what this machine has.
+Check once per session which are installed (`command -v rtk graphify`). If a tool is missing on your machine, skip its instructions instead of retrying: without rtk, run each command without its `rtk`, `rtk test`, `rtk err` or `rtk proxy` prefix (`rtk test pnpm run test` → `pnpm run test`).
 
 - **ponytail** — Write the smallest solution that fully meets the requirement. Never drop validation, security, error handling or accessibility to save lines.
 - **caveman** — Keep chat responses terse. Code, commit messages, PR descriptions and security warnings stay in normal, complete prose.
-- **rtk (Rust Token Killer)** — Prefix every shell command with `rtk`, including git, file and script commands. rtk filters the tools it knows and runs any other command unchanged, keeping its exit code, so the prefix is always safe. Use `rtk proxy <cmd>` only for the raw output of a filtered tool.
+- **rtk (Rust Token Killer)** — Prefix every shell command with `rtk`, including git, file and script commands: `rtk test <cmd>` for tests, `rtk err <cmd>` for builds and checks, `rtk <tool>` for tools rtk filters (git, grep, ls, pnpm, npm, go, … see `rtk --help`), and `rtk proxy <cmd>` for anything else or when you need raw output; proxy runs it unchanged and keeps its exit code. The commands in AGENTS.md and the skills are already written this way.
 - **graphify** — Ask it before broad grep/find, with symbol names and `--budget <tokens>` (see Project knowledge); broad questions return noise. Refresh with `graphify update .` (code only: no LLM, no tokens). Run the full `/graphify` extraction, which uses an LLM, only occasionally: the English wiki already explains the concepts.
 
 ## Constraints
@@ -85,7 +86,6 @@ Mandatory for every contributor and agent. Install steps: [required-tooling](.ag
 - Ask for explicit confirmation, showing the proposed message, before every `git commit` and `git push`.
 - Use commit format `type(#<issue>): subject`, or `type(TASK-<n>): subject` with the plan's task number when there is no issue.
 - Commit each task separately (one task = one commit, with its own reference) before starting the next task; never batch several tasks into one commit.
-- Prefix every shell command with `rtk`, including git, file and script commands; rtk runs tools it has no filter for unchanged.
 - Record hard-to-reverse architecture decisions as ADRs (`write-adr` skill).
 - Keep `strict` TypeScript; fix type errors instead of silencing them.
 
@@ -116,7 +116,7 @@ A task is done only when every step passes (use the `definition-of-done` skill):
 ## Conventions
 
 - Existing repository conventions win; these rules only fill the gaps.
-- These rules win over plugin defaults (for example ponytail's "trivial code needs no test or comment"). Comments explain *why* and are added to new or changed code only.
+- These rules win over plugin defaults (for example a plugin's "trivial code needs no test or comment"). Comments explain *why* and are added to new or changed code only.
 - Code must be readable by a beginner: clear names, small functions, early returns, no clever tricks.
 - Use the package manager already locked in the repo; never mix lockfiles.
 

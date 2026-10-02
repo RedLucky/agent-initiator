@@ -20,7 +20,7 @@ npx agent-initiator init
 6. [Generated files](#generated-files)
 7. [What the rules contain](#what-the-rules-contain)
 8. [Supported stacks](#supported-stacks)
-9. [Required tooling](#required-tooling)
+9. [Optional tooling](#optional-tooling)
 10. [Safety principles](#safety-principles)
 11. [FAQ and troubleshooting](#faq-and-troubleshooting)
 12. [Development](#development)
@@ -45,7 +45,7 @@ agent-initiator fixes this by generating a **consistent, opinionated and stack-a
 - **An `AGENTS.md` entry point**, read automatically by most agents. It contains:
   - a project overview
   - the exact commands for your stack
-  - how to use each required tool (install steps are in `.agents/rules/required-tooling.md`)
+  - how to use each helper tool installed on your machine (install steps are in `.agents/rules/required-tooling.md`)
   - MUST/NEVER constraints
   - the Definition of Done
   - links to every rule and skill
@@ -76,7 +76,7 @@ agent-initiator fixes this by generating a **consistent, opinionated and stack-a
                   4. write       only files that do not exist yet — never overwrites
                         │
                         ▼
-                  5. doctor      checks required tooling on your machine
+                  5. doctor      shows which optional tools are installed
 ```
 
 Content lives in plain Markdown and JSON **presets**. The code only detects, merges and writes. Details: [`docs/wiki/en/architecture.md`](docs/wiki/en/architecture.md).
@@ -125,7 +125,7 @@ npx agent-initiator init acme --layout workspaces --apps web:vue-vite,api:hono -
 ### 4. Check your machine
 
 ```bash
-npx agent-initiator doctor   # ✓/✗ for each required tool, with install commands
+npx agent-initiator doctor   # ✓/○ for each optional tool, with install commands
 ```
 
 Then review the generated files and commit them when you are happy. The tool never commits for you.
@@ -136,7 +136,7 @@ Then review the generated files and commit them when you are happy. The tool nev
 |---------|--------------|
 | `init [dir]` (default) | Detect or scaffold, then generate agent config into `dir` (default: current folder) |
 | `list` | List all presets by category |
-| `doctor` | Check required tooling; exit code 1 when something is missing |
+| `doctor` | Show which optional tools are installed, with install commands for the others |
 
 `init` options:
 
@@ -151,7 +151,7 @@ Then review the generated files and commit them when you are happy. The tool nev
 | `--lang <ts\|js>` | Language for Node apps (default `ts`; TS-only frameworks ignore `js`) |
 | `--pm <pm>` | `pnpm` · `npm` · `yarn` · `bun` (default: pnpm if installed, else npm) |
 | `--skip-install` | Do not install dependencies, where the scaffolder allows it |
-| `--setup-tools` | Run per-repo tool setup without asking (see [Required tooling](#required-tooling)) |
+| `--setup-tools` | Run per-repo tool setup without asking (see [Optional tooling](#optional-tooling)) |
 
 In `--yes` mode, an empty folder without `--framework`, `--apps` or `--preset` stops with an error and example commands. It does not silently write a base-only setup.
 
@@ -247,9 +247,9 @@ Commands come from your real `package.json` scripts. If `test` or `build` is mis
   - The official Nx skills are kept.
   - Competing agent files from the Nx template are removed.
 
-## Required tooling
+## Optional tooling
 
-Every generated `AGENTS.md` asks contributors and agents to use these tools. They are installed once per machine; `doctor` checks them, and nothing is installed automatically.
+All tools are optional. `init` checks which ones are installed on your machine and writes only those into `AGENTS.md`, where they are then required; a tool you do not have is not mentioned (for example, without rtk the commands have no `rtk` prefix). Install them once per machine; `doctor` shows what you have, and nothing is installed automatically.
 
 | Tool | Purpose | Install |
 |------|---------|---------|

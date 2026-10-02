@@ -19,7 +19,7 @@ const SCRIPT_ALIASES: Record<string, string[]> = {
   format: ['format', 'format:check'],
 };
 
-// rtk sub-command per task: `test` shows only failures, `err` only errors/warnings, `proxy` passes through.
+// rtk mode per task: `test` shows only test failures, `err` only errors and warnings, other tasks use `proxy`.
 const RTK_MODE: Record<string, string> = {
   test: 'test',
   build: 'err',
@@ -62,29 +62,50 @@ export function scriptCommands(scripts: string[], pm: PackageManager): CommandMa
   return commands;
 }
 
+/**
+ * The rtk command for one AGENTS.md task: `rtk test` for tests (only failures shown), `rtk err` for builds and
+ * checks (only errors shown), and `rtk proxy` for everything else, which runs the command unchanged. `rtk <tool>`
+ * is not used here: some rtk filters accept only certain subcommands (`rtk pip install -r …` fails).
+ */
 export function withRtk(task: string, command: string): string {
   return `rtk ${RTK_MODE[task] ?? 'proxy'} ${command}`;
 }
 
-/** Fills templates, prefixes rtk and sorts commands into display order. */
-export function toCommandList(commands: CommandMap, vars: Record<string, string>): Command[] {
+/**
+ * Writes the shell commands that presets mark as `{{rtk}}command` (inside backticks) with the `rtk` prefix, or plain
+ * when rtk is not installed. Agents follow skill and rule text literally, so the prefix must already be there.
+ * Presets mark only commands that work as `rtk <command>` (git, nx, turbo, moon).
+ * @param rtk - Whether rtk is installed.
+ */
+export function fillRtkCommands(content: string, rtk: boolean): string {
+  return content.replace(/`\{\{rtk\}\}([^`]+)`/g, (_match, command: string) => `\`${rtk ? `rtk ${command}` : command}\``);
+}
+
+/**
+ * Fills templates, adds the rtk prefix (only when rtk is installed) and sorts commands into display order.
+ * @param rtk - Whether rtk is installed.
+ */
+export function toCommandList(commands: CommandMap, vars: Record<string, string>, rtk = true): Command[] {
   const rank = (task: string) => {
     const index = TASK_ORDER.indexOf(task);
     return index === -1 ? TASK_ORDER.length : index;
   };
   return Object.entries(commands)
     .sort(([a], [b]) => rank(a) - rank(b) || a.localeCompare(b))
-    .map(([task, template]) => ({ task, command: withRtk(task, fillTemplate(template, vars).trim()) }));
+    .map(([task, template]) => {
+      const command = fillTemplate(template, vars).trim();
+      return { task, command: rtk ? withRtk(task, command) : command };
+    });
 }
 
 /**
  * Commands for one package: preset defaults overridden by the package's real scripts.
  * Node presets only define install/typecheck, so node packages show the scripts they actually have.
  */
-export function packageCommands(pkg: PackageInfo, presetCommands: CommandMap, monorepo?: string): Command[] {
+export function packageCommands(pkg: PackageInfo, presetCommands: CommandMap, monorepo?: string, rtk = true): Command[] {
   const isNode = pkg.language === 'typescript' || pkg.language === 'javascript';
   const scripts = isNode ? scriptCommands(pkg.scripts, pkg.packageManager) : {};
-  return toCommandList({ ...presetCommands, ...(isNode && monorepo === 'nx' ? nxTargets(pkg.name) : {}), ...scripts }, templateVars(pkg));
+  return toCommandList({ ...presetCommands, ...(isNode && monorepo === 'nx' ? nxTargets(pkg.name) : {}), ...scripts }, templateVars(pkg), rtk);
 }
 
 // Nx projects usually have inferred targets instead of package.json scripts.

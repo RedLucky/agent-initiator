@@ -29,7 +29,7 @@ Dengan kata-kata: kalau foldernya kosong, project dibuat dulu. Lalu tool mendete
 | Generate | Pure function: project hasil deteksi + preset → daftar file | `src/generate.ts`, `src/render/` — lihat [file yang dihasilkan](features/generated-files.md) |
 | Menulis | Hanya membuat file yang belum ada, mencetak langkah manual | `src/write/` |
 | Scaffolding | Daftar langkah per framework dan layout, serta runner-nya | `src/scaffold/` — lihat [scaffolding](features/scaffolding.md) |
-| Setup tool dan doctor | Tool wajib, setup per repo, cek mesin | `src/tooling.ts`, `src/setup.ts`, `src/doctor.ts` — lihat [setup tool](features/tool-setup.md) |
+| Setup tool dan doctor | Tool opsional, setup per repo, cek mesin | `src/tooling.ts`, `src/setup.ts`, `src/doctor.ts` — lihat [setup tool](features/tool-setup.md) |
 
 ## Keputusan desain
 | Keputusan | Alasan |

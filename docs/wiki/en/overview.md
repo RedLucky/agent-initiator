@@ -18,7 +18,7 @@ Without shared instructions, AI assistants produce inconsistent code, skip tests
 | Presets | Ready-made rules and guides per stack, combined in layers | [presets](features/presets.md) |
 | Generated files | Writes `AGENTS.md`, rules, skills, `CLAUDE.md` and a bilingual wiki — never overwriting existing files | [generated files](features/generated-files.md) |
 | Scaffolding | Creates a new project with the official framework tools before writing the instructions | [scaffolding](features/scaffolding.md) |
-| Tool setup and doctor | Checks the required helper tools and sets up the per-repository ones | [tool setup](features/tool-setup.md) |
+| Tool setup and doctor | Checks the optional helper tools and sets up the per-repository ones | [tool setup](features/tool-setup.md) |
 | Wiki knowledge base | Keeps a wiki like this one that every reader can follow | [wiki knowledge base](features/wiki-knowledge-base.md) |
 
 ## What it does not do

@@ -10,7 +10,7 @@ description: Workflow for writing focused, deterministic unit tests. Use when ad
 3. **Bug fix?** Write the failing test that reproduces the bug *first* and run it to see it fail.
 4. **Write the test** with Arrange → Act → Assert and a behaviour-describing name.
 5. **Isolate** — fake only boundaries (HTTP, DB, clock, randomness) via injected dependencies. No real network or shared state.
-6. **Run** the test command from AGENTS.md (via `rtk`) and confirm it passes — and fails if you revert the fix.
+6. **Run** the test command from AGENTS.md (exactly as written there) and confirm it passes — and fails if you revert the fix.
 7. **Keep it readable** — no logic (loops/conditionals) inside tests; use small builders/fixtures for setup.
 
 Never weaken, skip or delete existing tests to make a change pass.

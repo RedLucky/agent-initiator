@@ -29,12 +29,15 @@ function describeProject(registry: Registry, project: DetectedProject): string {
   return lines.length > 0 ? lines.join('\n') : 'No stack detected — base rules only.';
 }
 
-function printToolStatus(statuses: ToolStatus[]): boolean {
+/**
+ * Prints which tools are installed. All tools are optional: missing ones are only listed with their install steps.
+ * @param statuses - The result of `checkTools`.
+ */
+function printToolStatus(statuses: ToolStatus[]): void {
   for (const { tool, installed } of statuses) {
-    console.log(`${installed ? pc.green('✓') : pc.red('✗')} ${tool.name}${installed ? '' : pc.dim(`  → ${tool.url}`)}`);
+    console.log(`${installed ? pc.green('✓') : pc.dim('○')} ${tool.name}${installed ? '' : pc.dim(`  (optional, not installed) → ${tool.url}`)}`);
     if (!installed) for (const line of tool.install) console.log(pc.dim(`    ${line}`));
   }
-  return statuses.every((s) => s.installed);
 }
 
 async function scaffold(spec: ScaffoldSpec): Promise<void> {
@@ -138,16 +141,18 @@ async function runInit(dir: string, options: InitOptions): Promise<void> {
   }
 
   const rootIds = [...new Set(['base', ...(project.monorepo ? [project.monorepo] : []), ...project.packages.flatMap((pkg) => pkg.presets)])];
-  const tooling = resolvePresets(registry, rootIds).tooling;
+  // Every tool is optional: the ones installed on this machine become required instructions, the rest are left out.
+  const toolStatus = await checkTools(resolvePresets(registry, rootIds).tooling);
+  const installedTools = toolStatus.filter((s) => s.installed).map((s) => s.tool.id);
 
   // Runs before generation so skills installed by tools (UI UX Pro Max) get indexed in AGENTS.md.
-  const setupActions = await chooseSetupActions(root, options, planToolSetup(tooling));
+  const setupActions = await chooseSetupActions(root, options, planToolSetup(installedTools));
   if (setupActions.length > 0) {
     await runToolSetup(root, setupActions, logSetupResult);
     project = { ...project, existingSkills: await detectExistingSkills(root) };
   }
 
-  const { kind, files } = generateFiles(project, registry, { date: new Date().toISOString().slice(0, 10) });
+  const { kind, files } = generateFiles(project, registry, { date: new Date().toISOString().slice(0, 10), installedTools });
   const plan = await planFiles(root, files);
   const created = plan.filter((f) => f.status === 'create');
   const skipped = plan.filter((f) => f.status === 'skip');
@@ -160,8 +165,8 @@ async function runInit(dir: string, options: InitOptions): Promise<void> {
   const written = await applyPlan(root, plan);
   for (const step of await manualSteps(root, plan)) p.log.warn(step);
 
-  console.log(pc.bold('\nRequired tooling on this machine:'));
-  printToolStatus(await checkTools(tooling));
+  console.log(pc.bold('\nTools (optional; the installed ones are used in AGENTS.md):'));
+  printToolStatus(toolStatus);
 
   p.outro(`Wrote ${written.length} file(s). Review them, then commit when ready.`);
 }
@@ -200,9 +205,9 @@ program.command('list').description('list available presets').action(runList);
 
 program
   .command('doctor')
-  .description('check that the required tooling is installed')
+  .description('show which optional tools are installed')
   .action(async () => {
-    process.exitCode = printToolStatus(await checkTools()) ? 0 : 1;
+    printToolStatus(await checkTools());
     // Hooks are per clone: report them for the current repo, but do not fail (CI clones never have them).
     const hooks = isInsideGitRepo(process.cwd()) ? graphifyHookState(process.cwd()) : 'unknown';
     if (hooks === 'installed') console.log(`${pc.green('✓')} graphify git hooks in this repo`);

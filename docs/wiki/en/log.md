@@ -9,6 +9,11 @@ Newest entries first. Format:
 - Files: ...
 ```
 
+## 2026-10-02 — feat(TASK-7112): make every helper tool optional, required once installed
+- What: `init` checks which helper tools (ponytail, caveman, rtk, graphify, UI UX Pro Max) are installed and writes only those into AGENTS.md, where they are required; missing tools are not mentioned: commands without the `rtk` prefix, no graphify lines or `.graphifyignore`, no Required tooling section or required-tooling rule when nothing is installed. `doctor` lists every tool as optional and exits 0. Skills and rules (git, nx, moon, turbo) write shell commands as `{{rtk}}git status`, filled in as `rtk git status` only when rtk is installed (AGENTS.md commands: `rtk test` for tests, `rtk err` for builds and checks, `rtk proxy` for the rest); agents on a machine without a listed tool check once (`command -v`) and skip it instead of retrying, skills run AGENTS.md commands exactly as written there, and mention UI UX Pro Max and ponytail only "when installed"; the duplicate rtk and UI UX Pro Max MUST lines are gone.
+- Why: A minimal setup for a fresh install: nothing has to be installed first, and every tool a developer already has is used.
+- Files: src/{cli,generate,doctor}.ts, src/render/{agents-md,commands,tooling-rule}.ts, presets/*, AGENTS.md, .agents/*, .claude/skills/*, README.md, docs/wiki/*, test/*
+
 ## 2026-10-02 — refactor(TASK-7111): remove generated git hooks and lefthook
 - What: `init` no longer writes `lefthook.yml` or `.lefthook/` (commit message check, lint before commit, typecheck and tests before push, wiki reminder) and no longer runs `lefthook install`; lefthook is no longer a required tool. Removed the renderer, the after-files setup step, the executable `.sh` writing, the kept-lefthook manual step, the `Wiki: not needed` line and the quality-gates wiki page. The rules, the commit skill and the wiki skeleton are back to their pre-TASK-7101 text (the audit level stays). This repository uninstalled lefthook; its graphify hooks are restored.
 - Why: Back to pure agent configuration with fewer tools to install: one tool less for a fresh install and no extra files or hooks in every repository.

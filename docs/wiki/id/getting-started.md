@@ -6,7 +6,7 @@ Cara memasang agent-initiator dari repository ini, menjalankannya pada sebuah pr
 ## Kebutuhan
 - Node.js 20 atau lebih baru dan pnpm.
 - Git.
-- Tool pendukung wajib yang tercantum di `AGENTS.md` (rtk, graphify, caveman, ponytail; UI UX Pro Max untuk pekerjaan frontend). `agent-initiator doctor` mengeceknya.
+- Tool pendukung yang tercantum di `AGENTS.md` (repository ini memakai rtk, graphify, caveman dan ponytail). `agent-initiator doctor` menampilkan mana yang terpasang.
 - Untuk scaffolding app Python atau Go: `uv` atau `go`.
 
 ## Memasang command

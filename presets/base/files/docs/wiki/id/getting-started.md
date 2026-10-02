@@ -1,6 +1,6 @@
 # Memulai
 
-> Untuk developer baru. Ganti panduan ini dengan langkah dan command yang sebenarnya (pertahankan prefix `rtk` dari AGENTS.md).
+> Untuk developer baru. Ganti panduan ini dengan langkah dan command yang sebenarnya (ditulis seperti di AGENTS.md → Commands).
 
 ## Singkatnya
 Cara menjalankan {{projectName}} di mesin Anda, memastikan semuanya bekerja, dan membuat perubahan pertama.
@@ -15,7 +15,7 @@ Command yang tepat, berurutan, dari clone baru sampai project berjalan.
 Cara menjalankan test dan seperti apa hasil yang "lolos".
 
 ## Hook graph
-Jalankan `graphify hook install` sekali setelah clone: git hook ada di `.git/` dan tidak ikut di-commit, dan hook ini menjaga graph kode yang ditanyai AI agent tetap mutakhir setiap kali commit. `graphify hook status` menunjukkan apakah hook sudah terpasang.
+Kalau AGENTS.md mencantumkan graphify di Required tooling, jalankan `graphify hook install` sekali setelah clone: git hook ada di `.git/` dan tidak ikut di-commit, dan hook ini menjaga graph kode yang ditanyai AI agent tetap mutakhir setiap kali commit. `graphify hook status` menunjukkan apakah hook sudah terpasang.
 
 ## Perubahan pertama Anda
 Alur kerjanya: rencanakan task, buat perubahan dengan test dan doc comment, perbarui halaman wiki topiknya, lolos Definition of Done, lalu minta persetujuan commit.

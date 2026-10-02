@@ -18,11 +18,11 @@ Tanpa instruksi bersama, AI assistant menghasilkan kode yang tidak konsisten, me
 | Preset | Aturan dan panduan siap pakai per stack, digabung berlapis | [preset](features/presets.md) |
 | File yang dihasilkan | Menulis `AGENTS.md`, rules, skills, `CLAUDE.md` dan wiki dua bahasa — tidak pernah menimpa file yang sudah ada | [file yang dihasilkan](features/generated-files.md) |
 | Scaffolding | Membuat project baru dengan tool resmi framework sebelum menulis instruksinya | [scaffolding](features/scaffolding.md) |
-| Setup tool dan doctor | Mengecek tool pendukung wajib dan menyiapkan yang perlu langkah per repository | [setup tool](features/tool-setup.md) |
+| Setup tool dan doctor | Mengecek tool pendukung opsional dan menyiapkan yang perlu langkah per repository | [setup tool](features/tool-setup.md) |
 | Wiki knowledge base | Merawat wiki seperti ini yang bisa diikuti semua pembaca | [wiki knowledge base](features/wiki-knowledge-base.md) |
 
 ## Yang tidak dilakukan
 - Tidak menulis kode bisnis aplikasi Anda.
 - Tidak pernah menimpa file yang sudah ada, tidak pernah commit dan tidak pernah push.
-- Tidak menginstal tool pendukung wajib untuk Anda; tool ini hanya memberi tahu caranya.
+- Tidak menginstal tool pendukung untuk Anda; tool ini hanya memberi tahu caranya.
 - Belum ada di npm; lihat [getting started](getting-started.md).

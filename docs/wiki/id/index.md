@@ -22,7 +22,7 @@ AI agent cukup membaca halaman bahasa Inggris (`docs/wiki/en/`); `docs/wiki/id/`
 | Menambah atau mengubah preset, rule atau skill | [features/presets.md](features/presets.md) | `presets/<id>/`, `src/presets/` |
 | Mengubah AGENTS.md atau output lain yang di-generate | [features/generated-files.md](features/generated-files.md) | `src/generate.ts`, `src/render/` |
 | Menambah atau mengubah scaffolder atau layout | [features/scaffolding.md](features/scaffolding.md) | `src/scaffold/` |
-| Mengubah tool wajib, doctor atau setup | [features/tool-setup.md](features/tool-setup.md) | `src/tooling.ts`, `src/setup.ts`, `src/doctor.ts` |
+| Mengubah tool pendukung, doctor atau setup | [features/tool-setup.md](features/tool-setup.md) | `src/tooling.ts`, `src/setup.ts`, `src/doctor.ts` |
 | [features/wiki-knowledge-base.md](features/wiki-knowledge-base.md) | `presets/base/rules/documentation.md` |
 
 ## Semua halaman
@@ -36,7 +36,7 @@ AI agent cukup membaca halaman bahasa Inggris (`docs/wiki/en/`); `docs/wiki/id/`
 | [features/presets.md](features/presets.md) | Paket aturan berlapis per stack |
 | [features/generated-files.md](features/generated-files.md) | Apa yang ditulis ke repository dan kenapa tidak ada yang ditimpa |
 | [features/scaffolding.md](features/scaffolding.md) | Membuat project baru dengan tool resmi, termasuk monorepo dan moon |
-| [features/tool-setup.md](features/tool-setup.md) | Tool pendukung wajib, `doctor` dan setup per repository |
+| [features/tool-setup.md](features/tool-setup.md) | Tool pendukung opsional, `doctor` dan setup per repository |
 | [features/wiki-knowledge-base.md](features/wiki-knowledge-base.md) | Cara wiki dirawat sebagai knowledge base untuk semua pembaca |
 | [glossary.md](glossary.md) | Istilah dan singkatan dalam bahasa sederhana |
 | [faq.md](faq.md) | Pertanyaan dan masalah umum, beserta jawabannya |

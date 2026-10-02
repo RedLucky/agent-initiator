@@ -32,7 +32,7 @@ async function isInstalled(tool: Tool, home: string): Promise<boolean> {
   return false;
 }
 
-/** Checks which required tools are present on this machine. Never installs anything. */
+/** Checks which (optional) tools are present on this machine. Never installs anything. */
 export async function checkTools(toolIds: string[] = TOOLS.map((t) => t.id), home = homedir()): Promise<ToolStatus[]> {
   const tools = TOOLS.filter((t) => toolIds.includes(t.id));
   return Promise.all(tools.map(async (tool) => ({ tool, installed: await isInstalled(tool, home) })));

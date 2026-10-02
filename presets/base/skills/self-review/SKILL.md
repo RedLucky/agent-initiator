@@ -5,7 +5,7 @@ description: Review your own diff like a strict senior reviewer before declaring
 
 # Self Review
 
-Run `rtk git diff` (and `rtk git diff --staged`) and check every changed line:
+Run `{{rtk}}git diff` (and `{{rtk}}git diff --staged`) and check every changed line:
 
 1. **Scope** — every change traces to the request. Revert unrelated edits, reformatting and drive-by refactors.
 2. **Simplicity** — no speculative abstractions, dead code, debug leftovers, commented-out code or TODO placeholders.

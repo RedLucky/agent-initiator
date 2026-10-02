@@ -1,6 +1,6 @@
 import type { Registry } from './presets/registry.js';
 import { expandChain, resolvePresets } from './presets/resolve.js';
-import { fillTemplate, filterCommand, packageCommands, scriptCommands, templateVars, toCommandList, type Command } from './render/commands.js';
+import { fillRtkCommands, fillTemplate, filterCommand, packageCommands, scriptCommands, templateVars, toCommandList, type Command } from './render/commands.js';
 import { renderPackageAgentsMd, renderRootAgentsMd, type PackageSummary } from './render/agents-md.js';
 import { renderToolingRule } from './render/tooling-rule.js';
 import type { DetectedProject, PackageInfo, PlannedFile, ProjectKind, ResolvedConfig, RuleFile } from './types.js';
@@ -8,6 +8,11 @@ import type { DetectedProject, PackageInfo, PlannedFile, ProjectKind, ResolvedCo
 export interface GenerateOptions {
   /** ISO date (YYYY-MM-DD) stamped into the wiki log; injected so output is deterministic in tests. */
   date: string;
+  /**
+   * Tool ids found on this machine. Only these tools become part of the instructions (and then they are required);
+   * missing ones are left out completely. Omitted: every tool the presets list (deterministic for tests).
+   */
+  installedTools?: string[];
 }
 
 export interface GenerateResult {
@@ -50,10 +55,11 @@ function packageSpecific<T extends { presetId: string }>(items: T[], shared: Set
  * Commands for the root AGENTS.md.
  * Single-package repos use that package's commands; monorepos use the workspace tool's commands,
  * overridden by real root package.json scripts. Other multi-folder repos have no root commands.
+ * @param rtk - Prefix the commands with rtk (only when rtk is installed).
  */
-function rootCommands(project: DetectedProject, registry: Registry, configs: PackageConfig[]): Command[] {
+function rootCommands(project: DetectedProject, registry: Registry, configs: PackageConfig[], rtk: boolean): Command[] {
   const single = configs.length === 1 && configs[0]?.pkg.path === '.' ? configs[0] : undefined;
-  if (single) return packageCommands(single.pkg, single.resolved.commands);
+  if (single) return packageCommands(single.pkg, single.resolved.commands, undefined, rtk);
   if (!project.monorepo) return [];
 
   const pm = project.rootPackageManager ?? 'npm';
@@ -61,7 +67,7 @@ function rootCommands(project: DetectedProject, registry: Registry, configs: Pac
   // Without a root package.json there is nothing for a root `<pm> install` to install.
   const monorepoCommands = project.rootPackageManager && install ? { install, ...withoutInstall } : withoutInstall;
   const scripts = scriptCommands(project.rootScripts ?? [], pm);
-  return toCommandList({ ...monorepoCommands, ...scripts }, templateVars({ packageManager: pm, manifests: [] }));
+  return toCommandList({ ...monorepoCommands, ...scripts }, templateVars({ packageManager: pm, manifests: [] }), rtk);
 }
 
 /** Marks scoped rules with the packages that use them so the root table shows where they apply. */
@@ -95,8 +101,11 @@ export function generateFiles(project: DetectedProject, registry: Registry, opti
   const presetSkillNames = new Set(root.skills.map((s) => s.name));
   const existingSkills = (project.existingSkills ?? []).filter((s) => !presetSkillNames.has(s.name));
   const allSkills = [...root.skills, ...existingSkills];
+  // Tools are optional: only the ones installed here become (required) instructions; the rest are not mentioned.
+  const tooling = options.installedTools ? root.tooling.filter((id) => options.installedTools?.includes(id)) : root.tooling;
+  const rtk = tooling.includes('rtk');
   // Install steps for the required tools live in a rendered rule, so AGENTS.md only keeps how to use them.
-  const toolingRule = renderToolingRule(root.tooling);
+  const toolingRule = renderToolingRule(tooling);
   const rootRules = toolingRule ? [...root.rules, toolingRule] : root.rules;
 
   files.push({
@@ -108,8 +117,8 @@ export function generateFiles(project: DetectedProject, registry: Registry, opti
       packageManager: project.rootPackageManager ?? single?.pkg.packageManager,
       monorepoName: project.monorepo ? registry.get(project.monorepo)?.name : undefined,
       packages: summaries,
-      commands: rootCommands(project, registry, configs),
-      tooling: root.tooling,
+      commands: rootCommands(project, registry, configs, rtk),
+      tooling,
       docs: multi ? listFrom(registry, shared, 'docs') : root.docs,
       agentsMdBlocks: multi ? [] : root.agentsMdBlocks,
       // In multi-package repos only shared items stay at the root; package items move to nested files.
@@ -131,10 +140,11 @@ export function generateFiles(project: DetectedProject, registry: Registry, opti
       content: renderPackageAgentsMd({
         pkg: summary,
         language: pkg.language,
-        commands: packageCommands(pkg, resolved.commands, project.monorepo),
+        commands: packageCommands(pkg, resolved.commands, project.monorepo, rtk),
+        rtk,
         rootCommand:
           rootTest && (project.monorepo === 'moonrepo' || ['typescript', 'javascript'].includes(pkg.language))
-            ? `rtk test ${rootTest}`
+            ? `${rtk ? 'rtk test ' : ''}${rootTest}`
             : undefined,
         docs: listFrom(registry, specificIds, 'docs'),
         agentsMdBlocks: specificIds.flatMap((id) => (registry.get(id)?.agentsMd ? [registry.get(id)?.agentsMd ?? ''] : [])),
@@ -147,13 +157,16 @@ export function generateFiles(project: DetectedProject, registry: Registry, opti
     });
   }
 
-  for (const rule of rootRules) files.push({ path: `.agents/rules/${rule.file}`, content: rule.content });
+  // Preset rules and skills mark shell commands as `{{rtk}}git status`: written with the rtk prefix when rtk is
+  // installed (agents follow skill text literally), plain when it is not.
+  for (const rule of rootRules) files.push({ path: `.agents/rules/${rule.file}`, content: fillRtkCommands(rule.content, rtk) });
 
   // Claude Code only reads .claude/skills, so every skill is mirrored there as a plain copy (symlinks break on Windows).
   for (const skill of root.skills) {
     for (const file of skill.files) {
-      files.push({ path: `.agents/skills/${skill.name}/${file.path}`, content: file.content });
-      files.push({ path: `.claude/skills/${skill.name}/${file.path}`, content: file.content });
+      const content = fillRtkCommands(file.content, rtk);
+      files.push({ path: `.agents/skills/${skill.name}/${file.path}`, content });
+      files.push({ path: `.claude/skills/${skill.name}/${file.path}`, content });
     }
   }
   // Skills that were already in .agents/skills (e.g. official Nx skills) only need the Claude Code mirror.
@@ -162,7 +175,11 @@ export function generateFiles(project: DetectedProject, registry: Registry, opti
   }
 
   const vars = { projectName: project.name, date: options.date };
-  for (const file of root.files) files.push({ path: file.path, content: fillTemplate(file.content, vars) });
+  for (const file of root.files) {
+    // .graphifyignore only matters to graphify; without graphify it would be a stray file.
+    if (file.path === '.graphifyignore' && !tooling.includes('graphify')) continue;
+    files.push({ path: file.path, content: fillTemplate(file.content, vars) });
+  }
 
   return { kind, files };
 }

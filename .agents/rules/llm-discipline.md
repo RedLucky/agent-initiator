@@ -6,7 +6,7 @@ alwaysApply: true
 
 # LLM Engineering Discipline
 
-Derived from Andrej Karpathy's observations on LLM coding pitfalls. "Simplicity First" is covered by **ponytail** (see AGENTS.md → Required tooling).
+Derived from Andrej Karpathy's observations on LLM coding pitfalls. "Simplicity First" is covered by the code-quality rule (no over-engineering) and, when it is installed, by **ponytail** (see AGENTS.md → Required tooling).
 
 ## 1. Think Before Coding
 **Don't assume. Don't hide confusion. Surface trade-offs.**

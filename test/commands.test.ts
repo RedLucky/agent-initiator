@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { fillTemplate, filterCommand, packageCommands, scriptCommands, templateVars } from '../src/render/commands.js';
+import { fillRtkCommands, fillTemplate, filterCommand, packageCommands, scriptCommands, templateVars, withRtk } from '../src/render/commands.js';
 import type { PackageInfo } from '../src/types.js';
 
 const pkg = (overrides: Partial<PackageInfo>): PackageInfo => ({
@@ -77,5 +77,19 @@ describe('commands (nx + aliases)', () => {
 
   it('maps fastify-cli build:ts to build', () => {
     expect(scriptCommands(['build:ts'], 'npm')).toEqual({ build: 'npm run build:ts' });
+  });
+});
+
+describe('rtk forms', () => {
+  it('uses rtk test for tests, rtk err for builds and checks, and rtk proxy for everything else', () => {
+    expect(withRtk('test', 'pnpm run test')).toBe('rtk test pnpm run test');
+    expect(withRtk('build', 'pnpm run build')).toBe('rtk err pnpm run build');
+    expect(withRtk('install', 'pip install -r requirements.txt')).toBe('rtk proxy pip install -r requirements.txt');
+  });
+
+  it('fills {{rtk}} commands in skill text with the rtk prefix, or writes them plain without rtk', () => {
+    const text = 'Run `{{rtk}}git diff`, then `{{rtk}}moon run :test`; keep `npm ci` as is.';
+    expect(fillRtkCommands(text, true)).toBe('Run `rtk git diff`, then `rtk moon run :test`; keep `npm ci` as is.');
+    expect(fillRtkCommands(text, false)).toBe('Run `git diff`, then `moon run :test`; keep `npm ci` as is.');
   });
 });

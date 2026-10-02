@@ -26,8 +26,8 @@ The error names the failed command and the folder with partial files. Delete tha
 ### moon says "No tasks found" or "ambiguous argument 'HEAD'"
 moon needs at least one git commit and tasks in each project's `moon.yml`. Make the first commit and run `moon setup`; see [scaffolding](features/scaffolding.md).
 
-### `doctor` shows a red cross
-That helper tool is not installed. `doctor` prints the install command; nothing is installed automatically.
+### `doctor` shows an empty circle
+That helper tool is not installed. It is optional: generated instructions leave it out. `doctor` prints the install command; nothing is installed automatically.
 
 ## Developing the tool
 

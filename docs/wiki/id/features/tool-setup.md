@@ -1,9 +1,11 @@
-# Tool wajib, doctor dan setup per repository
+# Tool opsional, doctor dan setup per repository
 
 ## Singkatnya
-Instruksi yang dihasilkan meminta AI assistant dan developer memakai lima tool pendukung. Sebagian besar cukup diinstal sekali per komputer lalu bekerja di mana-mana; dua di antaranya butuh langkah kecil di setiap repository. agent-initiator mengecek semuanya dan bisa menjalankan langkah per repository itu, tetapi tidak pernah menginstal apa pun sendiri.
+agent-initiator mengenal lima tool pendukung. Semuanya opsional: `init` mengecek mana yang terpasang di komputer, dan hanya itu yang masuk ke instruksi, lalu menjadi wajib di sana. Tool yang tidak terpasang tidak disebut sama sekali, jadi mesin baru mendapat command polos tanpa ada yang perlu diinstal. Sebagian besar tool cukup diinstal sekali per komputer; dua di antaranya juga butuh langkah kecil di setiap repository, yang bisa dijalankan agent-initiator. Tool ini tidak pernah menginstal apa pun sendiri.
 
 ## Tool-tool tersebut
+Apa yang berubah kalau sebuah tool terpasang: rtk menambah awalannya di setiap command di AGENTS.md dan di perintah shell yang ditulis di skill dan rule (preset menuliskannya sebagai `{{rtk}}git status`, yang diisi oleh `init`; skill yang merujuk command AGENTS.md meminta menjalankannya persis seperti tertulis di sana). Setiap bentuk rtk dipakai sesuai kegunaannya: `rtk test` untuk test (hanya kegagalan yang tampil), `rtk err` untuk build dan cek (hanya error yang tampil), `rtk proxy` untuk command AGENTS.md lainnya (dijalankan apa adanya; `rtk <tool>` tidak dipakai di sana karena sebagian filter rtk hanya menerima subcommand tertentu, misalnya `rtk pip install -r …` gagal), dan `rtk <perintah>` di skill dan rule, yang hanya menandai perintah git, nx, turbo dan moon yang memang bisa begitu. Karena AGENTS.md dibuat di satu mesin dan dibaca di mesin lain, bagian Required tooling juga meminta agent mengecek sekali per sesi tool mana yang ada (`command -v rtk graphify`) dan, kalau ada yang tidak terpasang, melewati instruksinya alih-alih mencoba berulang; untuk rtk dengan membuang awalannya; graphify menambah baris graphify di Project knowledge, `.graphifyignore` dan setup graph; setiap tool yang terpasang mendapat satu baris cara pakai di AGENTS.md → Required tooling dan langkah instalnya di `.agents/rules/required-tooling.md`.
+
 | Tool | Untuk apa | Setelah instal sekali | Langkah per repository |
 |------|-----------|-----------------------|------------------------|
 | rtk | memperpendek output command | otomatis (hook global) | tidak ada |
@@ -16,7 +18,7 @@ Instruksi yang dihasilkan meminta AI assistant dan developer memakai lima tool p
 
 ```mermaid
 flowchart TD
-    A[init: preset sudah digabung] --> B{Ada langkah per repo untuk tool wajib?}
+    A[init: preset sudah digabung] --> B{Ada langkah per repo untuk tool yang terpasang?}
     B -- tidak --> G[Buat file]
     B -- ada --> C{--setup-tools, atau jawab ya pada pertanyaan?}
     C -- tidak --> G
@@ -36,12 +38,12 @@ Dengan kata-kata: setelah preset diketahui, tool mendaftar langkah per repositor
 - `.graphifyignore` (dibuat oleh `init`) mengeluarkan `docs/wiki/id/` dan log perubahan dari graph.
 
 ## Doctor
-`agent-initiator doctor` menampilkan centang atau silang per tool, beserta command instal untuk yang belum ada. Exit code-nya 1 kalau ada tool yang kurang, sehingga bisa dipakai di CI. Di dalam repository git, doctor juga menampilkan apakah git hook graphify sudah terpasang; hook yang belum terpasang hanya peringatan, karena clone di CI memang tidak pernah punya hook.
+`agent-initiator doctor` menampilkan centang (terpasang) atau lingkaran kosong (opsional, belum terpasang) per tool, beserta command instal untuk yang belum ada. Tool yang tidak ada bukan error, jadi exit code tetap 0. Di dalam repository git, doctor juga menampilkan apakah git hook graphify sudah terpasang; hook yang belum terpasang hanya peringatan, karena clone di CI memang tidak pernah punya hook.
 
 Setelah meng-clone repository, setiap kontributor menjalankan `graphify hook install` sekali (hook ada di `.git/` dan tidak ikut di-commit). Halaman getting-started hasil generate dan AGENTS.md → Project knowledge sama-sama menyebutkannya.
 
 ## Letaknya di kode
-`src/tooling.ts` (daftar tool dan teksnya: baris cara pakai masuk ke AGENTS.md, tujuan dan langkah instal ke rule hasil generate `.agents/rules/required-tooling.md` lewat `src/render/tooling-rule.ts`), `src/setup.ts` (langkah per repo), `src/doctor.ts` (cek mesin).
+`src/tooling.ts` (daftar tool dan teksnya: baris cara pakai masuk ke AGENTS.md, tujuan dan langkah instal ke rule hasil generate `.agents/rules/required-tooling.md` lewat `src/render/tooling-rule.ts`), `src/setup.ts` (langkah per repo), `src/doctor.ts` (cek mesin), dan `withRtk`/`fillRtkCommands` di `src/render/commands.ts` (bentuk-bentuk rtk).
 
 ## Cara mengeceknya
 `rtk test pnpm vitest run test/setup.test.ts`.

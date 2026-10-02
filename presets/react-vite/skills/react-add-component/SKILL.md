@@ -8,7 +8,7 @@ description: Create a React component with typed props, accessible markup, loadi
 1. **Reuse first** — search existing components/design system for something that fits.
 2. **Place it** in the feature folder (`src/features/<feature>/components/`) or shared UI folder, matching repo naming.
 3. **Props** — typed, minimal; events as `onX` callbacks.
-4. **Markup** — semantic, accessible (labels, roles, keyboard, focus). Use ui-ux-pro-max for design decisions.
+4. **Markup** — semantic, accessible (labels, roles, keyboard, focus). Use the ui-ux-pro-max skill for design decisions when it is installed.
 5. **States** — handle loading, empty and error when the component shows async data.
 6. **Test** — Testing Library test covering render + main interaction.
 7. Finish with `definition-of-done`.

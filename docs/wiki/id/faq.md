@@ -26,8 +26,8 @@ Pesan error menyebut command yang gagal dan folder berisi file setengah jadi. Ha
 ### moon menampilkan "No tasks found" atau "ambiguous argument 'HEAD'"
 moon butuh minimal satu commit git dan task di `moon.yml` setiap project. Buat commit pertama lalu jalankan `moon setup`; lihat [scaffolding](features/scaffolding.md).
 
-### `doctor` menampilkan tanda silang merah
-Tool pendukung itu belum terinstal. `doctor` mencetak command instalnya; tidak ada yang diinstal otomatis.
+### `doctor` menampilkan lingkaran kosong
+Tool pendukung itu belum terinstal. Tool itu opsional: instruksi yang dibuat tidak menyebutnya. `doctor` mencetak command instalnya; tidak ada yang diinstal otomatis.
 
 ## Mengembangkan tool
 

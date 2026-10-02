@@ -11,5 +11,5 @@ description: Add a new app or shared package to the monorepo following workspace
 4. **Wire dependencies** — declare workspace deps with the workspace protocol; respect dependency direction (apps → packages).
 5. **Scripts** — provide at least `build`, `test`, `lint` scripts so root pipelines pick it up.
 6. **Agent config** — add a short `AGENTS.md` in the package (purpose, commands, package-specific rules).
-7. **Verify** — install, then run the package's test and build commands via `rtk`; then the root pipeline.
+7. **Verify** — install, then run the package's test and build commands exactly as AGENTS.md writes them; then the root pipeline.
 8. **Document** — update the wiki (`update-wiki` skill).

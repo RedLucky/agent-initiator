@@ -27,4 +27,4 @@ alwaysApply: false
 - Lazy-load routes and heavy components; optimise images; avoid unnecessary re-renders.
 
 ## Design
-- Use the **ui-ux-pro-max** skill for visual/UX decisions; follow existing design tokens.
+- Use the **ui-ux-pro-max** skill for visual/UX decisions when it is installed; follow existing design tokens.

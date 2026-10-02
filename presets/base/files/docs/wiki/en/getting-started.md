@@ -1,6 +1,6 @@
 # Getting started
 
-> For new developers. Replace the guidance with real steps and commands (keep the `rtk` prefix from AGENTS.md).
+> For new developers. Replace the guidance with real steps and commands (written the way AGENTS.md → Commands shows them).
 
 ## In short
 How to get {{projectName}} running on your machine, check that it works, and make your first change.
@@ -15,7 +15,7 @@ The exact commands, in order, from a fresh clone to a running project.
 How to run the tests and what "passing" looks like.
 
 ## Graph hooks
-Run `graphify hook install` once after cloning: git hooks live in `.git/` and are not committed, and they keep the code graph that AI agents query up to date after every commit. `graphify hook status` shows whether they are installed.
+If AGENTS.md lists graphify under Required tooling, run `graphify hook install` once after cloning: git hooks live in `.git/` and are not committed, and they keep the code graph that AI agents query up to date after every commit. `graphify hook status` shows whether they are installed.
 
 ## Your first change
 The workflow: plan the task, make the change with tests and doc comments, update the wiki page of the topic, pass the Definition of Done, then ask for commit approval.

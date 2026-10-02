@@ -6,7 +6,7 @@ alwaysApply: false
 
 # Required tooling
 
-Mandatory for every contributor and agent. Read this when a tool is missing (`npx agent-initiator doctor` checks them) or when you set up a new machine or clone.
+These tools were installed when this repository was set up, so they are required here. Read this when you set up a new machine or clone (`npx agent-initiator doctor` shows what is installed).
 
 ## [ponytail](https://github.com/DietrichGebert/ponytail)
 Keeps generated code minimal: the least code that fully solves the task.
@@ -32,7 +32,7 @@ curl -fsSL https://raw.githubusercontent.com/JuliusBrussee/caveman/main/install.
 ## [rtk (Rust Token Killer)](https://github.com/rtk-ai/rtk)
 Filters shell command output so agents spend fewer tokens.
 
-**Use:** Prefix every shell command with `rtk`, including git, file and script commands. rtk filters the tools it knows and runs any other command unchanged, keeping its exit code, so the prefix is always safe. Use `rtk proxy <cmd>` only for the raw output of a filtered tool.
+**Use:** Prefix every shell command with `rtk`, including git, file and script commands: `rtk test <cmd>` for tests, `rtk err <cmd>` for builds and checks, `rtk <tool>` for tools rtk filters (git, grep, ls, pnpm, npm, go, … see `rtk --help`), and `rtk proxy <cmd>` for anything else or when you need raw output; proxy runs it unchanged and keeps its exit code. The commands in AGENTS.md and the skills are already written this way.
 
 ```bash
 brew install rtk   # or: cargo install --git https://github.com/rtk-ai/rtk  (NOT `cargo install rtk`, a different crate)

@@ -62,20 +62,21 @@ const BASE_REQUIREMENTS: Array<[string, string, string[]]> = [
   ['agents install missing graphify hooks', 'AGENTS.md', ['graphify hook status', 'run `graphify hook install` once']],
   ['wiki skeleton: getting started explains graph hooks', 'docs/wiki/en/getting-started.md', ['## Graph hooks', 'graphify hook install']],
   ['never bypass git hooks', 'AGENTS.md', ['Bypass git hooks with `--no-verify`']],
+  ['missing tools are skipped, not retried', 'AGENTS.md', ['Check once per session which are installed', 'skip its instructions instead of retrying', 'without rtk, run each command without its']],
   ['wiki skeleton: task table for AI agents', 'docs/wiki/en/index.md', ['## For AI agents: task → page', 'AI agents read the English pages only']],
   ['DoD rejects log-only wiki updates', '.agents/skills/definition-of-done/SKILL.md', ['A log entry alone does not pass']],
   // --- Karpathy (minus Simplicity First, replaced by ponytail)
   ['Karpathy: think before coding', '.agents/rules/llm-discipline.md', ['## 1. Think Before Coding', 'State assumptions explicitly', 'present them — do not pick silently', 'push back when warranted']],
   ['Karpathy: surgical changes', '.agents/rules/llm-discipline.md', ['## 2. Surgical Changes', 'Match existing repository conventions', 'trace back to the user']],
   ['Karpathy: goal-driven execution', '.agents/rules/llm-discipline.md', ['## 3. Goal-Driven Execution', 'write a test reproducing the invalid case', 'Verify results with commands before claiming completion']],
-  ['Karpathy simplicity handled by ponytail', '.agents/rules/llm-discipline.md', ['covered by **ponytail**']],
+  ['Karpathy simplicity handled by code quality and ponytail', '.agents/rules/llm-discipline.md', ['covered by the code-quality rule', 'by **ponytail**']],
   // --- DoD
   ['DoD skill: tests, build, wiki, log', '.agents/skills/definition-of-done/SKILL.md', ['Unit tests & coverage', '**Build**', '`docs/wiki/en/`', '`docs/wiki/id/`', '`log.md`']],
   ['DoD in AGENTS.md', 'AGENTS.md', ['## Definition of Done', 'Unit tests pass', 'Build succeeds', 'Dependencies audited', 'Wiki updated in both', 'a log entry alone is not enough']],
   // --- mandatory tooling
   ['tooling: ponytail, caveman, rtk, graphify', 'AGENTS.md', ['## Required tooling', 'ponytail', 'caveman', 'rtk (Rust Token Killer)', 'graphify', '.agents/rules/required-tooling.md']],
   ['required-tooling rule: purpose and install steps per tool', '.agents/rules/required-tooling.md', ['## [ponytail]', '## [rtk (Rust Token Killer)]', 'uv tool install graphifyy', 'alwaysApply: false']],
-  ['rtk prefix on every command', 'AGENTS.md', ['Prefix every shell command with `rtk`, including git, file and script commands', 'runs any other command unchanged, keeping its exit code', '`rtk test ']],
+  ['rtk prefix on every command', 'AGENTS.md', ['Prefix every shell command with `rtk`, including git, file and script commands', '`rtk test <cmd>` for tests', '`rtk err <cmd>`', '`rtk proxy <cmd>` for anything else', '`rtk test ']],
   // --- skills & industry additions (items 1-10, 13, 14)
   ['commit skill asks for approval', '.agents/skills/commit/SKILL.md', ['**Ask for approval**', 'stop and wait', 'Push** requires its own separate approval']],
   ['plan-task with random task number', '.agents/skills/plan-task/SKILL.md', ['random 4-digit id', 'TASK-4821']],

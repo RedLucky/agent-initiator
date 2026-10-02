@@ -9,4 +9,4 @@ description: Add a Go HTTP handler with validation, service logic, error mapping
 2. **Handler** — decode + validate input, call the service, map errors to status codes, encode JSON.
 3. **Route** — register in the router with the existing middleware chain.
 4. **Test** — table-driven `httptest` tests: success, invalid input, not found, internal error.
-5. Run `go vet` and tests via `rtk`; finish with `definition-of-done`.
+5. Run the `lint` (go vet) and `test` commands exactly as AGENTS.md writes them; finish with `definition-of-done`.

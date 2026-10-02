@@ -33,6 +33,8 @@ export interface PackageAgentsInput {
   pkg: PackageSummary;
   language: string;
   commands: Command[];
+  /** Whether the commands carry the rtk prefix (rtk is installed). */
+  rtk: boolean;
   rootCommand?: string;
   docs: string[];
   agentsMdBlocks: string[];
@@ -139,20 +141,32 @@ function projectKnowledgeSection(toolIds: string[]): string[] {
           '- If `graphify hook status` shows missing hooks (e.g. in a fresh clone), run `graphify hook install` once so the graph is rebuilt after every commit.',
         ]
       : []),
-    '- Use grep only for what the wiki and graphify do not answer.',
+    `- Use grep only for what the wiki${toolIds.includes('graphify') ? ' and graphify do' : ' does'} not answer.`,
     '',
   ];
 }
 
-/** How to use each required tool, one line each; install steps live in the required-tooling rule. */
+/**
+ * How to use each required tool, one line each; install steps live in the required-tooling rule.
+ * AGENTS.md is generated on one machine but read on others, so it also says what to do when a tool is missing there:
+ * check once, then skip that tool's instructions, instead of failing and retrying on every command.
+ */
 function toolingSection(toolIds: string[]): string[] {
   if (toolIds.length === 0) return [];
+  const tools = toolIds.map(getTool);
+  const bins = tools.flatMap((tool) => tool.check.bins ?? []);
+  const missing = [
+    bins.length > 0 ? `Check once per session which are installed (\`command -v ${bins.join(' ')}\`).` : '',
+    'If a tool is missing on your machine, skip its instructions instead of retrying',
+    toolIds.includes('rtk') ? ': without rtk, run each command without its `rtk`, `rtk test`, `rtk err` or `rtk proxy` prefix (`rtk test pnpm run test` → `pnpm run test`).' : '.',
+  ].join(bins.length > 0 ? ' ' : '');
   return [
     '## Required tooling',
     '',
-    'Mandatory for every contributor and agent. Install steps: [required-tooling](.agents/rules/required-tooling.md); `npx agent-initiator doctor` checks them.',
+    'These tools were installed when this file was generated, so use them on every task. Install steps: [required-tooling](.agents/rules/required-tooling.md); `npx agent-initiator doctor` shows what this machine has.',
+    missing.replace(' :', ':').trim(),
     '',
-    ...toolIds.map(getTool).map((tool) => `- **${tool.name}** — ${tool.usage}`),
+    ...tools.map((tool) => `- **${tool.name}** — ${tool.usage}`),
     '',
   ];
 }
@@ -206,7 +220,7 @@ export function renderRootAgentsMd(input: RootAgentsInput): string {
 
   const commands =
     input.commands.length > 0
-      ? ['## Commands', '', 'Run from the repo root. Keep the `rtk` prefix.', '', ...commandTable(input.commands), '']
+      ? ['## Commands', '', `Run from the repo root.${input.tooling.includes('rtk') ? ' Keep the `rtk` prefix.' : ''}`, '', ...commandTable(input.commands), '']
       : input.packages.length > 0
         ? ['## Commands', '', "Commands are per package — see each package's `AGENTS.md`.", '']
         : [];
@@ -257,7 +271,7 @@ export function renderPackageAgentsMd(input: PackageAgentsInput): string {
       ? [
           '## Commands',
           '',
-          `Run inside \`${input.pkg.path}\`. Keep the \`rtk\` prefix.`,
+          `Run inside \`${input.pkg.path}\`.${input.rtk ? ' Keep the `rtk` prefix.' : ''}`,
           '',
           ...commandTable(input.commands),
           ...(input.rootCommand ? ['', `From the repo root: \`${input.rootCommand}\``] : []),

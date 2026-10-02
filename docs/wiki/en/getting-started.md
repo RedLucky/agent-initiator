@@ -6,7 +6,7 @@ How to install agent-initiator from this repository, run it on a project, and ma
 ## Requirements
 - Node.js 20 or newer and pnpm.
 - Git.
-- The required helper tools listed in `AGENTS.md` (rtk, graphify, caveman, ponytail; UI UX Pro Max for frontend work). `agent-initiator doctor` checks them.
+- The helper tools listed in `AGENTS.md` (this repository uses rtk, graphify, caveman and ponytail). `agent-initiator doctor` shows which are installed.
 - For scaffolding Python or Go apps: `uv` or `go`.
 
 ## Install the command

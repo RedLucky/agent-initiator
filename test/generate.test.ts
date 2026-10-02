@@ -230,5 +230,60 @@ describe('Project knowledge section', () => {
     expect(agents).toContain('[commit](.agents/skills/commit/SKILL.md), ');
     expect(agents).not.toContain('```bash');
   });
+
+  it('leaves out every tool that is not installed: no rtk prefix, no graphify, no tooling section', async () => {
+    const project = await detectProject(fixture('turborepo'));
+    const { files } = generateFiles(project, registry, { ...options, installedTools: [] });
+    const file = (p: string) => files.find((f) => f.path === p)?.content ?? '';
+    const root = file('AGENTS.md');
+    expect(root).toContain('| test | `pnpm run test` |');
+    expect(root).not.toMatch(/rtk|graphify|ponytail|caveman|ui-ux-pro-max/);
+    expect(root).not.toContain('## Required tooling');
+    expect(file('apps/web/AGENTS.md')).not.toContain('rtk');
+    expect(files.map((f) => f.path)).not.toContain('.graphifyignore');
+    expect(files.map((f) => f.path)).not.toContain('.agents/rules/required-tooling.md');
+  });
+
+  it('makes installed tools required and mentions only those', async () => {
+    const project = await detectProject(fixture('nextjs'));
+    const { files } = generateFiles(project, registry, { ...options, installedTools: ['rtk', 'ui-ux-pro-max'] });
+    const agents = files.find((f) => f.path === 'AGENTS.md')?.content ?? '';
+    expect(agents).toContain('| test | `rtk test pnpm run test` |');
+    expect(agents).toContain('- **rtk (Rust Token Killer)** — Prefix every shell command with `rtk`');
+    expect(agents).toContain('- **UI UX Pro Max** —');
+    expect(agents).not.toMatch(/graphify|ponytail|caveman/);
+    expect(files.find((f) => f.path === '.agents/rules/required-tooling.md')?.content).not.toContain('graphify');
+  });
+
+  it('writes shell commands in skills and rules with the rtk prefix only when rtk is installed', async () => {
+    const generated = async (fixtureName: string, installedTools: string[]) =>
+      generateFiles(await detectProject(fixture(fixtureName)), registry, { ...options, installedTools }).files;
+    const read = (files: Array<{ path: string; content: string }>, p: string) => files.find((f) => f.path === p)?.content ?? '';
+
+    const withRtk = await generated('nextjs', ['rtk']);
+    expect(read(withRtk, '.claude/skills/commit/SKILL.md')).toContain('`rtk git status` and `rtk git diff --staged`');
+    expect(read(withRtk, 'AGENTS.md')).toContain('| install | `rtk proxy pnpm install` |');
+    expect(read(await generated('moonrepo', ['rtk']), '.agents/rules/moonrepo.md')).toContain('`rtk moon run :test`');
+
+    const plain = await generated('nextjs', []);
+    expect(read(plain, '.claude/skills/commit/SKILL.md')).toContain('`git status` and `git diff --staged`');
+    expect(read(plain, 'AGENTS.md')).toContain('| install | `pnpm install` |');
+  });
+
+  it.each(['nextjs', 'turborepo', 'moonrepo', 'nx', 'go'])('leaves no {{placeholder}} unfilled in %s rules and skills', async (name) => {
+    const { files } = await generate(name);
+    const leftovers = files.filter((f) => f.path.startsWith('.agents/') || f.path.startsWith('.claude/')).filter((f) => /\{\{\w+\}\}/.test(f.content));
+    expect(leftovers.map((f) => f.path)).toEqual([]);
+  });
+
+  it('tells agents on machines without a tool to check once and skip it instead of retrying', async () => {
+    const { renderRootAgentsMd } = await import('../src/render/agents-md.js');
+    const full = renderRootAgentsMd(input(['rtk', 'graphify']));
+    expect(full).toContain('Check once per session which are installed (`command -v rtk graphify`).');
+    expect(full).toContain('without rtk, run each command without its `rtk`, `rtk test`, `rtk err` or `rtk proxy` prefix');
+    const pluginsOnly = renderRootAgentsMd(input(['ponytail']));
+    expect(pluginsOnly).toContain('If a tool is missing on your machine, skip its instructions instead of retrying.');
+    expect(pluginsOnly).not.toContain('command -v');
+  });
 });
 

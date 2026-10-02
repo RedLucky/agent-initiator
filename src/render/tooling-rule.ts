@@ -2,7 +2,7 @@ import { getTool } from '../tooling.js';
 import type { RuleFile } from '../types.js';
 
 /**
- * Renders `.agents/rules/required-tooling.md`: what each required tool is for and how to install it.
+ * Renders `.agents/rules/required-tooling.md`: what each required (installed) tool is for and how to install it.
  * AGENTS.md keeps only the one-line usage per tool, because agents read it every session; install steps are
  * needed only once per machine, so they live in this on-demand rule.
  * @param toolIds - Required tool ids, in display order.
@@ -20,7 +20,7 @@ export function renderToolingRule(toolIds: string[]): RuleFile | null {
     '',
     '# Required tooling',
     '',
-    'Mandatory for every contributor and agent. Read this when a tool is missing (`npx agent-initiator doctor` checks them) or when you set up a new machine or clone.',
+    'These tools were installed when this repository was set up, so they are required here. Read this when you set up a new machine or clone (`npx agent-initiator doctor` shows what is installed).',
     '',
   ];
   for (const tool of toolIds.map(getTool)) {

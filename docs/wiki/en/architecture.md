@@ -29,7 +29,7 @@ In words: if the folder is empty, the project is created first. Then the tool de
 | Generation | Pure function: detected project + presets → files | `src/generate.ts`, `src/render/` — see [generated files](features/generated-files.md) |
 | Writing | Creates missing files only, prints manual steps | `src/write/` |
 | Scaffolding | Step lists per framework and layout, and the step runner | `src/scaffold/` — see [scaffolding](features/scaffolding.md) |
-| Tool setup and doctor | Required tools, per-repo setup, machine check | `src/tooling.ts`, `src/setup.ts`, `src/doctor.ts` — see [tool setup](features/tool-setup.md) |
+| Tool setup and doctor | Optional tools, per-repo setup, machine check | `src/tooling.ts`, `src/setup.ts`, `src/doctor.ts` — see [tool setup](features/tool-setup.md) |
 
 ## Design decisions
 | Decision | Why |
