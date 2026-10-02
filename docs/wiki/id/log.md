@@ -3,6 +3,17 @@
 Entri terbaru di atas. Format:
 
 ```
+## YYYY-MM-DD — <type>(#<issue>|TASK-<n>): <subject>
+- Apa: ...
+- Kenapa: ...
+- File: ...
+```
+
+## 2026-10-02 — docs(TASK-7108): close the log format example before the entries
+- Apa: Pagar penutup contoh format di `log.md` berada di bawah sebagian besar entri, sehingga entri tampil sebagai satu blok kode. Pagar itu sekarang ditutup tepat setelah contoh, di kedua bahasa, dan `test/wiki.test.ts` mengeceknya.
+- Kenapa: Selama beberapa task entri ditambahkan di atas pagar penutup, sehingga log tidak terbaca di GitHub dan GitLab.
+- File: docs/wiki/{en,id}/log.md, test/wiki.test.ts, docs/wiki/{en,id}/features/wiki-knowledge-base.md, docs/wiki/{en,id}/architecture.md
+
 ## 2026-10-02 — feat(TASK-7101): enforce the commit message format with lefthook
 - Apa: `init` membuat `lefthook.yml` dan script commit-msg `sh` POSIX yang menolak header yang tidak sesuai `type(#n|TASK-n): subject` (subject ≤ 72 karakter) dan trailer atribusi; dengan graphify, `lefthook.yml` juga memperbarui graph setelah setiap commit. lefthook menjadi tool wajib; `init --yes` menjalankan `lefthook install` setelah `graphify hook install` kecuali ada `.husky/` atau `.pre-commit-config.yaml`. AGENTS.md melarang `--no-verify`. `doctor` sekarang mengecek hook post-checkout graphify. Repository ini memakai hook yang sama. Halaman baru features/quality-gates.md.
 - Kenapa: Format commit sebelumnya hanya tertulis di rule, jadi agent dan orang masih bisa melanggarnya; hook menegakkannya dengan cara yang sama untuk semua bahasa.
@@ -102,12 +113,6 @@ Entri terbaru di atas. Format:
 - Apa: Target moon per package memakai ID project moon (key map di .moon/workspace.yml, atau nama folder), bukan nama di package.json; `lint` memakai `moon run :lint`, bukan `moon check`.
 - Kenapa: `moon check` butuh ID project di shell non-interaktif dan menjalankan build+test, dan `moon run @acme/web:test` bukan target yang valid.
 - File: src/detect/workspace.ts, src/detect/index.ts, src/types.ts, src/generate.ts, src/scaffold/templates.ts, presets/moonrepo/preset.json, test/*
-
-## YYYY-MM-DD — <type>(#<issue>|TASK-<n>): <subject>
-- Apa: ...
-- Kenapa: ...
-- File: ...
-```
 
 ## 2026-10-02 — feat(TASK-3814): enforce beginner-friendly doc comments, unit tests, and external mocking
 - Apa: Menambahkan aturan wajib dokumentasi (JSDoc untuk JS/TS, GoDoc untuk Go, docstrings untuk Python) pada function, class, object, dan tipe data dengan bahasa yang mudah dipahami pemula (beginner-friendly), komentar inline spesifik untuk alasan non-obvious, kewajiban mutlak unit test, serta kewajiban mock untuk batas eksternal (database, Redis/cache, antrean, API HTTP) pada preset dan aturan agent.

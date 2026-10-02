@@ -47,6 +47,6 @@ In words: if the folder is empty, the project is created first. Then the tool de
 | `test/detect.test.ts`, `commands.test.ts`, `generate.test.ts`, `write.test.ts`, `scaffold.test.ts`, `run.test.ts`, `setup.test.ts` | Unit and snapshot tests per part |
 | `test/cli.e2e.test.ts` | The built CLI against copies of the fixtures |
 | `test/requirements.test.ts` | Every rule, skill and constraint agreed with the product owner stays in the output |
-| `test/wiki.test.ts` | This wiki: every English page has an Indonesian twin, starts with In short, and is listed in the index |
+| `test/wiki.test.ts` | This wiki: every English page has an Indonesian twin, starts with In short, is listed in the index, and log entries sit outside the format example |
 
 Coverage: `rtk test pnpm run test:coverage` (the Definition of Done asks for at least 80% on changed code).

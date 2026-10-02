@@ -47,6 +47,6 @@ Dengan kata-kata: kalau foldernya kosong, project dibuat dulu. Lalu tool mendete
 | `test/detect.test.ts`, `commands.test.ts`, `generate.test.ts`, `write.test.ts`, `scaffold.test.ts`, `run.test.ts`, `setup.test.ts` | Unit test dan snapshot test per bagian |
 | `test/cli.e2e.test.ts` | CLI hasil build dijalankan pada salinan fixture |
 | `test/requirements.test.ts` | Setiap rule, skill dan batasan yang disepakati dengan product owner tetap ada di output |
-| `test/wiki.test.ts` | Wiki ini: setiap halaman Inggris punya pasangan Indonesia, dibuka dengan Singkatnya, dan terdaftar di index |
+| `test/wiki.test.ts` | Wiki ini: setiap halaman Inggris punya pasangan Indonesia, dibuka dengan Singkatnya, terdaftar di index, dan entri log ada di luar contoh format |
 
 Coverage: `rtk test pnpm run test:coverage` (Definition of Done meminta minimal 80% pada kode yang berubah).

@@ -3,6 +3,17 @@
 Newest entries first. Format:
 
 ```
+## YYYY-MM-DD — <type>(#<issue>|TASK-<n>): <subject>
+- What: ...
+- Why: ...
+- Files: ...
+```
+
+## 2026-10-02 — docs(TASK-7108): close the log format example before the entries
+- What: The closing fence of the format example in `log.md` sat below most entries, so they rendered as one code block. The fence now closes right after the example, in both languages, and `test/wiki.test.ts` checks it.
+- Why: Entries were added above the closing fence for several tasks, so the log was unreadable on GitHub and GitLab.
+- Files: docs/wiki/{en,id}/log.md, test/wiki.test.ts, docs/wiki/{en,id}/features/wiki-knowledge-base.md, docs/wiki/{en,id}/architecture.md
+
 ## 2026-10-02 — feat(TASK-7101): enforce the commit message format with lefthook
 - What: `init` generates `lefthook.yml` and a POSIX `sh` commit-msg script that rejects headers not matching `type(#n|TASK-n): subject` (subject ≤ 72 characters) and attribution trailers; with graphify, `lefthook.yml` also refreshes the graph after each commit. lefthook is a required tool; `init --yes` runs `lefthook install` after `graphify hook install` unless `.husky/` or `.pre-commit-config.yaml` exists. AGENTS.md forbids `--no-verify`. `doctor` now checks graphify's post-checkout hook. This repository uses the same hooks. New page features/quality-gates.md.
 - Why: The commit format was only written in a rule, so agents and people could still break it; a hook enforces it the same way for every language.
@@ -102,12 +113,6 @@ Newest entries first. Format:
 - What: Per-package moon targets use the moon project ID (map key in .moon/workspace.yml, else folder name) instead of the package.json name; `lint` runs `moon run :lint` instead of `moon check`.
 - Why: `moon check` needs a project ID in non-interactive shells and runs build+test, and `moon run @acme/web:test` is not a valid target.
 - Files: src/detect/workspace.ts, src/detect/index.ts, src/types.ts, src/generate.ts, src/scaffold/templates.ts, presets/moonrepo/preset.json, test/*
-
-## YYYY-MM-DD — <type>(#<issue>|TASK-<n>): <subject>
-- What: ...
-- Why: ...
-- Files: ...
-```
 
 ## 2026-10-02 — feat(TASK-3814): enforce beginner-friendly doc comments, unit tests, and external mocking
 - What: Added mandatory documentation rules (JSDoc for JS/TS, GoDoc for Go, docstrings for Python) across functions, classes, objects, and data types in plain, beginner-friendly language, specific inline comments explaining the "why", strict mandatory unit test requirements, and mandatory mocking of external boundaries (databases, Redis/caches, queues, HTTP APIs) across presets and agent rules.

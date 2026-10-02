@@ -51,6 +51,16 @@ describe('repository wiki (knowledge base)', () => {
     }
   });
 
+  it('closes the log format example before the first entry, so entries render as headings', async () => {
+    for (const lang of ['en', 'id'] as const) {
+      const log = await read(lang, 'log.md');
+      const fences = [...log.matchAll(/^```/gm)].map((m) => m.index);
+      const firstEntry = log.search(/^## \d{4}-\d{2}-\d{2}/m);
+      expect(fences, `docs/wiki/${lang}/log.md`).toHaveLength(2);
+      expect(fences[1], `docs/wiki/${lang}/log.md`).toBeLessThan(firstEntry);
+    }
+  });
+
   it('routes AI agents to English pages by task', async () => {
     const index = await read('en', 'index.md');
     expect(index).toContain('## For AI agents: task → page');
