@@ -3,6 +3,11 @@
 Entri terbaru di atas. Format:
 
 ```
+## 2026-10-02 — refactor(TASK-7343): move post-scaffold notes into a testable function
+- Apa: Pengingat moonrepo (commit pertama, `moon setup`) dipindah dari `cli.ts` ke `postScaffoldNotes()` di `src/scaffold/index.ts`, dengan unit test.
+- Kenapa: Kode di dalam `cli.ts` hanya tercapai lewat test end-to-end, padahal setiap function wajib punya unit test.
+- File: src/cli.ts, src/scaffold/index.ts, test/scaffold.test.ts
+
 ## 2026-10-02 — fix(TASK-7342): report broken package.json instead of swallowing the error
 - Apa: Step scaffold moon-tasks membaca package.json dengan `readJson`: file yang tidak ada berarti "tidak ada script", file yang rusak berhenti dengan error yang menyebut path-nya.
 - Kenapa: Step itu memakai `.catch(() => null)` yang menyembunyikan semua error baca, melanggar rule error-handling.

@@ -2,7 +2,7 @@ import { mkdir, mkdtemp, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { inspectDir, parseApps, requiredBinaries, validateSpec } from '../src/scaffold/index.js';
+import { inspectDir, parseApps, postScaffoldNotes, requiredBinaries, validateSpec } from '../src/scaffold/index.js';
 import { buildScaffoldSteps } from '../src/scaffold/recipes.js';
 import type { ScaffoldSpec, Step } from '../src/scaffold/types.js';
 
@@ -239,5 +239,18 @@ describe('moon project tasks', () => {
     const dir = await mkdtemp(path.join(tmpdir(), 'agent-initiator-moon-py-'));
     await runSteps([{ type: 'moon-tasks', label: 'moon', dir, framework: 'fastapi', packageManager: 'npm' }]);
     expect(await readFile(path.join(dir, 'moon.yml'), 'utf8')).toContain("command: 'uv run pytest'");
+  });
+});
+
+describe('postScaffoldNotes', () => {
+  it('reminds moonrepo users about the first commit and moon setup', () => {
+    const [note] = postScaffoldNotes({ layout: 'moonrepo' });
+    expect(note).toContain('first git commit');
+    expect(note).toContain('moon setup');
+  });
+
+  it('has nothing to say for other layouts', () => {
+    expect(postScaffoldNotes({ layout: 'turborepo' })).toEqual([]);
+    expect(postScaffoldNotes({ layout: 'single' })).toEqual([]);
   });
 });

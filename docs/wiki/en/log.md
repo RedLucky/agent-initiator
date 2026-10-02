@@ -3,6 +3,11 @@
 Newest entries first. Format:
 
 ```
+## 2026-10-02 — refactor(TASK-7343): move post-scaffold notes into a testable function
+- What: The moonrepo reminder (first commit, `moon setup`) moved from `cli.ts` into `postScaffoldNotes()` in `src/scaffold/index.ts`, with unit tests.
+- Why: Code inside `cli.ts` is only reached by end-to-end tests, and every function must have a unit test.
+- Files: src/cli.ts, src/scaffold/index.ts, test/scaffold.test.ts
+
 ## 2026-10-02 — fix(TASK-7342): report broken package.json instead of swallowing the error
 - What: The moon-tasks scaffold step reads package.json with `readJson`: a missing file means "no scripts", a broken file stops with an error that names its path.
 - Why: The step used `.catch(() => null)`, which hid every read error, against the error-handling rule.

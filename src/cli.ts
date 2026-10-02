@@ -10,7 +10,7 @@ import { defaultPresetsDir, loadRegistry, type Registry } from './presets/regist
 import { resolvePresets } from './presets/resolve.js';
 import { choosePresets, defaultPackageManager, promptNewProject } from './prompts.js';
 import { specFromFlags, type ScaffoldFlags } from './scaffold/flags.js';
-import { inspectDir, LAYOUTS, scaffoldProject, type NodePackageManager, type ScaffoldSpec } from './scaffold/index.js';
+import { inspectDir, LAYOUTS, postScaffoldNotes, scaffoldProject, type NodePackageManager, type ScaffoldSpec } from './scaffold/index.js';
 import { planToolSetup, runToolSetup, type SetupAction, type SetupResult } from './setup.js';
 import type { DetectedProject } from './types.js';
 import { applyPlan, manualSteps, planFiles } from './write/index.js';
@@ -42,10 +42,7 @@ async function scaffold(spec: ScaffoldSpec): Promise<void> {
     if (step.type === 'run' || step.type === 'mkdir') p.log.step(`${pc.dim(`[${index + 1}/${total}]`)} ${step.label}`);
   });
   p.log.success('Project scaffolded.');
-  // moon cannot run tasks before the first commit, and we never commit for the user.
-  if (spec.layout === 'moonrepo') {
-    p.log.info('moonrepo: make the first git commit, then run `moon setup` to install pinned tool versions before `moon run`.');
-  }
+  for (const note of postScaffoldNotes(spec)) p.log.info(note);
 }
 
 /**

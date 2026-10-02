@@ -92,6 +92,19 @@ export function isInsideGitRepo(dir: string): boolean {
   return spawnSync('git', ['rev-parse', '--is-inside-work-tree'], { cwd: dir, stdio: 'ignore' }).status === 0;
 }
 
+/**
+ * Follow-up steps the user must do by hand after scaffolding (things we must not do for them).
+ * @param spec - The scaffold spec that was just run.
+ * @returns Short messages to show the user; empty when nothing is needed.
+ */
+export function postScaffoldNotes(spec: Pick<ScaffoldSpec, 'layout'>): string[] {
+  // moon cannot run tasks before the first commit, and agent-initiator never commits for the user.
+  if (spec.layout === 'moonrepo') {
+    return ['moonrepo: make the first git commit, then run `moon setup` to install pinned tool versions before `moon run`.'];
+  }
+  return [];
+}
+
 export const LAYOUTS: Array<{ value: Layout; label: string; hint: string }> = [
   { value: 'single', label: 'Single app', hint: 'one frontend or backend in the repo root' },
   { value: 'folders', label: 'Multiple folders', hint: 'e.g. web/ + api/ without a monorepo tool (fullstack)' },
