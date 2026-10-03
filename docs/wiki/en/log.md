@@ -9,6 +9,11 @@ Newest entries first. Format:
 - Files: ...
 ```
 
+## 2026-10-03 — feat(TASK-7116): record each init in a manifest with the tool version
+- What: `init` writes `.agents/agent-initiator.json` with the version, date, presets, installed tools and a sha256 hash of every file it wrote; the AGENTS.md marker names the version. A later `init` reports "Already initialised with agent-initiator v… on …", or that an earlier version (marker only, no manifest) initialised the repository. The manifest is never overwritten.
+- Why: The only trace of an init was an unversioned comment in AGENTS.md, so there was no way to tell which version wrote a repository's files or which of them people had edited.
+- Files: src/render/manifest.ts, src/detect/initialised.ts, src/render/agents-md.ts, src/generate.ts, src/cli.ts, docs/wiki/*/features/generated-files.md, test/*
+
 ## 2026-10-02 — feat(TASK-7115): detect Python projects that have no manifest
 - What: A repository root with `.py` files or `tests/test_*.py` but no `pyproject.toml` or `requirements.txt` is now detected as Python. It gets only commands that need no declared dependencies: `python3 -m compileall` (build) and `python3 -m unittest discover`, or `python3 -m pytest` when the tests import pytest. Only the root counts. Verified on a copy of c-uas: 39 tests pass with the generated test command.
 - Why: The c-uas repository (plain Python scripts with unittest tests) was detected as "no stack", so its AGENTS.md had no test command and no Python rules.

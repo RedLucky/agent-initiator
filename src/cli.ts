@@ -3,10 +3,13 @@ import * as p from '@clack/prompts';
 import { Command } from 'commander';
 import pc from 'picocolors';
 import { detectProject, overridePresets } from './detect/index.js';
+import { detectInitState } from './detect/initialised.js';
 import { detectExistingSkills } from './detect/skills.js';
 import { checkTools, graphifyHookState, type ToolStatus } from './doctor.js';
 import { generateFiles } from './generate.js';
 import { defaultPresetsDir, loadRegistry, type Registry } from './presets/registry.js';
+import { renderManifest } from './render/manifest.js';
+import { readJson } from './fs-utils.js';
 import { resolvePresets } from './presets/resolve.js';
 import { choosePresets, defaultPackageManager, promptNewProject } from './prompts.js';
 import { specFromFlags, type ScaffoldFlags } from './scaffold/flags.js';
@@ -116,6 +119,27 @@ async function chooseSetupActions(root: string, options: InitOptions, actions: S
   return ok === true ? actions : [];
 }
 
+/**
+ * Reads agent-initiator's own version from its package.json, which sits next to the bundled presets/ folder.
+ * @throws When the version cannot be read: the installation is broken and the manifest would be wrong.
+ */
+async function toolVersion(): Promise<string> {
+  const file = path.join(path.dirname(await defaultPresetsDir()), 'package.json');
+  const pkg = await readJson<{ version?: unknown }>(file);
+  if (typeof pkg?.version !== 'string') throw new Error(`Could not read the agent-initiator version from ${file}`);
+  return pkg.version;
+}
+
+/** Tells the user when the repository was already initialised; existing files are kept either way. */
+async function reportInitState(root: string): Promise<void> {
+  const state = await detectInitState(root);
+  if (state.kind === 'manifest') {
+    p.log.info(`Already initialised with agent-initiator v${state.version} on ${state.generatedAt}; existing files are kept, only missing ones are added.`);
+  } else if (state.kind === 'legacy') {
+    p.log.info('Initialised by an earlier agent-initiator version (no manifest); existing files are kept, only missing ones are added.');
+  }
+}
+
 async function runInit(dir: string, options: InitOptions): Promise<void> {
   const root = path.resolve(dir);
   const registry = await loadRegistry(await defaultPresetsDir());
@@ -152,8 +176,15 @@ async function runInit(dir: string, options: InitOptions): Promise<void> {
     project = { ...project, existingSkills: await detectExistingSkills(root) };
   }
 
-  const { kind, files } = generateFiles(project, registry, { date: new Date().toISOString().slice(0, 10), installedTools });
-  const plan = await planFiles(root, files);
+  await reportInitState(root);
+  const version = await toolVersion();
+  const date = new Date().toISOString().slice(0, 10);
+  const generated = generateFiles(project, registry, { date, installedTools, version });
+  const { kind } = generated;
+  const filePlan = await planFiles(root, generated.files);
+  // The manifest records only the files this run writes; an existing manifest is kept like any other file.
+  const manifest = renderManifest({ version, date, presets: generated.presets, tools: generated.tools, written: filePlan.filter((f) => f.status === 'create') });
+  const plan = [...filePlan, ...(await planFiles(root, [manifest]))];
   const created = plan.filter((f) => f.status === 'create');
   const skipped = plan.filter((f) => f.status === 'skip');
 

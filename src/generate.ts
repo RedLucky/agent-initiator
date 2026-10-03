@@ -8,6 +8,8 @@ import type { DetectedProject, PackageInfo, PlannedFile, ProjectKind, ResolvedCo
 export interface GenerateOptions {
   /** ISO date (YYYY-MM-DD) stamped into the wiki log; injected so output is deterministic in tests. */
   date: string;
+  /** agent-initiator version, written into the AGENTS.md marker. */
+  version?: string;
   /**
    * Tool ids found on this machine. Only these tools become part of the instructions (and then they are required);
    * missing ones are left out completely. Omitted: every tool the presets list (deterministic for tests).
@@ -18,6 +20,10 @@ export interface GenerateOptions {
 export interface GenerateResult {
   kind: ProjectKind;
   files: PlannedFile[];
+  /** Every preset used (shared chain plus package stacks), for the manifest. */
+  presets: string[];
+  /** The helper tools written into AGENTS.md, for the manifest. */
+  tools: string[];
 }
 
 interface PackageConfig {
@@ -111,6 +117,7 @@ export function generateFiles(project: DetectedProject, registry: Registry, opti
   files.push({
     path: 'AGENTS.md',
     content: renderRootAgentsMd({
+      version: options.version,
       projectName: project.name,
       kind,
       stack: stackLabel(registry, [...new Set(project.packages.flatMap((p) => p.presets))]),
@@ -138,6 +145,7 @@ export function generateFiles(project: DetectedProject, registry: Registry, opti
     files.push({
       path: `${pkg.path}/AGENTS.md`,
       content: renderPackageAgentsMd({
+        version: options.version,
         pkg: summary,
         language: pkg.language,
         commands: packageCommands(pkg, resolved.commands, project.monorepo, rtk),
@@ -181,7 +189,7 @@ export function generateFiles(project: DetectedProject, registry: Registry, opti
     files.push({ path: file.path, content: fillTemplate(file.content, vars) });
   }
 
-  return { kind, files };
+  return { kind, files, presets: root.presetIds, tools: tooling };
 }
 
 type ListKey = 'conventions' | 'must' | 'never' | 'docs';

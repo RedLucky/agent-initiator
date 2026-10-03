@@ -9,6 +9,11 @@ Entri terbaru di atas. Format:
 - File: ...
 ```
 
+## 2026-10-03 — feat(TASK-7116): record each init in a manifest with the tool version
+- Apa: `init` menulis `.agents/agent-initiator.json` berisi versi, tanggal, preset, tool yang terpasang dan hash sha256 setiap file yang ditulisnya; penanda di AGENTS.md menyebut versinya. `init` berikutnya memberi tahu "Already initialised with agent-initiator v… on …", atau bahwa versi sebelumnya (hanya penanda, tanpa manifest) sudah meng-init repository itu. Manifest tidak pernah ditimpa.
+- Kenapa: Satu-satunya jejak init adalah komentar tanpa versi di AGENTS.md, jadi tidak bisa diketahui versi mana yang menulis file sebuah repository atau file mana yang sudah diedit orang.
+- File: src/render/manifest.ts, src/detect/initialised.ts, src/render/agents-md.ts, src/generate.ts, src/cli.ts, docs/wiki/*/features/generated-files.md, test/*
+
 ## 2026-10-02 — feat(TASK-7115): detect Python projects that have no manifest
 - Apa: Root repository dengan file `.py` atau `tests/test_*.py` tetapi tanpa `pyproject.toml` atau `requirements.txt` sekarang terdeteksi sebagai Python. Project ini hanya mendapat command yang tidak butuh dependency yang dideklarasikan: `python3 -m compileall` (build) dan `python3 -m unittest discover`, atau `python3 -m pytest` kalau test-nya mengimpor pytest. Hanya root yang dihitung. Diverifikasi di salinan c-uas: 39 test lolos dengan command test yang dibuat.
 - Kenapa: Repository c-uas (script Python biasa dengan test unittest) terdeteksi sebagai "no stack", sehingga AGENTS.md-nya tanpa command test dan tanpa rule Python.
