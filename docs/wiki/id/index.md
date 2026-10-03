@@ -24,6 +24,7 @@ AI agent cukup membaca halaman bahasa Inggris (`docs/wiki/en/`); `docs/wiki/id/`
 | Menambah atau mengubah scaffolder atau layout | [features/scaffolding.md](features/scaffolding.md) | `src/scaffold/` |
 | Mengubah tool pendukung, doctor atau setup | [features/tool-setup.md](features/tool-setup.md) | `src/tooling.ts`, `src/setup.ts`, `src/doctor.ts` |
 | Mengecek atau mengubah cara repository dibandingkan dengan versi sekarang | [features/upgrade-status.md](features/upgrade-status.md) | `src/status.ts`, `src/cli.ts` |
+| Mengubah cara agent membuat rencana, meminta persetujuan dan commit | [features/workflow.md](features/workflow.md) | `presets/base/skills/`, `presets/base/rules/git-workflow.md` |
 | Mengubah aturan wiki | [features/wiki-knowledge-base.md](features/wiki-knowledge-base.md) | `presets/base/rules/documentation.md` |
 
 ## Semua halaman
@@ -40,6 +41,7 @@ AI agent cukup membaca halaman bahasa Inggris (`docs/wiki/en/`); `docs/wiki/id/`
 | [features/tool-setup.md](features/tool-setup.md) | Tool pendukung opsional, `doctor` dan setup per repository |
 | [features/wiki-knowledge-base.md](features/wiki-knowledge-base.md) | Cara wiki dirawat sebagai knowledge base untuk semua pembaca |
 | [features/upgrade-status.md](features/upgrade-status.md) | `status` dan `init --upgrade`: menemukan file outdated, diedit atau konflik dan memperbarui yang tidak disentuh |
+| [features/workflow.md](features/workflow.md) | Putaran manusia–agent: diskusi, rencana, satu task, cek, setujui, commit |
 | [features/evaluation.md](features/evaluation.md) | Seberapa baik model Claude mengikuti instruksi yang dibuat, dan celah yang ditemukan |
 | [glossary.md](glossary.md) | Istilah dan singkatan dalam bahasa sederhana |
 | [faq.md](faq.md) | Pertanyaan dan masalah umum, beserta jawabannya |

@@ -19,12 +19,13 @@ npx agent-initiator init
 5. [CLI reference](#cli-reference)
 6. [Generated files](#generated-files)
 7. [What the rules contain](#what-the-rules-contain)
-8. [Supported stacks](#supported-stacks)
-9. [Optional tooling](#optional-tooling)
-10. [Safety principles](#safety-principles)
-11. [FAQ and troubleshooting](#faq-and-troubleshooting)
-12. [Development](#development)
-13. [Limitations and roadmap](#limitations-and-roadmap)
+8. [Working with an agent: the human–agent loop](#working-with-an-agent-the-humanagent-loop)
+9. [Supported stacks](#supported-stacks)
+10. [Optional tooling](#optional-tooling)
+11. [Safety principles](#safety-principles)
+12. [FAQ and troubleshooting](#faq-and-troubleshooting)
+13. [Development](#development)
+14. [Limitations and roadmap](#limitations-and-roadmap)
 
 ---
 
@@ -226,6 +227,89 @@ Commands come from your real `package.json` scripts. If `test` or `build` is mis
   - the Nuxt MCP and `gopls mcp`
 - **Next.js:** apps get the official `nextjs-agent-rules` block, so `next dev` leaves your `AGENTS.md` untouched.
 - **Existing skills:** skills already in `.agents/skills/`, such as Nx's official skills, are indexed and mirrored for Claude Code.
+
+## Working with an agent: the human–agent loop
+
+The generated rules and skills turn a chat with an AI agent into a repeatable loop. The agent does the work; you make every decision that matters: what to build, the plan, and each commit. This is how agent-initiator itself is developed.
+
+```mermaid
+flowchart TD
+    A[1. Discuss the idea] --> B[2. Plan: numbered tasks]
+    B --> C{You approve the plan?}
+    C -- change it --> B
+    C -- yes --> D[3. Agent does one task]
+    D --> E[4. Self-review + Definition of Done]
+    E --> F[5. Agent proposes the commit]
+    F --> G{You approve?}
+    G -- change or question --> D
+    G -- yes --> H[6. Agent commits exactly that message]
+    H --> I{More tasks?}
+    I -- yes --> D
+    I -- no --> J[7. You decide on push]
+```
+
+| Step | What happens | Who decides | Driven by |
+|------|--------------|-------------|-----------|
+| 1. Discuss | The agent restates the goal, lists assumptions and asks about anything unclear, and recommends an option instead of guessing. No code yet. | You | rule `llm-discipline` (Think Before Coding) |
+| 2. Plan | The work is split into small tasks (`TASK-<n>`, or your issue number), each with goal, files, acceptance checks and what is out of scope. | You approve or change it | skill `plan-task` |
+| 3. One task | The agent does exactly one task: code, unit tests, doc comments and the wiki page of that topic. It does not start the next task. | — | rules `code-quality`, `testing`, `documentation` |
+| 4. Check | It reviews its own diff, then runs the Definition of Done: tests with coverage, build, audit when dependencies changed, wiki in both languages. Failures are reported, not hidden. | — | skills `self-review`, `definition-of-done` |
+| 5. Ask | It stops and shows what changed, what it verified (with the real numbers), anything it found or could not check, and the exact commit message. | You: approve, ask, or change | skill `commit`, rule `git-workflow` |
+| 6. Commit | Only after your "yes": one commit per task, format `type(TASK-n): subject`, exactly the approved text, no attribution trailers. Then the next task starts. | — | rule `git-workflow` |
+| 7. Push | Never automatic; it needs its own approval. | You | rule `git-workflow` |
+
+A planned task looks like this (from the plan the agent shows before step 3):
+
+```text
+TASK-4821: Export the order list as CSV
+
+- Goal: let shop staff download the filtered order list as a CSV file for their spreadsheet.
+- How it works:
+  a. A "Download CSV" button on the order list uses the filters that are currently applied.
+  b. The API adds GET /orders/export?format=csv, reusing the existing order query,
+     so the export always matches the list on screen.
+  c. Columns: order number, date, customer name, status, total. Customer email and address
+     are left out (personal data, see the data-privacy rule).
+  d. Large exports are streamed in pages of 500 rows instead of loaded into memory at once.
+  e. Without permission to view orders the endpoint returns 403, like the list itself.
+- Out of scope:
+  - Excel (.xlsx) export.
+  - Scheduled or emailed exports.
+- Files:
+  - apps/api/src/orders/orders.controller.ts, orders.service.ts (export endpoint)
+  - apps/web/app/orders/page.tsx (button)
+  - tests; wiki en/id features/orders.md and log
+- Acceptance:
+  - unit tests: CSV columns and escaping (commas, quotes, line breaks), paging, 403 without permission
+  - e2e test: filter the list → download → the file has the same rows as the screen
+  - an export of 10,000 orders keeps memory flat (streamed)
+  - Definition of Done: tests, coverage, build
+```
+
+A good approval request looks like this:
+
+```text
+TASK-4821 is done.
+- What changed: GET /orders/export?format=csv streams the filtered order list; the order page
+  has a "Download CSV" button.
+- Verified: 148 tests pass, coverage 94% on the changed files, build ok; exported 10,000 test
+  orders with flat memory use.
+- Found on the way: the order list ignored the "cancelled" filter on page 2; fixed, with a test.
+- Not done: Excel export (out of scope, as planned).
+- Proposed commit (7 files):
+    feat(TASK-4821): export the order list as CSV
+
+    Shop staff copied orders into spreadsheets by hand. The order list
+    now has a CSV download that uses the same filters as the screen and
+    streams large exports in pages.
+May I commit?
+```
+
+What makes the loop work:
+- **Small steps.** One task is one commit you can review in minutes and revert on its own.
+- **Evidence over claims.** Every "done" comes with commands that were actually run and their results.
+- **You stay in control.** No commit, push or overwrite of your files without your explicit approval.
+- **Course corrections are cheap.** You can change direction at any approval point; the plan is updated and the work continues from there.
 
 ## Supported stacks
 

@@ -24,6 +24,7 @@ Read the English pages only (`docs/wiki/en/`); `docs/wiki/id/` is the same conte
 | Add or change a scaffolder or layout | [features/scaffolding.md](features/scaffolding.md) | `src/scaffold/` |
 | Change the helper tools, doctor or setup | [features/tool-setup.md](features/tool-setup.md) | `src/tooling.ts`, `src/setup.ts`, `src/doctor.ts` |
 | Check or change how a repository is compared with the current version | [features/upgrade-status.md](features/upgrade-status.md) | `src/status.ts`, `src/cli.ts` |
+| Change how agents plan, ask for approval and commit | [features/workflow.md](features/workflow.md) | `presets/base/skills/`, `presets/base/rules/git-workflow.md` |
 | Change the wiki rules | [features/wiki-knowledge-base.md](features/wiki-knowledge-base.md) | `presets/base/rules/documentation.md` |
 
 ## All pages
@@ -40,6 +41,7 @@ Read the English pages only (`docs/wiki/en/`); `docs/wiki/id/` is the same conte
 | [features/tool-setup.md](features/tool-setup.md) | Optional helper tools, `doctor` and per-repository setup |
 | [features/wiki-knowledge-base.md](features/wiki-knowledge-base.md) | How the wiki is kept as a knowledge base for every reader |
 | [features/upgrade-status.md](features/upgrade-status.md) | `status` and `init --upgrade`: find outdated, edited or conflicting files and update the untouched ones |
+| [features/workflow.md](features/workflow.md) | The human–agent loop: discuss, plan, one task, check, approve, commit |
 | [features/evaluation.md](features/evaluation.md) | How well Claude models follow the generated instructions, and the gaps found |
 | [glossary.md](glossary.md) | Terms and abbreviations in plain words |
 | [faq.md](faq.md) | Common questions and problems, with answers |

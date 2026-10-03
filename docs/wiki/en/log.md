@@ -9,6 +9,11 @@ Newest entries first. Format:
 - Files: ...
 ```
 
+## 2026-10-03 — docs(TASK-7120): describe the human–agent workflow loop
+- What: README has a new section, "Working with an agent: the human–agent loop": a diagram and table of the seven steps (discuss, plan, one task, check, ask, commit, push) with who decides and which rule or skill drives each, plus a fictional example of a planned task and of an approval request. New wiki page features/workflow.md explains the loop and where each step lives.
+- Why: The loop used to build agent-initiator itself was only implied by separate rules and skills; new users had no picture of how working with the agent goes from idea to commit.
+- Files: README.md, docs/wiki/{en,id}/features/workflow.md, docs/wiki/{en,id}/index.md
+
 ## 2026-10-03 — chore(TASK-7119): release version 0.2.0
 - What: package.json version 0.1.0 → 0.2.0 (minor, SemVer pre-1.0): new commands and output since 0.1.0, including optional tools, on-demand rules, the init manifest, `status` and `init --upgrade`; CI and git hook generation were removed. The upgrade page explains that a new version marks generated AGENTS.md files as outdated.
 - Why: The version stayed 0.1.0 through all changes, so the manifest's version told nothing about what generated a repository.

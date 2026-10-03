@@ -9,6 +9,11 @@ Entri terbaru di atas. Format:
 - File: ...
 ```
 
+## 2026-10-03 — docs(TASK-7120): describe the human–agent workflow loop
+- Apa: README mendapat bagian baru, "Working with an agent: the human–agent loop": diagram dan tabel tujuh langkah (diskusi, rencana, satu task, cek, minta persetujuan, commit, push) beserta siapa yang memutuskan dan rule atau skill yang menggerakkan setiap langkah, ditambah contoh fiktif task yang direncanakan dan permintaan persetujuan. Halaman wiki baru features/workflow.md menjelaskan putaran itu dan letak setiap langkah.
+- Kenapa: Putaran yang dipakai untuk membangun agent-initiator sendiri hanya tersirat di rule dan skill yang terpisah; pengguna baru tidak punya gambaran bagaimana bekerja dengan agent dari ide sampai commit.
+- File: README.md, docs/wiki/{en,id}/features/workflow.md, docs/wiki/{en,id}/index.md
+
 ## 2026-10-03 — chore(TASK-7119): release version 0.2.0
 - Apa: Versi package.json 0.1.0 → 0.2.0 (minor, SemVer sebelum 1.0): command dan output baru sejak 0.1.0, termasuk tool opsional, rule on demand, manifest init, `status` dan `init --upgrade`; pembuatan CI dan git hook dihapus. Halaman upgrade menjelaskan bahwa versi baru menandai AGENTS.md hasil generate sebagai outdated.
 - Kenapa: Versinya tetap 0.1.0 selama semua perubahan, sehingga versi di manifest tidak memberi tahu apa pun tentang apa yang membuat sebuah repository.
