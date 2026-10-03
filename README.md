@@ -136,6 +136,7 @@ Then review the generated files and commit them when you are happy. The tool nev
 |---------|--------------|
 | `init [dir]` (default) | Detect or scaffold, then generate agent config into `dir` (default: current folder) |
 | `list` | List all presets by category |
+| `status [dir]` | Compare the repository with what this version generates: outdated, edited, conflict, missing or obsolete files, with a `git diff` command for each; exit code 1 when files are outdated, in conflict or missing |
 | `doctor` | Show which optional tools are installed, with install commands for the others |
 
 `init` options:

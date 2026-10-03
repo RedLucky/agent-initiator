@@ -68,6 +68,20 @@ describe('repository wiki (knowledge base)', () => {
     expect(await read('id', 'index.md')).toContain('## Untuk AI agent: task → halaman');
   });
 
+  it('keeps every row of the index tables complete (no lost cells)', async () => {
+    for (const lang of ['en', 'id'] as const) {
+      const lines = (await read(lang, 'index.md')).split('\n');
+      const cells = (row: string) => row.split(/(?<!\\)\|/).length;
+      let header = '';
+      lines.forEach((line, i) => {
+        if (!line.startsWith('|')) return void (header = '');
+        // The first row of each table is its header; every other row needs the same number of cells.
+        if (header === '') return void (header = line);
+        expect(cells(line), `docs/wiki/${lang}/index.md line ${i + 1}`).toBe(cells(header));
+      });
+    }
+  });
+
   it('has the reading paths for every kind of reader', async () => {
     expect(await read('en', 'index.md')).toMatch(/Not a developer[\s\S]*A new developer[\s\S]*An experienced developer/);
     expect(await read('id', 'index.md')).toMatch(/Bukan developer[\s\S]*Developer baru[\s\S]*Developer berpengalaman/);

@@ -3,13 +3,16 @@ import * as p from '@clack/prompts';
 import { Command } from 'commander';
 import pc from 'picocolors';
 import { detectProject, overridePresets } from './detect/index.js';
-import { detectInitState } from './detect/initialised.js';
+import { detectInitState, readManifest } from './detect/initialised.js';
 import { detectExistingSkills } from './detect/skills.js';
 import { checkTools, graphifyHookState, type ToolStatus } from './doctor.js';
 import { generateFiles } from './generate.js';
 import { defaultPresetsDir, loadRegistry, type Registry } from './presets/registry.js';
-import { renderManifest } from './render/manifest.js';
-import { readJson } from './fs-utils.js';
+import { contentHash, MANIFEST_PATH, renderManifest } from './render/manifest.js';
+import { ACTION_STATES, classifyFiles, type FileState } from './status.js';
+import { readJson, readText } from './fs-utils.js';
+import { mkdir, mkdtemp, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import { resolvePresets } from './presets/resolve.js';
 import { choosePresets, defaultPackageManager, promptNewProject } from './prompts.js';
 import { specFromFlags, type ScaffoldFlags } from './scaffold/flags.js';
@@ -202,6 +205,73 @@ async function runInit(dir: string, options: InitOptions): Promise<void> {
   p.outro(`Wrote ${written.length} file(s). Review them, then commit when ready.`);
 }
 
+// How each state is shown in `status`, in this order; `up-to-date` files are only counted.
+const STATE_LABELS: Array<[FileState, string]> = [
+  ['outdated', 'outdated — unchanged by you, this version generates something new (safe to update)'],
+  ['conflict', 'conflict — you changed it and this version generates something new (merge by hand)'],
+  ['missing', 'missing — this version generates it, but it is not on disk (run init to add it)'],
+  ['differs', 'differs — no record of what init wrote, so it is unknown who changed it'],
+  ['edited', 'edited — you changed it; this version generates the same as before (kept)'],
+  ['obsolete', 'obsolete — init wrote it, but this version no longer generates it (review and delete it yourself)'],
+];
+
+/**
+ * `status`: compares the repository with what this version of agent-initiator generates, without changing it.
+ * It regenerates in memory with the date and tools recorded in the manifest, so only real template changes show up.
+ * New content for files worth comparing goes to a temp folder outside the repository, with a `git diff` command.
+ * Exits with code 1 when a file is outdated, in conflict or missing, so CI can use it like `cruft check`.
+ */
+async function runStatus(dir: string): Promise<void> {
+  const root = path.resolve(dir);
+  const registry = await loadRegistry(await defaultPresetsDir());
+  const version = await toolVersion();
+  const manifest = await readManifest(root);
+  const project = await detectProject(root);
+
+  const today = new Date().toISOString().slice(0, 10);
+  const generated = generateFiles(project, registry, {
+    date: manifest?.generatedAt ?? today,
+    installedTools: manifest?.tools,
+    version,
+  });
+  const paths = [...new Set([...generated.files.map((f) => f.path), ...Object.keys(manifest?.files ?? {})])].filter((p) => p !== MANIFEST_PATH);
+  const onDisk: Record<string, string | null> = {};
+  for (const file of paths) {
+    const text = await readText(path.join(root, file));
+    onDisk[file] = text === null ? null : contentHash(text);
+  }
+  const statuses = classifyFiles({ recorded: manifest?.files ?? null, onDisk, generated: generated.files });
+
+  console.log(
+    manifest
+      ? `Initialised with agent-initiator v${manifest.version} on ${manifest.generatedAt}; this is v${version}.`
+      : `No manifest in ${MANIFEST_PATH}: initialised before v${version} recorded one, or never; files can only be compared as same/different.`,
+  );
+  if (manifest) {
+    const installed = (await checkTools(resolvePresets(registry, generated.presets).tooling)).filter((s) => s.installed).map((s) => s.tool.id);
+    const added = installed.filter((id) => !manifest.tools.includes(id));
+    if (added.length > 0) console.log(pc.dim(`Tools installed since init (left out of this comparison): ${added.join(', ')}`));
+  }
+
+  const compareDir = await mkdtemp(path.join(tmpdir(), 'agent-initiator-status-'));
+  for (const [state, label] of STATE_LABELS) {
+    const group = statuses.filter((s) => s.state === state);
+    if (group.length === 0) continue;
+    console.log(`\n${pc.bold(label)}`);
+    for (const entry of group) {
+      console.log(`  ${entry.path}`);
+      if (entry.generated === undefined || state === 'missing' || state === 'edited') continue;
+      const target = path.join(compareDir, entry.path);
+      await mkdir(path.dirname(target), { recursive: true });
+      await writeFile(target, entry.generated, 'utf8');
+      console.log(pc.dim(`    git diff --no-index -- ${path.join(root, entry.path)} ${target}`));
+    }
+  }
+  const upToDate = statuses.filter((s) => s.state === 'up-to-date').length;
+  console.log(`\n${upToDate} of ${statuses.length} file(s) up to date.`);
+  process.exitCode = statuses.some((s) => ACTION_STATES.includes(s.state)) ? 1 : 0;
+}
+
 async function runList(): Promise<void> {
   const registry = await loadRegistry(await defaultPresetsDir());
   const categories = [...new Set([...registry.values()].map((preset) => preset.category))];
@@ -233,6 +303,12 @@ program
   .action(runInit);
 
 program.command('list').description('list available presets').action(runList);
+
+program
+  .command('status')
+  .description('compare the repository with what this version generates (exit code 1 when files are outdated or missing)')
+  .argument('[dir]', 'repository directory', '.')
+  .action(runStatus);
 
 program
   .command('doctor')

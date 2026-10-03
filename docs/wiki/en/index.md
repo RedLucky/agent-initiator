@@ -23,7 +23,8 @@ Read the English pages only (`docs/wiki/en/`); `docs/wiki/id/` is the same conte
 | Change AGENTS.md or other generated output | [features/generated-files.md](features/generated-files.md) | `src/generate.ts`, `src/render/` |
 | Add or change a scaffolder or layout | [features/scaffolding.md](features/scaffolding.md) | `src/scaffold/` |
 | Change the helper tools, doctor or setup | [features/tool-setup.md](features/tool-setup.md) | `src/tooling.ts`, `src/setup.ts`, `src/doctor.ts` |
-| [features/wiki-knowledge-base.md](features/wiki-knowledge-base.md) | `presets/base/rules/documentation.md` |
+| Check or change how a repository is compared with the current version | [features/upgrade-status.md](features/upgrade-status.md) | `src/status.ts`, `src/cli.ts` |
+| Change the wiki rules | [features/wiki-knowledge-base.md](features/wiki-knowledge-base.md) | `presets/base/rules/documentation.md` |
 
 ## All pages
 
@@ -38,6 +39,7 @@ Read the English pages only (`docs/wiki/en/`); `docs/wiki/id/` is the same conte
 | [features/scaffolding.md](features/scaffolding.md) | Creating new projects with official tools, including monorepos and moon |
 | [features/tool-setup.md](features/tool-setup.md) | Optional helper tools, `doctor` and per-repository setup |
 | [features/wiki-knowledge-base.md](features/wiki-knowledge-base.md) | How the wiki is kept as a knowledge base for every reader |
+| [features/upgrade-status.md](features/upgrade-status.md) | `status`: which generated files are outdated, edited or in conflict |
 | [features/evaluation.md](features/evaluation.md) | How well Claude models follow the generated instructions, and the gaps found |
 | [glossary.md](glossary.md) | Terms and abbreviations in plain words |
 | [faq.md](faq.md) | Common questions and problems, with answers |

@@ -23,7 +23,8 @@ AI agent cukup membaca halaman bahasa Inggris (`docs/wiki/en/`); `docs/wiki/id/`
 | Mengubah AGENTS.md atau output lain yang di-generate | [features/generated-files.md](features/generated-files.md) | `src/generate.ts`, `src/render/` |
 | Menambah atau mengubah scaffolder atau layout | [features/scaffolding.md](features/scaffolding.md) | `src/scaffold/` |
 | Mengubah tool pendukung, doctor atau setup | [features/tool-setup.md](features/tool-setup.md) | `src/tooling.ts`, `src/setup.ts`, `src/doctor.ts` |
-| [features/wiki-knowledge-base.md](features/wiki-knowledge-base.md) | `presets/base/rules/documentation.md` |
+| Mengecek atau mengubah cara repository dibandingkan dengan versi sekarang | [features/upgrade-status.md](features/upgrade-status.md) | `src/status.ts`, `src/cli.ts` |
+| Mengubah aturan wiki | [features/wiki-knowledge-base.md](features/wiki-knowledge-base.md) | `presets/base/rules/documentation.md` |
 
 ## Semua halaman
 
@@ -38,6 +39,7 @@ AI agent cukup membaca halaman bahasa Inggris (`docs/wiki/en/`); `docs/wiki/id/`
 | [features/scaffolding.md](features/scaffolding.md) | Membuat project baru dengan tool resmi, termasuk monorepo dan moon |
 | [features/tool-setup.md](features/tool-setup.md) | Tool pendukung opsional, `doctor` dan setup per repository |
 | [features/wiki-knowledge-base.md](features/wiki-knowledge-base.md) | Cara wiki dirawat sebagai knowledge base untuk semua pembaca |
+| [features/upgrade-status.md](features/upgrade-status.md) | `status`: file hasil generate mana yang outdated, diedit atau konflik |
 | [features/evaluation.md](features/evaluation.md) | Seberapa baik model Claude mengikuti instruksi yang dibuat, dan celah yang ditemukan |
 | [glossary.md](glossary.md) | Istilah dan singkatan dalam bahasa sederhana |
 | [faq.md](faq.md) | Pertanyaan dan masalah umum, beserta jawabannya |

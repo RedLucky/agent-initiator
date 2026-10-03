@@ -9,6 +9,11 @@ Entri terbaru di atas. Format:
 - File: ...
 ```
 
+## 2026-10-03 — feat(TASK-7117): add status to compare a repo with the current version
+- Apa: Perintah baru `agent-initiator status [dir]` membuat ulang hasil di memori dengan tanggal dan tool dari manifest lalu membandingkan, per file, apa yang ditulis init, apa yang ada di disk dan apa yang dihasilkan versi ini: up to date, outdated, edited, conflict, differs (tanpa manifest), missing atau obsolete. File outdated, conflict dan differs mendapat perintah `git diff --no-index` terhadap isi baru yang ditulis ke folder temp di luar repository. Exit code 1 kalau ada file outdated, konflik atau missing. Halaman baru features/upgrade-status.md. Juga memperbaiki baris yang rusak di tabel task index dan menambah test yang menjaga baris tabel index tetap lengkap.
+- Kenapa: Nomor versi saja tidak menunjukkan apakah sebuah repository tertinggal: isinya berubah walaupun versinya sama, dan file yang diedit harus dibedakan dari file yang tidak disentuh.
+- File: src/status.ts, src/cli.ts, src/detect/initialised.ts, docs/wiki/*/features/{upgrade-status,generated-files}.md, docs/wiki/*/index.md, README.md, test/*
+
 ## 2026-10-03 — feat(TASK-7116): record each init in a manifest with the tool version
 - Apa: `init` menulis `.agents/agent-initiator.json` berisi versi, tanggal, preset, tool yang terpasang dan hash sha256 setiap file yang ditulisnya; penanda di AGENTS.md menyebut versinya. `init` berikutnya memberi tahu "Already initialised with agent-initiator v… on …", atau bahwa versi sebelumnya (hanya penanda, tanpa manifest) sudah meng-init repository itu. Manifest tidak pernah ditimpa.
 - Kenapa: Satu-satunya jejak init adalah komentar tanpa versi di AGENTS.md, jadi tidak bisa diketahui versi mana yang menulis file sebuah repository atau file mana yang sudah diedit orang.

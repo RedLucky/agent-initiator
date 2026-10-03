@@ -9,6 +9,11 @@ Newest entries first. Format:
 - Files: ...
 ```
 
+## 2026-10-03 — feat(TASK-7117): add status to compare a repo with the current version
+- What: New `agent-initiator status [dir]` regenerates in memory with the manifest's date and tools and compares, per file, what init wrote, what is on disk and what this version generates: up to date, outdated, edited, conflict, differs (no manifest), missing or obsolete. Outdated, conflict and differs files get a `git diff --no-index` command against new content written to a temp folder outside the repository. Exit code 1 when files are outdated, in conflict or missing. New page features/upgrade-status.md. Also fixed a broken row in the index task table and added a test that keeps index table rows complete.
+- Why: The version number alone does not show whether a repository is behind: content changes while the version stays the same, and edited files must be told apart from untouched ones.
+- Files: src/status.ts, src/cli.ts, src/detect/initialised.ts, docs/wiki/*/features/{upgrade-status,generated-files}.md, docs/wiki/*/index.md, README.md, test/*
+
 ## 2026-10-03 — feat(TASK-7116): record each init in a manifest with the tool version
 - What: `init` writes `.agents/agent-initiator.json` with the version, date, presets, installed tools and a sha256 hash of every file it wrote; the AGENTS.md marker names the version. A later `init` reports "Already initialised with agent-initiator v… on …", or that an earlier version (marker only, no manifest) initialised the repository. The manifest is never overwritten.
 - Why: The only trace of an init was an unversioned comment in AGENTS.md, so there was no way to tell which version wrote a repository's files or which of them people had edited.

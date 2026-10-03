@@ -93,4 +93,29 @@ describe('CLI (built)', () => {
     const dir = await copyFixture('express');
     await expect(init(dir, '--framework', 'nextjs')).rejects.toMatchObject({ stderr: expect.stringContaining('is not empty') });
   });
+
+  it('status reports a fresh init as up to date and an edited or outdated file after that', async () => {
+    const dir = await copyFixture('fastapi');
+    await init(dir);
+    const status = () => run('node', [cli, 'status', dir]).then((r) => ({ ...r, code: 0 }), (e: { stdout: string; code: number }) => e);
+    const fresh = await status();
+    expect(fresh.code).toBe(0);
+    expect(fresh.stdout).toMatch(/(\d+) of \1 file\(s\) up to date/);
+
+    // A person edits one rule; another one is made to look like an older template wrote it.
+    const rules = path.join(dir, '.agents', 'rules');
+    await writeFile(path.join(rules, 'security.md'), `${await readFile(path.join(rules, 'security.md'), 'utf8')}- team note\n`);
+    const older = `${await readFile(path.join(rules, 'testing.md'), 'utf8')}old line\n`;
+    await writeFile(path.join(rules, 'testing.md'), older);
+    const manifestPath = path.join(dir, '.agents', 'agent-initiator.json');
+    const manifest = JSON.parse(await readFile(manifestPath, 'utf8')) as { files: Record<string, string> };
+    manifest.files['.agents/rules/testing.md'] = `sha256:${createHash('sha256').update(older).digest('hex')}`;
+    await writeFile(manifestPath, JSON.stringify(manifest));
+
+    const changed = await status();
+    expect(changed.code).toBe(1);
+    expect(changed.stdout).toMatch(/edited[^\n]*\n  \.agents\/rules\/security\.md/);
+    expect(changed.stdout).toMatch(/outdated[^\n]*\n  \.agents\/rules\/testing\.md\n    git diff --no-index -- /);
+  });
 });
+

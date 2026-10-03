@@ -4,7 +4,7 @@ import { mkdir, mkdtemp, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { detectInitState } from '../src/detect/initialised.js';
+import { detectInitState, readManifest } from '../src/detect/initialised.js';
 import { contentHash, MANIFEST_PATH, renderManifest, type InitManifest } from '../src/render/manifest.js';
 
 describe('renderManifest', () => {
@@ -46,7 +46,7 @@ describe('detectInitState', () => {
   }
 
   it('reads version and date from the manifest', async () => {
-    const dir = await repo({ [MANIFEST_PATH]: JSON.stringify({ version: '0.2.0', generatedAt: '2026-10-03' }) });
+    const dir = await repo({ [MANIFEST_PATH]: JSON.stringify({ version: '0.2.0', generatedAt: '2026-10-03', presets: [], tools: [], files: {} }) });
     expect(await detectInitState(dir)).toEqual({ kind: 'manifest', version: '0.2.0', generatedAt: '2026-10-03' });
   });
 
@@ -57,6 +57,10 @@ describe('detectInitState', () => {
 
   it('ignores a manifest without the expected fields, and reports none for an untouched repo', async () => {
     expect(await detectInitState(await repo({ [MANIFEST_PATH]: '{"version": 1}' }))).toEqual({ kind: 'none' });
+    const base = { version: '1.0.0', generatedAt: '2026-10-03', presets: [], tools: [] };
+    for (const broken of [{ ...base, files: { 'AGENTS.md': 1 } }, { ...base, files: [] }, { ...base, tools: [1], files: {} }]) {
+      expect(await readManifest(await repo({ [MANIFEST_PATH]: JSON.stringify(broken) }))).toBeNull();
+    }
     expect(await detectInitState(await repo({ 'AGENTS.md': '# My own notes\n' }))).toEqual({ kind: 'none' });
   });
 });
