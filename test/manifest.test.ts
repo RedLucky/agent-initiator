@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { detectInitState, readManifest } from '../src/detect/initialised.js';
-import { contentHash, MANIFEST_PATH, renderManifest, type InitManifest } from '../src/render/manifest.js';
+import { contentHash, MANIFEST_PATH, renderManifest, upgradeManifest, type InitManifest } from '../src/render/manifest.js';
 
 describe('renderManifest', () => {
   it('records version, date, presets, tools and a sha256 of every written file', () => {
@@ -34,6 +34,17 @@ describe('renderManifest', () => {
   });
 });
 
+describe('upgradeManifest', () => {
+  it('records the new version and upgrade date and rehashes only the files the upgrade wrote', () => {
+    const before: InitManifest = {
+      generator: 'agent-initiator', version: '0.1.0', generatedAt: '2026-10-01', presets: ['base'], tools: [],
+      files: { 'a.md': contentHash('a'), 'b.md': contentHash('b') },
+    };
+    const after = JSON.parse(upgradeManifest(before, '0.2.0', '2026-10-03', [{ path: 'b.md', content: 'B' }, { path: 'c.md', content: 'c' }]).content) as InitManifest;
+    expect(after).toEqual({ ...before, version: '0.2.0', upgradedAt: '2026-10-03', files: { 'a.md': contentHash('a'), 'b.md': contentHash('B'), 'c.md': contentHash('c') } });
+  });
+});
+
 describe('detectInitState', () => {
   /** A temp repository with the given files. */
   async function repo(files: Record<string, string>): Promise<string> {
@@ -58,6 +69,8 @@ describe('detectInitState', () => {
   it('ignores a manifest without the expected fields, and reports none for an untouched repo', async () => {
     expect(await detectInitState(await repo({ [MANIFEST_PATH]: '{"version": 1}' }))).toEqual({ kind: 'none' });
     const base = { version: '1.0.0', generatedAt: '2026-10-03', presets: [], tools: [] };
+    const upgraded = await readManifest(await repo({ [MANIFEST_PATH]: JSON.stringify({ ...base, files: {}, upgradedAt: '2026-10-04' }) }));
+    expect(upgraded?.upgradedAt).toBe('2026-10-04');
     for (const broken of [{ ...base, files: { 'AGENTS.md': 1 } }, { ...base, files: [] }, { ...base, tools: [1], files: {} }]) {
       expect(await readManifest(await repo({ [MANIFEST_PATH]: JSON.stringify(broken) }))).toBeNull();
     }

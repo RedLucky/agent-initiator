@@ -8,8 +8,13 @@ export const MANIFEST_PATH = '.agents/agent-initiator.json';
 export interface InitManifest {
   generator: 'agent-initiator';
   version: string;
-  /** ISO date (YYYY-MM-DD) of the init run. */
+  /**
+   * ISO date (YYYY-MM-DD) of the init run. Kept on upgrade: generated content (the wiki log) uses this date, so
+   * comparisons must keep regenerating with it.
+   */
   generatedAt: string;
+  /** ISO date of the last `init --upgrade`, when there was one. */
+  upgradedAt?: string;
   presets: string[];
   /** Helper tools that were installed, and therefore written into AGENTS.md. */
   tools: string[];
@@ -53,4 +58,17 @@ export function renderManifest(input: ManifestInput): PlannedFile {
     files: Object.fromEntries(input.written.map((file) => [file.path, contentHash(file.content)])),
   };
   return { path: MANIFEST_PATH, content: `${JSON.stringify(manifest, null, 2)}\n` };
+}
+
+/**
+ * The manifest after an upgrade: the new version and upgrade date, and new hashes for the files the upgrade wrote.
+ * Every other hash stays as it was, so files people edited keep showing as edited or in conflict later.
+ * @param manifest - The manifest before the upgrade.
+ * @param written - The files the upgrade wrote.
+ */
+export function upgradeManifest(manifest: InitManifest, version: string, date: string, written: PlannedFile[]): PlannedFile {
+  const files = { ...manifest.files };
+  for (const file of written) files[file.path] = contentHash(file.content);
+  const upgraded: InitManifest = { ...manifest, version, upgradedAt: date, files };
+  return { path: MANIFEST_PATH, content: `${JSON.stringify(upgraded, null, 2)}\n` };
 }

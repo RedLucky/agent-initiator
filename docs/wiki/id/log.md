@@ -9,6 +9,11 @@ Entri terbaru di atas. Format:
 - File: ...
 ```
 
+## 2026-10-03 — feat(TASK-7118): add init --upgrade for untouched outdated files
+- Apa: `init --upgrade` (dengan `--dry-run` opsional) memakai perbandingan tiga arah yang sama dengan `status`: menulis file outdated yang tidak diedit siapa pun, menambah file yang hilang, mengecek ulang hash setiap file tepat sebelum menulis, dan membiarkan file yang diedit, konflik dan tanpa catatan dengan perintah `git diff`. Manifest mendapat versi baru, tanggal `upgradedAt` dan hash baru untuk file yang ditulis; `generatedAt` tetap. Tanpa manifest hanya file yang hilang yang ditambahkan.
+- Kenapa: Repository yang sudah di-init sebelumnya harus di-backup lalu di-init ulang secara manual untuk mendapat rule dan skill terbaru, yang juga menghilangkan catatan file mana yang sudah diedit.
+- File: src/cli.ts, src/status.ts, src/render/manifest.ts, src/detect/initialised.ts, src/write/index.ts, docs/wiki/*/features/upgrade-status.md, docs/wiki/*/index.md, README.md, test/*
+
 ## 2026-10-03 — feat(TASK-7117): add status to compare a repo with the current version
 - Apa: Perintah baru `agent-initiator status [dir]` membuat ulang hasil di memori dengan tanggal dan tool dari manifest lalu membandingkan, per file, apa yang ditulis init, apa yang ada di disk dan apa yang dihasilkan versi ini: up to date, outdated, edited, conflict, differs (tanpa manifest), missing atau obsolete. File outdated, conflict dan differs mendapat perintah `git diff --no-index` terhadap isi baru yang ditulis ke folder temp di luar repository. Exit code 1 kalau ada file outdated, konflik atau missing. Halaman baru features/upgrade-status.md. Juga memperbaiki baris yang rusak di tabel task index dan menambah test yang menjaga baris tabel index tetap lengkap.
 - Kenapa: Nomor versi saja tidak menunjukkan apakah sebuah repository tertinggal: isinya berubah walaupun versinya sama, dan file yang diedit harus dibedakan dari file yang tidak disentuh.

@@ -26,6 +26,31 @@ export async function applyPlan(root: string, plan: FilePlanEntry[]): Promise<st
   return written;
 }
 
+/**
+ * Writes the files of an upgrade. A file that exists is replaced only if it still has the hash init recorded, so a
+ * file someone edited after `status` ran is skipped instead of overwritten; a missing file is created as usual.
+ * @param recorded - path → hash from the manifest.
+ * @param hash - How to hash file content (the manifest's `contentHash`).
+ * @returns The files actually written.
+ */
+export async function applyUpgrade(
+  root: string,
+  files: PlannedFile[],
+  recorded: Record<string, string>,
+  hash: (content: string) => string,
+): Promise<PlannedFile[]> {
+  const written: PlannedFile[] = [];
+  for (const file of files) {
+    const target = path.join(root, file.path);
+    const current = await readText(target);
+    if (current !== null && hash(current) !== recorded[file.path]) continue;
+    await mkdir(path.dirname(target), { recursive: true });
+    await writeFile(target, file.content, { encoding: 'utf8', flag: current === null ? 'wx' : 'w' });
+    written.push(file);
+  }
+  return written;
+}
+
 /** Returns the markdown from the first "## Rules" heading to the end: the part that wires rules/skills in. */
 function linksSection(agentsMd: string): string {
   const start = agentsMd.indexOf('\n## Rules');

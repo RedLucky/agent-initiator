@@ -39,7 +39,7 @@ AI agent cukup membaca halaman bahasa Inggris (`docs/wiki/en/`); `docs/wiki/id/`
 | [features/scaffolding.md](features/scaffolding.md) | Membuat project baru dengan tool resmi, termasuk monorepo dan moon |
 | [features/tool-setup.md](features/tool-setup.md) | Tool pendukung opsional, `doctor` dan setup per repository |
 | [features/wiki-knowledge-base.md](features/wiki-knowledge-base.md) | Cara wiki dirawat sebagai knowledge base untuk semua pembaca |
-| [features/upgrade-status.md](features/upgrade-status.md) | `status`: file hasil generate mana yang outdated, diedit atau konflik |
+| [features/upgrade-status.md](features/upgrade-status.md) | `status` dan `init --upgrade`: menemukan file outdated, diedit atau konflik dan memperbarui yang tidak disentuh |
 | [features/evaluation.md](features/evaluation.md) | Seberapa baik model Claude mengikuti instruksi yang dibuat, dan celah yang ditemukan |
 | [glossary.md](glossary.md) | Istilah dan singkatan dalam bahasa sederhana |
 | [faq.md](faq.md) | Pertanyaan dan masalah umum, beserta jawabannya |

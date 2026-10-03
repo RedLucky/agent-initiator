@@ -1,7 +1,7 @@
 /** Tests the three-way comparison behind `agent-initiator status`: manifest (what init wrote), disk and new output. */
 import { describe, expect, it } from 'vitest';
 import { contentHash } from '../src/render/manifest.js';
-import { ACTION_STATES, classifyFiles } from '../src/status.js';
+import { ACTION_STATES, classifyFiles, upgradeFiles } from '../src/status.js';
 
 const h = contentHash;
 /** One generated file with the given new content. */
@@ -39,3 +39,15 @@ describe('classifyFiles', () => {
     expect(ACTION_STATES).toEqual(['outdated', 'conflict', 'missing']);
   });
 });
+
+describe('upgradeFiles', () => {
+  it('writes only outdated and missing files, never edited, conflicting or unrecorded ones', () => {
+    const statuses = classifyFiles({
+      recorded: { outdated: h('old'), edited: h('a'), conflict: h('old') },
+      onDisk: { outdated: h('old'), edited: h('mine'), conflict: h('mine'), differs: h('mine'), missing: null },
+      generated: [gen('outdated', 'new'), gen('edited', 'a'), gen('conflict', 'new'), gen('differs', 'x'), gen('missing', 'm')],
+    });
+    expect(upgradeFiles(statuses)).toEqual([gen('outdated', 'new'), gen('missing', 'm')]);
+  });
+});
+

@@ -30,7 +30,8 @@ export async function readManifest(root: string): Promise<InitManifest | null> {
   const data = await readJson<Record<string, unknown>>(path.join(root, MANIFEST_PATH));
   if (!data || typeof data.version !== 'string' || typeof data.generatedAt !== 'string') return null;
   if (!isStringList(data.presets) || !isStringList(data.tools) || !isStringRecord(data.files)) return null;
-  return { generator: 'agent-initiator', version: data.version, generatedAt: data.generatedAt, presets: data.presets, tools: data.tools, files: data.files };
+  const manifest: InitManifest = { generator: 'agent-initiator', version: data.version, generatedAt: data.generatedAt, presets: data.presets, tools: data.tools, files: data.files };
+  return typeof data.upgradedAt === 'string' ? { ...manifest, upgradedAt: data.upgradedAt } : manifest;
 }
 
 /**

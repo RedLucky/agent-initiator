@@ -152,6 +152,7 @@ Then review the generated files and commit them when you are happy. The tool nev
 | `--lang <ts\|js>` | Language for Node apps (default `ts`; TS-only frameworks ignore `js`) |
 | `--pm <pm>` | `pnpm` · `npm` · `yarn` · `bun` (default: pnpm if installed, else npm) |
 | `--skip-install` | Do not install dependencies, where the scaffolder allows it |
+| `--upgrade` | Update files init wrote that nobody edited to this version and add missing ones; edited files are never touched (combine with `--dry-run`) |
 | `--setup-tools` | Run per-repo tool setup without asking (see [Optional tooling](#optional-tooling)) |
 
 In `--yes` mode, an empty folder without `--framework`, `--apps` or `--preset` stops with an error and example commands. It does not silently write a base-only setup.

@@ -8,8 +8,8 @@ import { detectExistingSkills } from './detect/skills.js';
 import { checkTools, graphifyHookState, type ToolStatus } from './doctor.js';
 import { generateFiles } from './generate.js';
 import { defaultPresetsDir, loadRegistry, type Registry } from './presets/registry.js';
-import { contentHash, MANIFEST_PATH, renderManifest } from './render/manifest.js';
-import { ACTION_STATES, classifyFiles, type FileState } from './status.js';
+import { contentHash, MANIFEST_PATH, renderManifest, upgradeManifest, type InitManifest } from './render/manifest.js';
+import { ACTION_STATES, classifyFiles, UPGRADE_STATES, upgradeFiles, type FileState, type FileStatus } from './status.js';
 import { readJson, readText } from './fs-utils.js';
 import { mkdir, mkdtemp, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -19,13 +19,14 @@ import { specFromFlags, type ScaffoldFlags } from './scaffold/flags.js';
 import { inspectDir, isInsideGitRepo, LAYOUTS, postScaffoldNotes, scaffoldProject, type NodePackageManager, type ScaffoldSpec } from './scaffold/index.js';
 import { planToolSetup, runToolSetup, selectDefaultActions, type SetupAction, type SetupResult } from './setup.js';
 import type { DetectedProject } from './types.js';
-import { applyPlan, manualSteps, planFiles } from './write/index.js';
+import { applyPlan, applyUpgrade, manualSteps, planFiles } from './write/index.js';
 
 interface InitOptions extends ScaffoldFlags {
   preset?: string;
   yes?: boolean;
   dryRun?: boolean;
   setupTools?: boolean;
+  upgrade?: boolean;
 }
 
 function describeProject(registry: Registry, project: DetectedProject): string {
@@ -145,6 +146,7 @@ async function reportInitState(root: string): Promise<void> {
 
 async function runInit(dir: string, options: InitOptions): Promise<void> {
   const root = path.resolve(dir);
+  if (options.upgrade) return runUpgrade(root, options.dryRun === true);
   const registry = await loadRegistry(await defaultPresetsDir());
   p.intro(pc.bold('agent-initiator'));
 
@@ -221,16 +223,26 @@ const STATE_LABELS: Array<[FileState, string]> = [
  * New content for files worth comparing goes to a temp folder outside the repository, with a `git diff` command.
  * Exits with code 1 when a file is outdated, in conflict or missing, so CI can use it like `cruft check`.
  */
-async function runStatus(dir: string): Promise<void> {
-  const root = path.resolve(dir);
+/** The comparison `status` and `init --upgrade` both use. */
+interface Comparison {
+  manifest: InitManifest | null;
+  version: string;
+  statuses: FileStatus[];
+  /** Installed now but not in the manifest; left out of the comparison. */
+  newTools: string[];
+}
+
+/**
+ * Compares a repository with what this version generates. It regenerates in memory with the date and tools recorded
+ * in the manifest, so only real template changes show up, and hashes the files on disk.
+ */
+async function compareRepository(root: string): Promise<Comparison> {
   const registry = await loadRegistry(await defaultPresetsDir());
   const version = await toolVersion();
   const manifest = await readManifest(root);
   const project = await detectProject(root);
-
-  const today = new Date().toISOString().slice(0, 10);
   const generated = generateFiles(project, registry, {
-    date: manifest?.generatedAt ?? today,
+    date: manifest?.generatedAt ?? new Date().toISOString().slice(0, 10),
     installedTools: manifest?.tools,
     version,
   });
@@ -241,22 +253,30 @@ async function runStatus(dir: string): Promise<void> {
     onDisk[file] = text === null ? null : contentHash(text);
   }
   const statuses = classifyFiles({ recorded: manifest?.files ?? null, onDisk, generated: generated.files });
+  const installed = manifest ? (await checkTools(resolvePresets(registry, generated.presets).tooling)).filter((s) => s.installed).map((s) => s.tool.id) : [];
+  return { manifest, version, statuses, newTools: installed.filter((id) => !manifest?.tools.includes(id)) };
+}
 
+/** Prints the version line and tools installed since init. */
+function printComparisonHeader({ manifest, version, newTools }: Comparison): void {
   console.log(
     manifest
       ? `Initialised with agent-initiator v${manifest.version} on ${manifest.generatedAt}; this is v${version}.`
       : `No manifest in ${MANIFEST_PATH}: initialised before v${version} recorded one, or never; files can only be compared as same/different.`,
   );
-  if (manifest) {
-    const installed = (await checkTools(resolvePresets(registry, generated.presets).tooling)).filter((s) => s.installed).map((s) => s.tool.id);
-    const added = installed.filter((id) => !manifest.tools.includes(id));
-    if (added.length > 0) console.log(pc.dim(`Tools installed since init (left out of this comparison): ${added.join(', ')}`));
-  }
+  if (newTools.length > 0) console.log(pc.dim(`Tools installed since init (left out of this comparison): ${newTools.join(', ')}`));
+}
 
+/**
+ * Prints the files grouped by state. For files worth comparing, the new content goes to a temp folder outside the
+ * repository with a `git diff` command next to it.
+ * @param skip - States not to print (e.g. the ones an upgrade just wrote).
+ */
+async function printStatuses(root: string, statuses: FileStatus[], skip: FileState[] = []): Promise<void> {
   const compareDir = await mkdtemp(path.join(tmpdir(), 'agent-initiator-status-'));
   for (const [state, label] of STATE_LABELS) {
     const group = statuses.filter((s) => s.state === state);
-    if (group.length === 0) continue;
+    if (group.length === 0 || skip.includes(state)) continue;
     console.log(`\n${pc.bold(label)}`);
     for (const entry of group) {
       console.log(`  ${entry.path}`);
@@ -267,9 +287,47 @@ async function runStatus(dir: string): Promise<void> {
       console.log(pc.dim(`    git diff --no-index -- ${path.join(root, entry.path)} ${target}`));
     }
   }
-  const upToDate = statuses.filter((s) => s.state === 'up-to-date').length;
-  console.log(`\n${upToDate} of ${statuses.length} file(s) up to date.`);
-  process.exitCode = statuses.some((s) => ACTION_STATES.includes(s.state)) ? 1 : 0;
+}
+
+/**
+ * `status`: compares the repository with what this version of agent-initiator generates, without changing it.
+ * Exits with code 1 when a file is outdated, in conflict or missing, so CI can use it like `cruft check`.
+ */
+async function runStatus(dir: string): Promise<void> {
+  const root = path.resolve(dir);
+  const comparison = await compareRepository(root);
+  printComparisonHeader(comparison);
+  await printStatuses(root, comparison.statuses);
+  const upToDate = comparison.statuses.filter((s) => s.state === 'up-to-date').length;
+  console.log(`\n${upToDate} of ${comparison.statuses.length} file(s) up to date.`);
+  process.exitCode = comparison.statuses.some((s) => ACTION_STATES.includes(s.state)) ? 1 : 0;
+}
+
+/**
+ * `init --upgrade`: writes the outdated and missing files only, then records the new version in the manifest.
+ * Edited, conflicting and unrecorded files are never touched; they are listed with a `git diff` command instead.
+ */
+async function runUpgrade(root: string, dryRun: boolean): Promise<void> {
+  const comparison = await compareRepository(root);
+  const { manifest, version, statuses } = comparison;
+  printComparisonHeader(comparison);
+  const planned = upgradeFiles(statuses);
+  console.log(`\n${pc.bold(`${dryRun ? 'Would update' : 'Updating'} ${planned.length} file(s):`)}`);
+  for (const file of planned) console.log(`  ${statuses.find((s) => s.path === file.path)?.state === 'missing' ? pc.green('+') : pc.cyan('~')} ${file.path}`);
+  await printStatuses(root, statuses, ['up-to-date', ...UPGRADE_STATES]);
+  if (dryRun) return console.log('\nDry run — nothing written.');
+
+  if (!manifest) {
+    // Without a record no file can be outdated (existing ones show as "differs"), so only missing files are added.
+    const added = await applyUpgrade(root, planned, {}, contentHash);
+    console.log(`\nAdded ${added.length} missing file(s). Without a manifest nothing else is updated: back up the agent files and run init again to start tracking.`);
+    return;
+  }
+  const written = await applyUpgrade(root, planned, manifest.files, contentHash);
+  const record = upgradeManifest(manifest, version, new Date().toISOString().slice(0, 10), written);
+  await writeFile(path.join(root, record.path), record.content, 'utf8');
+  const skipped = planned.length - written.length;
+  console.log(`\nUpdated ${written.length} file(s) and the manifest (v${version}).${skipped > 0 ? ` Skipped ${skipped} file(s) that changed since the comparison.` : ''}`);
 }
 
 async function runList(): Promise<void> {
@@ -299,6 +357,7 @@ program
   .option('--lang <ts|js>', 'language for Node apps when scaffolding (default: ts)')
   .option('--pm <pm>', 'package manager for scaffolding: pnpm | npm | yarn | bun')
   .option('--skip-install', 'do not install dependencies after scaffolding (where the scaffolder allows it)')
+  .option('--upgrade', 'update files init wrote that nobody edited to this version (edited files are never touched)')
   .option('--setup-tools', 'run per-repo tool setup without asking (graphify graph + git hooks, UI UX Pro Max skills)')
   .action(runInit);
 

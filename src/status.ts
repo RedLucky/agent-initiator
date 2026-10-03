@@ -60,3 +60,14 @@ export function classifyFiles({ recorded, onDisk, generated }: StatusInput): Fil
   }
   return result;
 }
+
+/** States `init --upgrade` writes: files nobody edited that the template changed, and files that are gone. */
+export const UPGRADE_STATES: FileState[] = ['outdated', 'missing'];
+
+/**
+ * The files `init --upgrade` writes, with their new content. Edited, conflicting and unrecorded files are never
+ * part of it, so a person's changes are never overwritten.
+ */
+export function upgradeFiles(statuses: FileStatus[]): PlannedFile[] {
+  return statuses.flatMap((s) => (UPGRADE_STATES.includes(s.state) && s.generated !== undefined ? [{ path: s.path, content: s.generated }] : []));
+}

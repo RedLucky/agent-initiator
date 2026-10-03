@@ -39,7 +39,7 @@ Read the English pages only (`docs/wiki/en/`); `docs/wiki/id/` is the same conte
 | [features/scaffolding.md](features/scaffolding.md) | Creating new projects with official tools, including monorepos and moon |
 | [features/tool-setup.md](features/tool-setup.md) | Optional helper tools, `doctor` and per-repository setup |
 | [features/wiki-knowledge-base.md](features/wiki-knowledge-base.md) | How the wiki is kept as a knowledge base for every reader |
-| [features/upgrade-status.md](features/upgrade-status.md) | `status`: which generated files are outdated, edited or in conflict |
+| [features/upgrade-status.md](features/upgrade-status.md) | `status` and `init --upgrade`: find outdated, edited or conflicting files and update the untouched ones |
 | [features/evaluation.md](features/evaluation.md) | How well Claude models follow the generated instructions, and the gaps found |
 | [glossary.md](glossary.md) | Terms and abbreviations in plain words |
 | [faq.md](faq.md) | Common questions and problems, with answers |

@@ -1,6 +1,6 @@
 import { execFile } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { cp, mkdtemp, readFile, readdir, writeFile } from 'node:fs/promises';
+import { cp, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { promisify } from 'node:util';
@@ -116,6 +116,36 @@ describe('CLI (built)', () => {
     expect(changed.code).toBe(1);
     expect(changed.stdout).toMatch(/edited[^\n]*\n  \.agents\/rules\/security\.md/);
     expect(changed.stdout).toMatch(/outdated[^\n]*\n  \.agents\/rules\/testing\.md\n    git diff --no-index -- /);
+  });
+
+  it('init --upgrade updates untouched outdated files, restores missing ones and never touches edited ones', async () => {
+    const dir = await copyFixture('fastapi');
+    await init(dir);
+    const rules = path.join(dir, '.agents', 'rules');
+    const read = (p: string) => readFile(path.join(dir, p), 'utf8');
+    await writeFile(path.join(rules, 'security.md'), `${await read('.agents/rules/security.md')}- team note\n`);
+    const older = `${await read('.agents/rules/testing.md')}old line\n`;
+    await writeFile(path.join(rules, 'testing.md'), older);
+    const manifestPath = path.join(dir, '.agents', 'agent-initiator.json');
+    const manifest = JSON.parse(await read('.agents/agent-initiator.json')) as { files: Record<string, string> };
+    manifest.files['.agents/rules/testing.md'] = `sha256:${createHash('sha256').update(older).digest('hex')}`;
+    await writeFile(manifestPath, JSON.stringify(manifest));
+    await rm(path.join(dir, '.agents', 'skills', 'commit', 'SKILL.md'));
+
+    const dry = await init(dir, '--upgrade', '--dry-run');
+    expect(dry.stdout).toContain('Would update 2 file(s)');
+    expect(await read('.agents/rules/testing.md')).toBe(older);
+
+    await init(dir, '--upgrade');
+    expect(await read('.agents/rules/security.md')).toContain('- team note');
+    expect(await read('.agents/rules/testing.md')).not.toContain('old line');
+    expect(await read('.agents/skills/commit/SKILL.md')).toContain('name: commit');
+    const upgraded = JSON.parse(await read('.agents/agent-initiator.json')) as { upgradedAt?: string };
+    expect(upgraded.upgradedAt).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+
+    const after = await run('node', [cli, 'status', dir]);
+    expect(after.stdout).toMatch(/edited[^\n]*\n  \.agents\/rules\/security\.md/);
+    expect(after.stdout).not.toContain('outdated');
   });
 });
 

@@ -2,7 +2,8 @@ import { mkdtemp, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { applyPlan, manualSteps, planFiles } from '../src/write/index.js';
+import { applyPlan, applyUpgrade, manualSteps, planFiles } from '../src/write/index.js';
+import { contentHash } from '../src/render/manifest.js';
 
 const tempDir = () => mkdtemp(path.join(tmpdir(), 'agent-initiator-write-'));
 
@@ -48,4 +49,21 @@ describe('write', () => {
     expect(await manualSteps(dir, plan)).toEqual([]);
   });
 
+
+  it('upgrades a file only while it still has the recorded hash, and creates missing files', async () => {
+    const dir = await tempDir();
+    await writeFile(path.join(dir, 'untouched.md'), 'old');
+    await writeFile(path.join(dir, 'edited-since.md'), 'someone changed this');
+    const written = await applyUpgrade(
+      dir,
+      [{ path: 'untouched.md', content: 'new' }, { path: 'edited-since.md', content: 'new' }, { path: 'docs/missing.md', content: 'm' }],
+      { 'untouched.md': contentHash('old'), 'edited-since.md': contentHash('old') },
+      contentHash,
+    );
+    expect(written.map((f) => f.path)).toEqual(['untouched.md', 'docs/missing.md']);
+    expect(await readFile(path.join(dir, 'untouched.md'), 'utf8')).toBe('new');
+    expect(await readFile(path.join(dir, 'edited-since.md'), 'utf8')).toBe('someone changed this');
+    expect(await readFile(path.join(dir, 'docs/missing.md'), 'utf8')).toBe('m');
+  });
 });
+

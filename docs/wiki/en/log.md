@@ -9,6 +9,11 @@ Newest entries first. Format:
 - Files: ...
 ```
 
+## 2026-10-03 — feat(TASK-7118): add init --upgrade for untouched outdated files
+- What: `init --upgrade` (with optional `--dry-run`) uses the same three-way comparison as `status`: it writes outdated files nobody edited, adds missing ones, re-checks each file's hash right before writing, and leaves edited, conflicting and unrecorded files alone with a `git diff` command. The manifest gets the new version, an `upgradedAt` date and new hashes for written files; `generatedAt` is kept. Without a manifest only missing files are added.
+- Why: Repositories initialised earlier had to be backed up and initialised again by hand to get newer rules and skills, which also discarded the record of what was edited.
+- Files: src/cli.ts, src/status.ts, src/render/manifest.ts, src/detect/initialised.ts, src/write/index.ts, docs/wiki/*/features/upgrade-status.md, docs/wiki/*/index.md, README.md, test/*
+
 ## 2026-10-03 — feat(TASK-7117): add status to compare a repo with the current version
 - What: New `agent-initiator status [dir]` regenerates in memory with the manifest's date and tools and compares, per file, what init wrote, what is on disk and what this version generates: up to date, outdated, edited, conflict, differs (no manifest), missing or obsolete. Outdated, conflict and differs files get a `git diff --no-index` command against new content written to a temp folder outside the repository. Exit code 1 when files are outdated, in conflict or missing. New page features/upgrade-status.md. Also fixed a broken row in the index task table and added a test that keeps index table rows complete.
 - Why: The version number alone does not show whether a repository is behind: content changes while the version stays the same, and edited files must be told apart from untouched ones.
