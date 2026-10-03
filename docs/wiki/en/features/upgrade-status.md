@@ -23,6 +23,8 @@ flowchart TD
 
 In words: a missing file is reported first. A file that already matches the new output is up to date, whoever changed it. Without a record (a file the user already had, or a repository set up before the manifest existed) only "same or different" can be known. With a record, an untouched file is outdated when the template changed, an edited file is kept when the template did not change, and a file changed on both sides is a conflict. Files the manifest lists but this version no longer generates (for example an old `lefthook.yml`) are reported as obsolete; nothing is deleted.
 
+**The wiki is left out.** Pages under `docs/wiki/` are written once by `init` (only when missing) and then belong to your team: a newer skeleton means nothing for a page you filled in, and a page you deleted or merged must not come back. `status` and `init --upgrade` therefore skip `docs/wiki/` completely and say so ("Not compared: docs/wiki/"); the manifest still records what init wrote.
+
 | State | Meaning | Exit code |
 |-------|---------|-----------|
 | up to date | matches what this version generates | 0 |
@@ -47,7 +49,7 @@ Without a manifest (a repository set up before it existed) nothing can be told a
 ## Where it lives in the code
 | What | File |
 |------|------|
-| The three-way comparison | `classifyFiles` in `src/status.ts` |
+| The three-way comparison; files left out (`SEED_ONCE_PREFIXES`) | `classifyFiles`, `isSeedOnce` in `src/status.ts` |
 | The `status` command and `init --upgrade` (shared comparison) | `compareRepository`, `runStatus`, `runUpgrade` in `src/cli.ts` |
 | Which files an upgrade writes; safe writing | `upgradeFiles` in `src/status.ts`, `applyUpgrade` in `src/write/index.ts` |
 | Manifest after an upgrade | `upgradeManifest` in `src/render/manifest.ts` |

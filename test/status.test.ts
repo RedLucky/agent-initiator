@@ -51,3 +51,15 @@ describe('upgradeFiles', () => {
   });
 });
 
+describe('seed-once files (the wiki)', () => {
+  it('leaves wiki pages out: not compared, not recreated when deleted, never obsolete', () => {
+    const result = classifyFiles({
+      recorded: { 'docs/wiki/en/faq.md': h('skeleton'), 'docs/wiki/en/old.md': h('x'), 'AGENTS.md': h('a') },
+      onDisk: { 'docs/wiki/en/faq.md': null, 'docs/wiki/en/index.md': h('team notes'), 'docs/wiki/en/old.md': h('x'), 'AGENTS.md': h('a') },
+      generated: [gen('docs/wiki/en/faq.md', 'new skeleton'), gen('docs/wiki/en/index.md', 'skeleton'), gen('AGENTS.md', 'a')],
+    });
+    expect(result).toEqual([{ path: 'AGENTS.md', state: 'up-to-date', generated: 'a' }]);
+    expect(upgradeFiles(result)).toEqual([]);
+  });
+});
+

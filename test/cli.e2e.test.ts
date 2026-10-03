@@ -147,5 +147,20 @@ describe('CLI (built)', () => {
     expect(after.stdout).toMatch(/edited[^\n]*\n  \.agents\/rules\/security\.md/);
     expect(after.stdout).not.toContain('outdated');
   });
+
+  it('leaves the wiki to the team: a deleted or rewritten page is neither reported nor restored', async () => {
+    const dir = await copyFixture('fastapi');
+    await init(dir);
+    await rm(path.join(dir, 'docs', 'wiki', 'en', 'faq.md'));
+    await writeFile(path.join(dir, 'docs', 'wiki', 'en', 'overview.md'), '# Our overview\n');
+
+    const status = await run('node', [cli, 'status', dir]);
+    expect(status.stdout).toContain('Not compared: docs/wiki/');
+    expect(status.stdout).not.toContain('docs/wiki/en/faq.md');
+
+    await init(dir, '--upgrade');
+    await expect(readFile(path.join(dir, 'docs', 'wiki', 'en', 'faq.md'), 'utf8')).rejects.toThrow();
+    expect(await readFile(path.join(dir, 'docs', 'wiki', 'en', 'overview.md'), 'utf8')).toBe('# Our overview\n');
+  });
 });
 

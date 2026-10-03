@@ -9,6 +9,11 @@ Newest entries first. Format:
 - Files: ...
 ```
 
+## 2026-10-03 — feat(TASK-7122): leave the wiki out of status and upgrade
+- What: Pages under `docs/wiki/` are written once by `init` and then owned by the team: `status` and `init --upgrade` no longer compare, flag, recreate or list them as obsolete, and `status` prints "Not compared: docs/wiki/". The manifest still records what init wrote.
+- Why: A filled-in wiki page showed as edited or in conflict whenever the skeleton changed, and a page the team deleted on purpose was reported as missing and recreated by every upgrade.
+- Files: src/status.ts, src/cli.ts, docs/wiki/*/features/upgrade-status.md, test/*
+
 ## 2026-10-03 — feat(TASK-7121): link rules other tools wrote from AGENTS.md
 - What: Rules already in `.agents/rules/` that no preset generates (for example graphify's and ponytail's installer rules) are listed in AGENTS.md. Their frontmatter decides the scope: `alwaysApply: true` or Antigravity/Windsurf `trigger: always_on` → always, `globs` (list or comma-separated) → file scope, otherwise on demand; the description comes from the frontmatter, the first heading or the file name. Empty files are skipped, preset rules win on name clashes, invalid frontmatter is read as none, and the files are never written or added to the manifest.
 - Why: Agents that only read AGENTS.md (Codex, Claude Code) never saw rules other tools installed; found while combining asset-management's existing content with a fresh init.

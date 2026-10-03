@@ -31,16 +31,29 @@ export interface StatusInput {
   generated: PlannedFile[];
 }
 
+/**
+ * Files init writes once and then hands over to the team: the wiki skeleton becomes the team's knowledge base, so
+ * a newer template means nothing for it and a page the team deleted on purpose must not come back.
+ * `status` and `init --upgrade` leave these paths out completely; the manifest still records what init wrote.
+ */
+export const SEED_ONCE_PREFIXES = ['docs/wiki/'];
+
+/** True for files init writes once and never compares or updates afterwards. */
+export function isSeedOnce(filePath: string): boolean {
+  return SEED_ONCE_PREFIXES.some((prefix) => filePath.startsWith(prefix));
+}
+
 /** States that need action: `status` exits with code 1 when any file has one of them. */
 export const ACTION_STATES: FileState[] = ['outdated', 'conflict', 'missing'];
 
 /**
  * Three-way comparison per file, like `copier update`: what init wrote (manifest), what is on disk, and what this
  * version generates. Pure, so every case is unit-tested without touching a repository.
- * @returns One entry per generated file, plus `obsolete` entries for recorded files that are no longer generated.
+ * @returns One entry per generated file, plus `obsolete` entries for recorded files that are no longer generated;
+ *   seed-once files (the wiki) are left out.
  */
 export function classifyFiles({ recorded, onDisk, generated }: StatusInput): FileStatus[] {
-  const result: FileStatus[] = generated.map((file) => {
+  const result: FileStatus[] = generated.filter((file) => !isSeedOnce(file.path)).map((file) => {
     const wrote = recorded?.[file.path];
     const disk = onDisk[file.path] ?? null;
     const fresh = contentHash(file.content);
@@ -56,7 +69,7 @@ export function classifyFiles({ recorded, onDisk, generated }: StatusInput): Fil
   const generatedPaths = new Set(generated.map((file) => file.path));
   for (const path of Object.keys(recorded ?? {})) {
     // A recorded file the user already deleted needs no attention.
-    if (!generatedPaths.has(path) && onDisk[path]) result.push({ path, state: 'obsolete' });
+    if (!generatedPaths.has(path) && !isSeedOnce(path) && onDisk[path]) result.push({ path, state: 'obsolete' });
   }
   return result;
 }

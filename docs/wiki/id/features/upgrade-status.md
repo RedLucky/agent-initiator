@@ -23,6 +23,8 @@ flowchart TD
 
 Dengan kata-kata: file yang hilang dilaporkan lebih dulu. File yang sudah sama dengan hasil baru berarti up to date, siapa pun yang mengubahnya. Tanpa catatan (file yang sudah dimiliki pengguna, atau repository yang disiapkan sebelum manifest ada) yang bisa diketahui hanya "sama atau berbeda". Dengan catatan, file yang tidak disentuh menjadi outdated kalau template berubah, file yang diedit dipertahankan kalau template tidak berubah, dan file yang berubah di kedua sisi adalah konflik. File yang tercatat di manifest tetapi tidak lagi dibuat versi ini (misalnya `lefthook.yml` lama) dilaporkan sebagai obsolete; tidak ada yang dihapus.
 
+**Wiki tidak ikut dibandingkan.** Halaman di bawah `docs/wiki/` ditulis sekali oleh `init` (hanya kalau belum ada) lalu menjadi milik tim Anda: kerangka yang lebih baru tidak berarti apa-apa untuk halaman yang sudah Anda isi, dan halaman yang Anda hapus atau gabungkan tidak boleh muncul lagi. Karena itu `status` dan `init --upgrade` melewati `docs/wiki/` sepenuhnya dan menyebutkannya ("Not compared: docs/wiki/"); manifest tetap mencatat apa yang ditulis init.
+
 | Status | Arti | Exit code |
 |--------|------|-----------|
 | up to date | sama dengan hasil versi ini | 0 |
@@ -47,7 +49,7 @@ Tanpa manifest (repository yang disiapkan sebelum manifest ada) tidak ada yang b
 ## Letaknya di kode
 | Apa | File |
 |-----|------|
-| Perbandingan tiga arah | `classifyFiles` di `src/status.ts` |
+| Perbandingan tiga arah; file yang tidak dibandingkan (`SEED_ONCE_PREFIXES`) | `classifyFiles`, `isSeedOnce` di `src/status.ts` |
 | Perintah `status` dan `init --upgrade` (perbandingan bersama) | `compareRepository`, `runStatus`, `runUpgrade` di `src/cli.ts` |
 | File mana yang ditulis upgrade; penulisan yang aman | `upgradeFiles` di `src/status.ts`, `applyUpgrade` di `src/write/index.ts` |
 | Manifest setelah upgrade | `upgradeManifest` di `src/render/manifest.ts` |

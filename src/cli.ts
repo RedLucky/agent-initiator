@@ -9,7 +9,7 @@ import { checkTools, graphifyHookState, type ToolStatus } from './doctor.js';
 import { generateFiles } from './generate.js';
 import { defaultPresetsDir, loadRegistry, type Registry } from './presets/registry.js';
 import { contentHash, MANIFEST_PATH, renderManifest, upgradeManifest, type InitManifest } from './render/manifest.js';
-import { ACTION_STATES, classifyFiles, UPGRADE_STATES, upgradeFiles, type FileState, type FileStatus } from './status.js';
+import { ACTION_STATES, classifyFiles, SEED_ONCE_PREFIXES, UPGRADE_STATES, upgradeFiles, type FileState, type FileStatus } from './status.js';
 import { readJson, readText } from './fs-utils.js';
 import { mkdir, mkdtemp, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -265,6 +265,7 @@ function printComparisonHeader({ manifest, version, newTools }: Comparison): voi
       : `No manifest in ${MANIFEST_PATH}: initialised before v${version} recorded one, or never; files can only be compared as same/different.`,
   );
   if (newTools.length > 0) console.log(pc.dim(`Tools installed since init (left out of this comparison): ${newTools.join(', ')}`));
+  console.log(pc.dim(`Not compared: ${SEED_ONCE_PREFIXES.join(', ')} (written once by init, then owned by your team).`));
 }
 
 /**

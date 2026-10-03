@@ -9,6 +9,11 @@ Entri terbaru di atas. Format:
 - File: ...
 ```
 
+## 2026-10-03 — feat(TASK-7122): leave the wiki out of status and upgrade
+- Apa: Halaman di bawah `docs/wiki/` ditulis sekali oleh `init` lalu menjadi milik tim: `status` dan `init --upgrade` tidak lagi membandingkan, menandai, membuat ulang atau mencantumkannya sebagai obsolete, dan `status` mencetak "Not compared: docs/wiki/". Manifest tetap mencatat apa yang ditulis init.
+- Kenapa: Halaman wiki yang sudah diisi tampil sebagai edited atau konflik setiap kali kerangka berubah, dan halaman yang sengaja dihapus tim dilaporkan missing serta dibuat ulang oleh setiap upgrade.
+- File: src/status.ts, src/cli.ts, docs/wiki/*/features/upgrade-status.md, test/*
+
 ## 2026-10-03 — feat(TASK-7121): link rules other tools wrote from AGENTS.md
 - Apa: Rule yang sudah ada di `.agents/rules/` dan tidak dibuat preset (misalnya rule dari installer graphify dan ponytail) dicantumkan di AGENTS.md. Frontmatter-nya menentukan lingkupnya: `alwaysApply: true` atau `trigger: always_on` milik Antigravity/Windsurf → always, `globs` (list atau dipisah koma) → lingkup file, selain itu on demand; deskripsinya dari frontmatter, judul pertama atau nama file. File kosong dilewati, rule preset menang kalau namanya sama, frontmatter yang tidak valid dianggap tidak ada, dan file-file ini tidak pernah ditulis atau dimasukkan ke manifest.
 - Kenapa: Agent yang hanya membaca AGENTS.md (Codex, Claude Code) tidak pernah melihat rule yang dipasang tool lain; ditemukan saat menggabungkan konten asset-management yang sudah ada dengan init baru.
