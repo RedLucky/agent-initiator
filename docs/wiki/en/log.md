@@ -9,6 +9,11 @@ Newest entries first. Format:
 - Files: ...
 ```
 
+## 2026-10-03 — feat(TASK-7121): link rules other tools wrote from AGENTS.md
+- What: Rules already in `.agents/rules/` that no preset generates (for example graphify's and ponytail's installer rules) are listed in AGENTS.md. Their frontmatter decides the scope: `alwaysApply: true` or Antigravity/Windsurf `trigger: always_on` → always, `globs` (list or comma-separated) → file scope, otherwise on demand; the description comes from the frontmatter, the first heading or the file name. Empty files are skipped, preset rules win on name clashes, invalid frontmatter is read as none, and the files are never written or added to the manifest.
+- Why: Agents that only read AGENTS.md (Codex, Claude Code) never saw rules other tools installed; found while combining asset-management's existing content with a fresh init.
+- Files: src/detect/rules.ts, src/detect/index.ts, src/types.ts, src/generate.ts, docs/wiki/*/features/generated-files.md, test/*
+
 ## 2026-10-03 — docs(TASK-7120): describe the human–agent workflow loop
 - What: README has a new section, "Working with an agent: the human–agent loop": a diagram and table of the seven steps (discuss, plan, one task, check, ask, commit, push) with who decides and which rule or skill drives each, plus a fictional example of a planned task and of an approval request. New wiki page features/workflow.md explains the loop and where each step lives.
 - Why: The loop used to build agent-initiator itself was only implied by separate rules and skills; new users had no picture of how working with the agent goes from idea to commit.

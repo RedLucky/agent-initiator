@@ -322,5 +322,22 @@ describe('Project knowledge section', () => {
     expect(result.presets).toEqual(expect.arrayContaining(['base', 'turborepo', 'nextjs']));
     expect(result.tools).toEqual(['rtk']);
   });
+
+  it('links rules other tools wrote from AGENTS.md without writing them, and lets preset rules win on name clashes', async () => {
+    const { parseExistingRule } = await import('../src/detect/rules.js');
+    const project = await detectProject(fixture('express'));
+    const existingRules = [
+      parseExistingRule('graphify.md', '---\ntrigger: always_on\ndescription: Use the graph\n---\n'),
+      parseExistingRule('ponytail.md', '# Ponytail mode\n'),
+      parseExistingRule('testing.md', '# an old copy of a preset rule\n'),
+    ].filter((r) => r !== null);
+    const { files } = generateFiles({ ...project, existingRules }, registry, options);
+    const agents = files.find((f) => f.path === 'AGENTS.md')?.content ?? '';
+    expect(agents.split('\n').find((l) => l.startsWith('- **Always:**'))).toContain('[graphify](.agents/rules/graphify.md)');
+    expect(agents).toContain('- [ponytail](.agents/rules/ponytail.md) — on demand: Ponytail mode');
+    expect(agents.match(/\[testing\]/g)).toHaveLength(1);
+    expect(files.map((f) => f.path)).not.toContain('.agents/rules/graphify.md');
+    expect(files.find((f) => f.path === '.agents/rules/testing.md')?.content).not.toContain('an old copy');
+  });
 });
 

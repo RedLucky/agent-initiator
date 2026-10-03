@@ -5,6 +5,7 @@ import { detectGoPackage } from './go.js';
 import { detectNodePackage } from './node.js';
 import { detectNodePackageManager } from './package-manager.js';
 import { detectPythonPackage } from './python.js';
+import { detectExistingRules } from './rules.js';
 import { detectExistingSkills } from './skills.js';
 import { detectWorkspace } from './workspace.js';
 
@@ -35,7 +36,7 @@ export interface DetectOptions {
  * @returns The detected project; `packages` is empty when nothing is recognised.
  */
 export async function detectProject(root: string, options: DetectOptions = {}): Promise<DetectedProject> {
-  return { ...(await detectLayout(root, options)), existingSkills: await detectExistingSkills(root) };
+  return { ...(await detectLayout(root, options)), existingSkills: await detectExistingSkills(root), existingRules: await detectExistingRules(root) };
 }
 
 /**

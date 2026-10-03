@@ -43,6 +43,8 @@ export interface DetectedProject {
   packages: PackageInfo[];
   /** Skills already present in .agents/skills (e.g. shipped by Nx) that are not from our presets. */
   existingSkills?: Skill[];
+  /** Rules already in .agents/rules (for example from other tools); preset rules with the same name win. */
+  existingRules?: RuleFile[];
 }
 
 /** Task name → shell command template. Templates may use {{pm}} and {{pyRun}}. */

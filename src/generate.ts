@@ -113,6 +113,9 @@ export function generateFiles(project: DetectedProject, registry: Registry, opti
   // Install steps for the required tools live in a rendered rule, so AGENTS.md only keeps how to use them.
   const toolingRule = renderToolingRule(tooling);
   const rootRules = toolingRule ? [...root.rules, toolingRule] : root.rules;
+  // Rules other tools wrote are linked from AGENTS.md but never written: they are the user's files.
+  const ruleNames = new Set(rootRules.map((r) => r.file));
+  const existingRules = (project.existingRules ?? []).filter((r) => !ruleNames.has(r.file));
 
   files.push({
     path: 'AGENTS.md',
@@ -132,7 +135,7 @@ export function generateFiles(project: DetectedProject, registry: Registry, opti
       conventions: multi ? listFrom(registry, shared, 'conventions') : root.conventions,
       must: multi ? listFrom(registry, shared, 'must') : root.must,
       never: multi ? listFrom(registry, shared, 'never') : root.never,
-      rules: scopeRules(configs, rootRules, shared, multi),
+      rules: [...scopeRules(configs, rootRules, shared, multi), ...existingRules],
       skills: allSkills,
     }),
   });

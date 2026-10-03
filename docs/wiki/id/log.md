@@ -9,6 +9,11 @@ Entri terbaru di atas. Format:
 - File: ...
 ```
 
+## 2026-10-03 — feat(TASK-7121): link rules other tools wrote from AGENTS.md
+- Apa: Rule yang sudah ada di `.agents/rules/` dan tidak dibuat preset (misalnya rule dari installer graphify dan ponytail) dicantumkan di AGENTS.md. Frontmatter-nya menentukan lingkupnya: `alwaysApply: true` atau `trigger: always_on` milik Antigravity/Windsurf → always, `globs` (list atau dipisah koma) → lingkup file, selain itu on demand; deskripsinya dari frontmatter, judul pertama atau nama file. File kosong dilewati, rule preset menang kalau namanya sama, frontmatter yang tidak valid dianggap tidak ada, dan file-file ini tidak pernah ditulis atau dimasukkan ke manifest.
+- Kenapa: Agent yang hanya membaca AGENTS.md (Codex, Claude Code) tidak pernah melihat rule yang dipasang tool lain; ditemukan saat menggabungkan konten asset-management yang sudah ada dengan init baru.
+- File: src/detect/rules.ts, src/detect/index.ts, src/types.ts, src/generate.ts, docs/wiki/*/features/generated-files.md, test/*
+
 ## 2026-10-03 — docs(TASK-7120): describe the human–agent workflow loop
 - Apa: README mendapat bagian baru, "Working with an agent: the human–agent loop": diagram dan tabel tujuh langkah (diskusi, rencana, satu task, cek, minta persetujuan, commit, push) beserta siapa yang memutuskan dan rule atau skill yang menggerakkan setiap langkah, ditambah contoh fiktif task yang direncanakan dan permintaan persetujuan. Halaman wiki baru features/workflow.md menjelaskan putaran itu dan letak setiap langkah.
 - Kenapa: Putaran yang dipakai untuk membangun agent-initiator sendiri hanya tersirat di rule dan skill yang terpisah; pengguna baru tidak punya gambaran bagaimana bekerja dengan agent dari ide sampai commit.
