@@ -33,7 +33,7 @@ In words: a missing file is reported first. A file that already matches the new 
 | conflict | changed by you and by the template | 1 |
 | missing | generated but not on disk | 1 |
 
-For outdated, conflict and differs files, `status` writes the new content to a temp folder outside the repository and prints a `git diff --no-index -- <file> <new>` command to see the difference. Tools installed after init are listed but left out of the comparison.
+For outdated, conflict and differs files, `status` writes the new content to a temp folder outside the repository and prints a `git diff --no-index -- <file> <new>` command to see the difference. Tools installed after init are listed but left out of the comparison. A new agent-initiator version always shows the generated AGENTS.md files as outdated (or in conflict, if they were edited), because their first-line marker names the version.
 
 ## Upgrading
 `agent-initiator init --upgrade` (add `--dry-run` to see the plan first) uses the same comparison and:

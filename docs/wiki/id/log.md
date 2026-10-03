@@ -9,6 +9,11 @@ Entri terbaru di atas. Format:
 - File: ...
 ```
 
+## 2026-10-03 — chore(TASK-7119): release version 0.2.0
+- Apa: Versi package.json 0.1.0 → 0.2.0 (minor, SemVer sebelum 1.0): command dan output baru sejak 0.1.0, termasuk tool opsional, rule on demand, manifest init, `status` dan `init --upgrade`; pembuatan CI dan git hook dihapus. Halaman upgrade menjelaskan bahwa versi baru menandai AGENTS.md hasil generate sebagai outdated.
+- Kenapa: Versinya tetap 0.1.0 selama semua perubahan, sehingga versi di manifest tidak memberi tahu apa pun tentang apa yang membuat sebuah repository.
+- File: package.json, docs/wiki/*/features/upgrade-status.md
+
 ## 2026-10-03 — feat(TASK-7118): add init --upgrade for untouched outdated files
 - Apa: `init --upgrade` (dengan `--dry-run` opsional) memakai perbandingan tiga arah yang sama dengan `status`: menulis file outdated yang tidak diedit siapa pun, menambah file yang hilang, mengecek ulang hash setiap file tepat sebelum menulis, dan membiarkan file yang diedit, konflik dan tanpa catatan dengan perintah `git diff`. Manifest mendapat versi baru, tanggal `upgradedAt` dan hash baru untuk file yang ditulis; `generatedAt` tetap. Tanpa manifest hanya file yang hilang yang ditambahkan.
 - Kenapa: Repository yang sudah di-init sebelumnya harus di-backup lalu di-init ulang secara manual untuk mendapat rule dan skill terbaru, yang juga menghilangkan catatan file mana yang sudah diedit.

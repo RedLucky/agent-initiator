@@ -9,6 +9,11 @@ Newest entries first. Format:
 - Files: ...
 ```
 
+## 2026-10-03 — chore(TASK-7119): release version 0.2.0
+- What: package.json version 0.1.0 → 0.2.0 (minor, SemVer pre-1.0): new commands and output since 0.1.0, including optional tools, on-demand rules, the init manifest, `status` and `init --upgrade`; CI and git hook generation were removed. The upgrade page explains that a new version marks generated AGENTS.md files as outdated.
+- Why: The version stayed 0.1.0 through all changes, so the manifest's version told nothing about what generated a repository.
+- Files: package.json, docs/wiki/*/features/upgrade-status.md
+
 ## 2026-10-03 — feat(TASK-7118): add init --upgrade for untouched outdated files
 - What: `init --upgrade` (with optional `--dry-run`) uses the same three-way comparison as `status`: it writes outdated files nobody edited, adds missing ones, re-checks each file's hash right before writing, and leaves edited, conflicting and unrecorded files alone with a `git diff` command. The manifest gets the new version, an `upgradedAt` date and new hashes for written files; `generatedAt` is kept. Without a manifest only missing files are added.
 - Why: Repositories initialised earlier had to be backed up and initialised again by hand to get newer rules and skills, which also discarded the record of what was edited.

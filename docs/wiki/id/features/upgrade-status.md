@@ -33,7 +33,7 @@ Dengan kata-kata: file yang hilang dilaporkan lebih dulu. File yang sudah sama d
 | conflict | diubah oleh Anda dan oleh template | 1 |
 | missing | dibuat tetapi tidak ada di disk | 1 |
 
-Untuk file outdated, conflict dan differs, `status` menulis isi barunya ke folder temp di luar repository dan mencetak perintah `git diff --no-index -- <file> <baru>` untuk melihat perbedaannya. Tool yang dipasang setelah init dicantumkan tetapi tidak ikut dibandingkan.
+Untuk file outdated, conflict dan differs, `status` menulis isi barunya ke folder temp di luar repository dan mencetak perintah `git diff --no-index -- <file> <baru>` untuk melihat perbedaannya. Tool yang dipasang setelah init dicantumkan tetapi tidak ikut dibandingkan. Versi agent-initiator yang baru selalu menampilkan AGENTS.md hasil generate sebagai outdated (atau konflik, kalau sudah diedit), karena penanda di baris pertamanya menyebut versi.
 
 ## Upgrade
 `agent-initiator init --upgrade` (tambahkan `--dry-run` untuk melihat rencananya dulu) memakai perbandingan yang sama dan:

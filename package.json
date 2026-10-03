@@ -1,6 +1,6 @@
 {
   "name": "agent-initiator",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Generate AGENTS.md, rules, skills and constraints for AI coding assistants in new repos",
   "type": "module",
   "bin": {
